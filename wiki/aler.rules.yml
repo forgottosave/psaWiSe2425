@@ -1,0 +1,367 @@
+groups:
+
+- name: NodeOsStatus
+  rules:
+
+  - alert: PrometheusOsStatusJobMissing
+    expr: absent(up{job="os-status"})
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      summary: Prometheus OS-Status job missing (instance {{ $labels.instance }})
+      description: "A Prometheus OS-Status job has disappeared\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+  - alert: HostOutOfMemory
+    expr: (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100 < 10) * on(instance) group_left (nodename) node_uname_info{nodename=~".+"}
+    for: 2m
+    labels:
+      severity: warning
+    annotations:
+      summary: Host out of memory (instance {{ $labels.instance }})
+      description: "Node memory is filling up (< 10% left)\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+  - alert: HostHighCpuLoad
+    expr: (sum by (instance) (avg by (mode, instance) (rate(node_cpu_seconds_total{mode!="idle"}[2m]))) > 0.8) * on(instance) group_left (nodename) node_uname_info{nodename=~".+"}
+    for: 10m
+    labels:
+      severity: warning
+    annotations:
+      summary: Host high CPU load (instance {{ $labels.instance }})
+      description: "CPU load is > 80%\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+  - alert: HostOutOfDiskSpace
+    expr: ((node_filesystem_avail_bytes * 100) / node_filesystem_size_bytes < 10 and ON (instance, device, mountpoint) node_filesystem_readonly == 0) * on(instance) group_left (nodename) node_uname_info{nodename=~".+"}
+    for: 2m
+    labels:
+      severity: warning
+    annotations:
+      summary: Host out of disk space (instance {{ $labels.instance }})
+      description: "Disk is almost full (< 10% left)\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+  - alert: HostDiskWillFillIn24Hours
+    expr: ((node_filesystem_avail_bytes * 100) / node_filesystem_size_bytes < 10 and ON (instance, device, mountpoint) predict_linear(node_filesystem_avail_bytes{fstype!~"tmpfs"}[1h], 24 * 3600) < 0 and ON (instance, device, mountpoint) node_filesystem_readonly == 0) * on(instance) group_left (nodename) node_uname_info{nodename=~".+"}
+    for: 2m
+    labels:
+      severity: warning
+    annotations:
+      summary: Host disk will fill in 24 hours (instance {{ $labels.instance }})
+      description: "Filesystem is predicted to run out of space within the next 24 hours at current write rate\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+  - alert: HostRaidArrayGotInactive
+    expr: (node_md_state{state="inactive"} > 0) * on(instance) group_left (nodename) node_uname_info{nodename=~".+"}
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      summary: Host RAID array got inactive (instance {{ $labels.instance }})
+      description: "RAID array {{ $labels.device }} is in a degraded state due to one or more disk failures. The number of spare drives is insufficient to fix the issue automatically.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+- name: DHCP
+  rules:
+
+  - alert: PrometheusDhcpJobMissing
+    expr: absent(up{job="dhcp"})
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      summary: Prometheus DHCP job missing (instance {{ $labels.instance }})
+      description: "A Prometheus DHCP job has disappeared\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+- name: Postgresql
+  rules:
+
+  - alert: PrometheusPostgresqlJobMissing
+    expr: absent(up{job="postgresql"})
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      summary: Prometheus Postgresql job missing (instance {{ $labels.instance }})
+      description: "A Prometheus Postgresql job has disappeared\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+  - alert: PrometheusBackupPostgresqlJobMissing
+    expr: absent(up{job="postgresql-backup"})
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      summary: Prometheus Postgresql-Backup job missing (instance {{ $labels.instance }})
+      description: "A Prometheus Postgresql-Backup job has disappeared\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+  - alert: PrometheusTeam02MySqlJobMissing
+    expr: absent(up{job="mysql-team02"})
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      summary: Prometheus Team 02 MySQL job missing (instance {{ $labels.instance }})
+      description: "A Prometheus Team 02 MySQL job has disappeared\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+  - alert: PostgresqlDown
+    expr: pg_up == 0
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      summary: Postgresql down (instance {{ $labels.instance }})
+      description: "Postgresql instance is down\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+  - alert: PostgresqlExporterError
+    expr: pg_exporter_last_scrape_error > 0
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      summary: Postgresql exporter error (instance {{ $labels.instance }})
+      description: "Postgresql exporter is showing errors. A query may be buggy in query.yaml\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+  - alert: PostgresqlDeadLocks
+    expr: increase(pg_stat_database_deadlocks{datname!~"template.*|postgres"}[1m]) > 5
+    for: 0m
+    labels:
+      severity: warning
+    annotations:
+      summary: Postgresql dead locks (instance {{ $labels.instance }})
+      description: "PostgreSQL has dead-locks\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+  - alert: PostgresqlHighRollbackRate
+    expr: sum by (namespace,datname) ((rate(pg_stat_database_xact_rollback{datname!~"template.*|postgres",datid!="0"}[3m])) / ((rate(pg_stat_database_xact_rollback{datname!~"template.*|postgres",datid!="0"}[3m])) + (rate(pg_stat_database_xact_commit{datname!~"template.*|postgres",datid!="0"}[3m])))) > 0.02
+    for: 0m
+    labels:
+      severity: warning
+    annotations:
+      summary: Postgresql high rollback rate (instance {{ $labels.instance }})
+      description: "Ratio of transactions being aborted compared to committed is > 2 %\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+- name: Homeassistant
+  rules:
+
+  - alert: PrometheusHomeassistantJobMissing
+    expr: absent(up{job="homeassistant"})
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      summary: Prometheus Homeassistant job missing (instance {{ $labels.instance }})
+      description: "A Prometheus Homeassistant job has disappeared\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+- name: CoreDNS
+  rules:
+
+  - alert: CorednsPanicCount
+    expr: increase(coredns_panics_total[1m]) > 0
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      summary: CoreDNS Panic Count (instance {{ $labels.instance }})
+      description: "Number of CoreDNS panics encountered\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+- name: PostFix
+  rules:
+
+  - alert: PrometheusPostFixJobMissing
+    expr: absent(up{job="postfix"})
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      summary: Prometheus PostFix job missing (instance {{ $labels.instance }})
+      description: "A Prometheus PostFix job has disappeared\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+  - alert: PostfixDown
+    expr: postfix_up == 0
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      summary: Postfix down (instance {{ $labels.instance }})
+      description: "Postfix instance is down\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+- name: OpenLDAP
+  rules:
+
+  - alert: PrometheusOpenLDAPJobMissing
+    expr: absent(up{job="openldap"})
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      summary: Prometheus OpenLDAP job missing (instance {{ $labels.instance }})
+      description: "A Prometheus OpenLDAP job has disappeared\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+  - alert: OpenLDAPDown
+    expr: openldap_up == 0
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      summary: OpenLDAP down (instance {{ $labels.instance }})
+      description: "OpenLDAP instance is down\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+- name: Prometheus
+  rules:
+
+  - alert: PrometheusJobMissing
+    expr: absent(up{job="prometheus"})
+    for: 0m
+    labels:
+      severity: warning
+    annotations:
+      summary: Prometheus job missing (instance {{ $labels.instance }})
+      description: "A Prometheus job has disappeared\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+  - alert: PrometheusTargetMissing
+    expr: up == 0
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      summary: Prometheus target missing (instance {{ $labels.instance }})
+      description: "A Prometheus target has disappeared. An exporter might be crashed.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+  - alert: PrometheusTargetMissingWithWarmupTime
+    expr: sum by (instance, job) ((up == 0) * on (instance) group_right(job) (node_time_seconds - node_boot_time_seconds > 600))
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      summary: Prometheus target missing with warmup time (instance {{ $labels.instance }})
+      description: "Allow a job time to start up (10 minutes) before alerting that it's down.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+  - alert: PrometheusConfigurationReloadFailure
+    expr: prometheus_config_last_reload_successful != 1
+    for: 0m
+    labels:
+      severity: warning
+    annotations:
+      summary: Prometheus configuration reload failure (instance {{ $labels.instance }})
+      description: "Prometheus configuration reload error\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+  - alert: PrometheusTooManyRestarts
+    expr: changes(process_start_time_seconds{job=~"prometheus|pushgateway|alertmanager"}[15m]) > 3
+    for: 0m
+    labels:
+      severity: warning
+    annotations:
+      summary: Prometheus too many restarts (instance {{ $labels.instance }})
+      description: "Prometheus has restarted more than twice in the last 15 minutes. It might be crashlooping.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+  - alert: PrometheusAlertmanagerConfigurationReloadFailure
+    expr: alertmanager_config_last_reload_successful != 1
+    for: 0m
+    labels:
+      severity: warning
+    annotations:
+      summary: Prometheus AlertManager configuration reload failure (instance {{ $labels.instance }})
+      description: "AlertManager configuration reload error\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+  - alert: PrometheusAlertmanagerConfigNotSynced
+    expr: count(count_values("config_hash", alertmanager_config_hash)) > 1
+    for: 0m
+    labels:
+      severity: warning
+    annotations:
+      summary: Prometheus AlertManager config not synced (instance {{ $labels.instance }})
+      description: "Configurations of AlertManager cluster instances are out of sync\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+  - alert: PrometheusAlertmanagerE2eDeadManSwitch
+    expr: vector(1)
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      summary: Prometheus AlertManager E2E dead man switch (instance {{ $labels.instance }})
+      description: "Prometheus DeadManSwitch is an always-firing alert. It's used as an end-to-end test of Prometheus through the Alertmanager.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+  - alert: PrometheusNotConnectedToAlertmanager
+    expr: prometheus_notifications_alertmanagers_discovered < 1
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      summary: Prometheus not connected to alertmanager (instance {{ $labels.instance }})
+      description: "Prometheus cannot connect the alertmanager\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+  - alert: PrometheusRuleEvaluationFailures
+    expr: increase(prometheus_rule_evaluation_failures_total[3m]) > 0
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      summary: Prometheus rule evaluation failures (instance {{ $labels.instance }})
+      description: "Prometheus encountered {{ $value }} rule evaluation failures, leading to potentially ignored alerts.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+  - alert: PrometheusTemplateTextExpansionFailures
+    expr: increase(prometheus_template_text_expansion_failures_total[3m]) > 0
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      summary: Prometheus template text expansion failures (instance {{ $labels.instance }})
+      description: "Prometheus encountered {{ $value }} template text expansion failures\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+  - alert: PrometheusRuleEvaluationSlow
+    expr: prometheus_rule_group_last_duration_seconds > prometheus_rule_group_interval_seconds
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: Prometheus rule evaluation slow (instance {{ $labels.instance }})
+      description: "Prometheus rule evaluation took more time than the scheduled interval. It indicates a slower storage backend access or too complex query.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+  - alert: PrometheusNotificationsBacklog
+    expr: min_over_time(prometheus_notifications_queue_length[10m]) > 0
+    for: 0m
+    labels:
+      severity: warning
+    annotations:
+      summary: Prometheus notifications backlog (instance {{ $labels.instance }})
+      description: "The Prometheus notification queue has not been empty for 10 minutes\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+  - alert: PrometheusAlertmanagerNotificationFailing
+    expr: rate(alertmanager_notifications_failed_total[1m]) > 0
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      summary: Prometheus AlertManager notification failing (instance {{ $labels.instance }})
+      description: "Alertmanager is failing sending notifications\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+  - alert: PrometheusTargetEmpty
+    expr: prometheus_sd_discovered_targets == 0
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      summary: Prometheus target empty (instance {{ $labels.instance }})
+      description: "Prometheus has no target in service discovery\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+  - alert: PrometheusTargetScrapingSlow
+    expr: prometheus_target_interval_length_seconds{quantile="0.9"} / on (interval, instance, job) prometheus_target_interval_length_seconds{quantile="0.5"} > 1.05
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: Prometheus target scraping slow (instance {{ $labels.instance }})
+      description: "Prometheus is scraping exporters slowly since it exceeded the requested interval time. Your Prometheus server is under-provisioned.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+  - alert: PrometheusLargeScrape
+    expr: increase(prometheus_target_scrapes_exceeded_sample_limit_total[10m]) > 10
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: Prometheus large scrape (instance {{ $labels.instance }})
+      description: "Prometheus has many scrapes that exceed the sample limit\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+  - alert: PrometheusTargetScrapeDuplicate
+    expr: increase(prometheus_target_scrapes_sample_duplicate_timestamp_total[5m]) > 0
+    for: 0m
+    labels:
+      severity: warning
+    annotations:
+      summary: Prometheus target scrape duplicate (instance {{ $labels.instance }})
+      description: "Prometheus has many samples rejected due to duplicate timestamps but different values\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"

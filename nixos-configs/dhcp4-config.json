@@ -1,0 +1,136 @@
+{
+    "Dhcp4": {
+
+        "valid-lifetime": 300,
+        "renew-timer": 150,
+        "rebind-timer": 240,
+
+        "lease-database": {
+            "type": "memfile",
+            "persist": true,
+            "name": "/var/lib/kea/dhcp4.leases",
+            "lfc-interval": 1800
+        },
+
+        "host-reservation-identifiers": [ "hw-address" ],
+
+        "authoritative": false,
+
+        "interfaces-config": {
+            "interfaces": ["enp0s8/192.168.3.3"],
+            "dhcp-socket-type": "raw"
+        },
+
+        "control-socket": {
+            "socket-type": "unix",
+            "socket-name": "/run/kea/kea-dhcp4.socket"
+        },
+
+        "subnet4": [
+            {
+                "id": 1,
+                "subnet": "192.168.3.0/24",
+                "pools": [],
+                "reservations-out-of-pool": true,
+
+                "reservations" : [
+                    {
+                        "hw-address": "08:00:27:4c:bb:84",
+                        "ip-address": "192.168.3.1",
+                        "hostname": "vm1"
+                    },
+                    {
+                        "hw-address": "08:00:27:af:7f:28",
+                        "ip-address": "192.168.3.2",
+                        "hostname": "vm2"
+                    },
+                    {
+                        "hw-address": "08:00:27:70:68:22",
+                        "ip-address": "192.168.3.4",
+                        "hostname": "database"
+                    },
+                    {
+                        "hw-address": "08:00:27:9f:27:cf",
+                        "ip-address": "192.168.3.5",
+                        "hostname": "homeassistant"
+                    },
+                    {
+                        "hw-address": "08:00:27:8e:7a:e7",
+                        "ip-address": "192.168.3.6",
+                        "hostname": "webserver"
+                    },
+                    {
+                        "hw-address": "08:00:27:b8:2c:a7",
+                        "ip-address": "192.168.3.7",
+                        "hostname": "ldap"
+                    },
+                    {
+                        "hw-address": "08:00:27:33:e9:5b",
+                        "ip-address": "192.168.3.8",
+                        "hostname": "fileserver"
+                    },
+                    {
+                        "hw-address": "08:00:27:54:8e:3c",
+                        "ip-address": "192.168.3.9",
+                        "hostname": "mail"
+                    },
+                    {
+                        "hw-address": "08:00:27:ed:4c:33",
+                        "ip-address": "192.168.3.10",
+                        "hostname": "monitoring"
+                    }
+                ]
+            }
+        ],
+
+        "option-def": [
+            {
+                "code": 252,
+                "name": "wpad-proxy-url",
+                "type": "string"
+            }
+        ],
+
+        "option-data" : [
+            {
+                "name": "routers",
+                "data": "192.168.3.3",
+                "always-send": true
+            },
+            {
+                "name": "domain-name-servers",
+                "data": "192.168.3.3",
+                "always-send": true
+            },
+            {
+                "name": "domain-name",
+                "data": "psa-team03.cit.tum.de.",
+                "always-send": true
+            },
+            {
+                "code": 121,
+                "name": "classless-static-route",
+                "data": "192.168.0.0/16 - 192.168.3.3",
+                "always-send": true
+            },
+            {
+                "name": "wpad-proxy-url",
+                "data": "http://pac.lrz.de",
+                "always-send": true
+            }
+        ],
+
+        "loggers": [
+            {
+                "name": "kea-dhcp4",
+                "output-options": [
+                    {
+                        "output": "/home/kea.log"
+                    }
+                ],
+                "severity": "DEBUG"
+            }
+        ]
+
+    }
+}

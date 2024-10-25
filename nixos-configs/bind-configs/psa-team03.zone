@@ -1,0 +1,55 @@
+$TTL    1h
+@       IN      SOA     ns1 admin (
+                        24111901    ; Serial
+                        3h   ; Refresh
+                        1h   ; Retry
+                        1w   ; Expire
+                        1h)  ; Negative Cache TTL
+
+@       NS      ns1
+@       NS      ns1.psa-team02.cit.tum.de
+@       NS      ns1.psa-team04.cit.tum.de
+@       MX  10  mail
+
+ns1     A       192.168.3.3
+
+; VM 1
+vm1             A       192.168.3.1
+
+; VM 2
+vm2             A       192.168.3.2
+mirror.database CNAME   vm2
+
+; VM 3
+vm3             A       192.168.3.3
+router          CNAME   vm3
+
+; VM 4
+vm4             A       192.168.3.4
+database        CNAME   vm4
+
+; VM 5
+vm5             A       192.168.3.5
+homeassistant   CNAME   vm5
+
+; VM 6
+vm6             A       192.168.3.6
+web1            A       192.168.3.6
+web2            CNAME   web1
+web3            A       192.168.3.66
+
+; VM 7
+vm7             A       192.168.3.7
+ldap            CNAME   vm7
+
+; VM 8
+vm8             A       192.168.3.8
+fileserver      CNAME   vm8
+
+; VM 9
+vm9             A       192.168.3.9
+mail           CNAME   vm9
+
+; VM 10
+vm10            A       192.168.3.10
+monitoring      CNAME   vm10

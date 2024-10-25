@@ -1,0 +1,34 @@
+$TTL    1h
+@            IN      SOA     psa-team03.cit.tum.de. admin.psa-team03.cit.tum.de. (
+                                 24111901    ; Serial
+                                 3h   ; Refresh
+                                 1h   ; Retry
+                                 1w   ; Expire
+                                 1h)  ; Negative Cache TTL
+@       NS        ns1.psa-team03.cit.tum.de.
+@       NS        ns1.psa-team02.cit.tum.de.
+@       NS        ns1.psa-team04.cit.tum.de.
+
+3       PTR       ns1.psa-team03.cit.tum.de.
+
+1       PTR       vm1.psa-team03.cit.tum.de.
+2       PTR       vm2.psa-team03.cit.tum.de.
+2       PTR       mirror.database.psa-team03.cit.tum.de.
+3       PTR       vm3.psa-team03.cit.tum.de.
+3       PTR       router.psa-team03.cit.tum.de.
+4       PTR       vm4.psa-team03.cit.tum.de.
+4       PTR       database.psa-team03.cit.tum.de.
+5       PTR       vm5.psa-team03.cit.tum.de.
+5       PTR       homeassistant.psa-team03.cit.tum.de.
+6       PTR       vm6.psa-team03.cit.tum.de.
+6       PTR       web1.psa-team03.cit.tum.de.
+6       PTR       web2.psa-team03.cit.tum.de.
+66      PTR       web3.psa-team03.cit.tum.de.
+7       PTR       vm7.psa-team03.cit.tum.de.
+7       PTR       ldap.psa-team03.cit.tum.de.
+8       PTR       vm8.psa-team03.cit.tum.de.
+8       PTR       fileserver.psa-team03.cit.tum.de.
+9       PTR       vm9.psa-team03.cit.tum.de.
+9       PTR       mail.psa-team03.cit.tum.de.
+10      PTR       vm10.psa-team03.cit.tum.de.
+10      PTR       monitoring.psa-team03.cit.tum.de.
