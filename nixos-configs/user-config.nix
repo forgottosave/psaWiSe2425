@@ -79,77 +79,77 @@
   };  
   #Team6  
   users.users.ge59pib = {  
-    isNormalUser  = true;  
-    home  = "/home/ge59pib";  
-    uid = 1060;  
-    group = "students";  
-    openssh.authorizedKeys.keys  = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINTyrsqSn9oAlqyThh1VoIqLoOzNV5a9IAeERC09fAFU im-in-your-walls" ];  
-  };  
-  users.users.ge65peq = {  
-    isNormalUser  = true;  
-    home  = "/home/ge65peq";  
-    uid = 1061;  
-    group = "students";  
-    openssh.authorizedKeys.keys  = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBKmGZBpo2o5HMwSCOLVuznuaZ0ZdJgedaRyTYFxJzEK christian.sommer@tum.de" ];  
-  };
- #Team7  
-  users.users.ge63gut = {    
-    isNormalUser = true;    
-    home = "/home/ge63gut";    
-    uid = 1070;  
-    group = "students";  
-    openssh.authorizedKeys.keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMqGJj/qaJn7hULwBvUBdxwSij5dJ1l1ErFmYj8b7aVh sina.mozaffari-tabar@tum.de" ];  
-  };  
-  users.users.ge64baw = {    
-    isNormalUser = true;    
-    home = "/home/ge64baw";    
-    uid = 1071;    
-    group = "students";    
-    openssh.authorizedKeys.keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID74Bxdsa6oQATpMu6sPJ/49J8KcG3wHDz2Wsgk8n+ZE mostafa.nejati.hatamian@tum.de" ];  
-  };  
-  #Team8  
-  users.users.ge84zoj = {    
-    isNormalUser = true;    
-    home = "/home/ge84zoj";    
-    uid = 1080;  
-    group = "students";    
-    openssh.authorizedKeys.keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIP11LUlgDrjK7Bf3jwmQuuUKkWLRgDXNPx9g4sn1+iC7 bjarne.hansen@proton.me" ];  
-  };  
-  users.users.ge94bob = {    
-    isNormalUser = true;    
-    home = "/home/ge94bob";    
-    uid = 1081;  
-    group = "students";    
-    openssh.authorizedKeys.keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIgT4clpBTjp7UeMqP/Qy1mchYBYAZPWuZ0xr9ZOiviG fabianluca.schulz@tum.de" ];  
-  };  
-  #Team9    
-  users.users.ge87huk = {    
-    isNormalUser = true;    
-    home = "/home/ge87huk";    
-    uid = 1090;  
-    group = "students";    
-    openssh.authorizedKeys.keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGeIYnWtdhXEbQ+ZxiEd9Ad5/C4BdK60G8k7fJ4XAu34 ge87huk@mytum.de" ];  
-  };  
-  users.users.ge64wug = {    
-    isNormalUser = true;    
-    home = "/home/ge64wug";    
-    uid = 1091;  
-    group = "students";  
-    openssh.authorizedKeys.keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEN53t0LaDrA2zQtW6jIk5xAndloBe09rXfbaS6QwXq+ sophie@Sophies-Mac.fritz.box" ];  
-  };  
-  #Team10  
-  users.users.ge65hog = {    
-    isNormalUser = true;  
-    home = "/home/ge65hog";  
-    uid = 1100;  
-    group = "students";  
-    openssh.authorizedKeys.keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEeWH4TQsfrcYjQWCylMHqOy3y/RsaahdAI0QdkiyUXJ katharina.schmenn@tum.de" ];  
-  };  
-  users.users.ge38hoy = {  
-    isNormalUser = true;  
-    home = "/home/ge38hoy";  
-    uid = 1101;  
-    group = "students";  
-    openssh.authorizedKeys.keys = [ "sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIK4f12ldfJGJhMUbAYOz5E3aXc+F6SScLb2n2KdVfqu4AAAAC3NzaDp0ZXJtaXVz" ];  
-  };  
+    isNormalUser = true;  
+    home = "/home/ge59pib";  
+    uid = 1060;  
+    group = "students";  
+    openssh.authorizedKeys.keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINTyrsqSn9oAlqyThh1VoIqLoOzNV5a9IAeERC09fA>
+  };
+  users.users.ge65peq = {  
+    isNormalUser = true;  
+    home = "/home/ge65peq";  
+    uid = 1061;  
+    group = "students";  
+    openssh.authorizedKeys.keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBKmGZBpo2o5HMwSCOLVuznuaZ0ZdJgedaRyTYFxJz>
+  };
+  #Team7
+  users.users.ge63gut = {  
+    isNormalUser = true;  
+    home = "/home/ge63gut";  
+    uid = 1070;
+    group = "students";
+    openssh.authorizedKeys.keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMqGJj/qaJn7hULwBvUBdxwSij5dJ1l1ErFmYj8b7a>
+  };
+  users.users.ge64baw = {  
+    isNormalUser = true;  
+    home = "/home/ge64baw";  
+    uid = 1071;  
+    group = "students";  
+    openssh.authorizedKeys.keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID74Bxdsa6oQATpMu6sPJ/49J8KcG3wHDz2Wsgk8n+>
+  };
+  #Team8
+  users.users.ge84zoj = {  
+    isNormalUser = true;  
+    home = "/home/ge84zoj";  
+    uid = 1080;
+    group = "students";  
+    openssh.authorizedKeys.keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIP11LUlgDrjK7Bf3jwmQuuUKkWLRgDXNPx9g4sn1+i>
+  };
+  users.users.ge94bob = {  
+    isNormalUser = true;  
+    home = "/home/ge94bob";  
+    uid = 1081;
+    group = "students";  
+    openssh.authorizedKeys.keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIgT4clpBTjp7UeMqP/Qy1mchYBYAZPWuZ0xr9ZOiv>
+  };
+  #Team9  
+  users.users.ge87huk = {  
+    isNormalUser = true;  
+    home = "/home/ge87huk";  
+    uid = 1090;
+    group = "students";  
+    openssh.authorizedKeys.keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGeIYnWtdhXEbQ+ZxiEd9Ad5/C4BdK60G8k7fJ4XAu>
+  };
+  users.users.ge64wug = {  
+    isNormalUser = true;  
+    home = "/home/ge64wug";  
+    uid = 1091;
+    group = "students";
+    openssh.authorizedKeys.keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEN53t0LaDrA2zQtW6jIk5xAndloBe09rXfbaS6QwX>
+  };
+  #Team10
+  users.users.ge65hog = {  
+    isNormalUser = true;
+    home = "/home/ge65hog";
+    uid = 1100;
+    group = "students";
+    openssh.authorizedKeys.keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEeWH4TQsfrcYjQWCylMHqOy3y/RsaahdAI0QdkiyU>
+  };
+  users.users.ge38hoy = { 
+    isNormalUser = true;
+    home = "/home/ge38hoy";
+    uid = 1101;
+    group = "students";
+    openssh.authorizedKeys.keys = [ "sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIK4f12l>
+  };
 }
