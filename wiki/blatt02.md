@@ -107,3 +107,12 @@ Gewünschte Firewall–Regeln:
 
 
 TODO
+
+
+## Zusatz:
+Wir haben diese Woche zudem die synchronisierte Aktualisierung der config Dateien über ein git repository ermöglicht. Die Ausführung von [`scripts/sync-nixos-config.sh`](https://github.com/forgottosave/psaWiSe2425/blob/main/scripts/sync-nixos-config.sh) übernimmt...
+1. ...das Kopieren der `.nix` Dateien an den richtigen Ort (`/etc/nixos/`).
+2. ...das VM spezifische konfigurieren der `.nix` Dateien (Einsetzen der richtigen root-ssh-keys, IP-Adressen, ...). Die VM spezifischen Konfigurationen können in `scripts/vm-configs/` gefunden werden.
+3. ...`nixos-rebuild switch`.
+
+Details zur Benutzung können zudem in der repository [README](../README.md) gefunden werden.

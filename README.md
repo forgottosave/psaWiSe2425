@@ -30,7 +30,4 @@ When editing the configs in `nixos-configs/`, configurations changing between VM
 
 **placeholder structure:** `%%placeholdername%%`
 
-Adding a new placeholder must be done by:
-1. adding an `sed` entry to `scripts/sync-nixos-config.sh` under `# 3. ...`
-2. adding the configurations to `scripts/vm-configs/vm-*.sh`
-3. using the placeholder in the configs in `nixos-configs/`
+New placeholder must be added to the VM-specific configurations in `scripts/vm-configs/vm-*.sh`.
