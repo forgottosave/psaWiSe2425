@@ -72,3 +72,9 @@ done
 if [ "$NIXOS_REBUILD" = true ] ; then
     sudo nixos-rebuild switch
 fi
+
+
+## EXERCISE SHEET SPECIFIC REQUIREMENTS ##############
+
+# Week 02
+cp ${THIS_DIR}/test_PSA_02.sh /root/
