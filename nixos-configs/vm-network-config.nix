@@ -3,7 +3,7 @@
   networking = {
     interfaces.enp0s8 = {
       ipv4.addresses = [
-        { address = "192.168.3.1"; prefixLength = 24; } #bzw .2 für vm2
+        { address = "192.168.3.%%vm%%"; prefixLength = 24; }
       ];
       ipv4.routes = [
         { address = "192.168.1.0"; prefixLength = 24; via = "192.168.31.3"; }
@@ -51,19 +51,23 @@
       iptables -A INPUT -p udp --dport 53 -j ACCEPT 
       iptables -A INPUT -p tcp --dport 53 -j ACCEPT
 
-      # Allow incoming HTTP, HTTPS, and responses to the requests
+      # Allow: incoming HTTP, HTTPS, and responses to the requests
       iptables -A INPUT -p tcp --dport 80 -j ACCEPT
       iptables -A OUTPUT -p tcp --sport 80 -j ACCEPT
       iptables -A INPUT -p tcp --dport 443 -j ACCEPT
       iptables -A OUTPUT -p tcp --sport 443 -j ACCEPT
 
       # Outgoing only to specific IPs
+      # github
       iptables -A OUTPUT -d 140.82.112.3 -j ACCEPT
+      # gitlab
+      iptables -A OUTPUT -d 131.159.0.0/16 -j ACCEPT
+      # nixos updater
       iptables -A OUTPUT -d 151.101.2.217 -j ACCEPT  
       iptables -A OUTPUT -d 151.101.130.217 -j ACCEPT
       iptables -A OUTPUT -d 151.101.66.217 -j ACCEPT
       iptables -A OUTPUT -d 151.101.194.217 -j ACCEPT
-      iptables -A OUTPUT -d 131.159.0.0/16 -j ACCEPT
+      # praktikum
       iptables -A OUTPUT -d 192.168.1.0/24 -j ACCEPT
       iptables -A OUTPUT -d 192.168.2.0/24 -j ACCEPT 
       iptables -A OUTPUT -d 192.168.3.0/24 -j ACCEPT
