@@ -51,6 +51,12 @@
       iptables -A INPUT -p udp --dport 53 -j ACCEPT 
       iptables -A INPUT -p tcp --dport 53 -j ACCEPT
 
+      # Allow: git (https://serverfault.com/questions/682373/setting-up-iptables-filter-to-allow-git)
+      iptables -A INPUT -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
+      iptables -A OUTPUT -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
+      iptables -A INPUT -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
+      iptables -A OUTPUT -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
+
       # Allow: incoming HTTP, HTTPS, and responses to the requests
       iptables -A INPUT -p tcp --dport 80 -j ACCEPT
       iptables -A OUTPUT -p tcp --sport 80 -j ACCEPT
@@ -59,7 +65,7 @@
 
       # Outgoing only to specific IPs
       # github
-      iptables -A OUTPUT -d 140.82.112.3 -j ACCEPT
+      iptables -A OUTPUT -d 140.82.112.4 -j ACCEPT
       # gitlab
       iptables -A OUTPUT -d 131.159.0.0/16 -j ACCEPT
       # nixos updater
