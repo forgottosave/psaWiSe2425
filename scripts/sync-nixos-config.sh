@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-## CONFIGURATION ################################
+## 0. configuration ##################################
 
 THIS_DIR=$(dirname "$0")
 # try to find vm number, if not provided
@@ -11,13 +11,13 @@ if [ -n "$1" ]; then
 fi
 # paths
 PATH_CONFIG_SRC="$THIS_DIR/../nixos-configs/"
-PATH_CONFIG_DEST='/etc/nixos/' # ="$THIS_DIR/../test/"
+PATH_CONFIG_DEST='/etc/nixos/'
 # script configs
 SYNC_GIT=false
-SYNC_CONFIG=true
 NIXOS_REBUILD=true
 
-## 0. synchronize with git repository ###########
+
+## 1. synchronize with git repository ################
 
 if [ "$SYNC_GIT" = true ] ; then
     echo 'synchronizing the git repository...'
@@ -26,28 +26,26 @@ if [ "$SYNC_GIT" = true ] ; then
 fi
 
 
-## 1. Set VM specific configuration #############
+## 2. read vm specific configuration #################
 
 echo "setting configuration for VM ${VM_NUMBER}..."
 declare -a include_files
 source "${THIS_DIR}/vm-configs/vm-${VM_NUMBER}.sh"
 
 
-## 2. synchronize configs #######################
+## 3. synchronize .nix configs #######################
 
-if [ "$SYNC_CONFIG" = true ] ; then
-    echo 'synchronizing the configs:'
-    for file in ${include_files[@]}; do
-        echo "  ${PATH_CONFIG_SRC}${file} -> ${PATH_CONFIG_DEST}${file}"
-        backup_folder="${PATH_CONFIG_DEST}backup"
-        [ -d "$backup_folder" ] || mkdir "$backup_folder"
-        mv "${PATH_CONFIG_DEST}${file}" "$backup_folder"
-        cp "${PATH_CONFIG_SRC}${file}" "${PATH_CONFIG_DEST}${file}"
-    done
-fi
+echo 'synchronizing the configs:'
+for file in ${include_files[@]}; do
+    echo "  ${PATH_CONFIG_SRC}${file} -> ${PATH_CONFIG_DEST}${file}"
+    backup_folder="${PATH_CONFIG_DEST}backup"
+    [ -d "$backup_folder" ] || mkdir "$backup_folder"
+    mv "${PATH_CONFIG_DEST}${file}" "$backup_folder"
+    cp "${PATH_CONFIG_SRC}${file}" "${PATH_CONFIG_DEST}${file}"
+done
 
 
-## 3. enter vm specific configs #################
+## 4. edit vm specific placeholders ##################
 
 imports='
         ./hardware-configuration.nix'
@@ -69,7 +67,8 @@ for file in ${include_files[@]}; do
     done
 done
 
-## 4. reload config #############################
-if [ "$SYNC_CONFIG" = true ] ; then
+
+## 5. reload config ##################################
+if [ "$NIXOS_REBUILD" = true ] ; then
     sudo nixos-rebuild switch
 fi
