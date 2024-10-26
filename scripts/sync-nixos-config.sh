@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ## CONFIGURATION ################################
 
@@ -15,7 +15,7 @@ PATH_CONFIG_DEST='/etc/nixos/' # ="$THIS_DIR/../test/"
 # script configs
 SYNC_GIT=false
 SYNC_CONFIG=true
-
+NIXOS_REBUILD=true
 
 ## 0. synchronize with git repository ###########
 
@@ -49,10 +49,13 @@ fi
 
 ## 3. enter vm specific configs #################
 
-imports=''
+imports='
+        ./hardware-configuration.nix'
 for file in ${include_files[@]}; do
-    imports+="
-    ./$file"
+    if ! [ "$file" = "configuration.nix" ]; then
+        imports+="
+        ./$file"
+    fi
 done
 gawk -i inplace -v r="$imports" '{gsub(/%%imports%%/,r)}1' "${PATH_CONFIG_DEST}configuration.nix"
 
@@ -65,3 +68,8 @@ for file in ${include_files[@]}; do
         gawk -i inplace -v r="$replacement" "{gsub(/%%$placeholder%%/,r)}1" "$path"
     done
 done
+
+## 4. reload config #############################
+if [ "$SYNC_CONFIG" = true ] ; then
+    sudo nixos-rebuild switch
+fi
