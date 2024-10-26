@@ -8,12 +8,14 @@ The documentation of all projects can be found in `wiki/`.
 The config files are all partially generated using `scripts/sync-nixos-config.sh` to
 1. update all NixOS configuration files (`nixos-configs/` -> `/etc/nixos/`)
 2. and insert all correct values into those files
+##### cloning the configs to VMs:
+We set up [deploy keys](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/managing-deploy-keys#deploy-keys) for the VMs to be able to connect to the [Github repository](https://github.com/forgottosave/psaWiSe2425/). Just enter the public key in Github and clone the repo.
 ##### usage:
 ```
 ./scripts/sync-nixos-config.sh
 ```
 
-The VM number is trying to be parsed from the hostname. Optionally it can be manually passed:
+The VM number is trying to be parsed from the `hostname`. Optionally it can be manually passed:
 ```
 ./scripts/sync-nixos-config.sh <vm-number>
 ```
@@ -24,12 +26,11 @@ The VM number is trying to be parsed from the hostname. Optionally it can be man
 | 2         | Team-member 2 (Timon Ensel)     |
 | 3         | Router                          |
 ##### changing the config:
-When editing the configs in `nixos-configs/`, configurations changing between VMs shouldn't be hard-coded, but rather replaced by a `sed`-able placeholder.
+When editing the configs in `nixos-configs/`, configurations changing between VMs shouldn't be hard-coded, but rather replaced by a placeholder.
 
 **placeholder structure:** `%%placeholdername%%`
 
-Adding a new placeholder must be done in:
-
-1. add an `sed` entry to `scripts/sync-nixos-config.sh` under `# 3. ...`
-2. add the configurations to `scripts/vm-configs/vm-*.sh`
-3. use the placeholder in the configs in `nixos-configs/`
+Adding a new placeholder must be done by:
+1. adding an `sed` entry to `scripts/sync-nixos-config.sh` under `# 3. ...`
+2. adding the configurations to `scripts/vm-configs/vm-*.sh`
+3. using the placeholder in the configs in `nixos-configs/`
