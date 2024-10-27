@@ -73,8 +73,7 @@
       iptables -A OUTPUT -p tcp --sport 443 -j ACCEPT
 
       # Outgoing only to specific IPs
-      iptables -A OUTPUT -d 140.82.112.4 -j ACCEPT
-      iptables -A OUTPUT -d 151.101.2.217 -j ACCEPT  
+      iptables -A OUTPUT -d 151.101.2.217 -j ACCEPT
       iptables -A OUTPUT -d 151.101.130.217 -j ACCEPT
       iptables -A OUTPUT -d 151.101.66.217 -j ACCEPT
       iptables -A OUTPUT -d 151.101.194.217 -j ACCEPT

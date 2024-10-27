@@ -35,12 +35,14 @@ function print_summary {
 ## connection to other teams
 start_test "connection to other teams"
 for i in $(seq 1 10); do
-    ip="192.168.$i.1"
-    if ping -c 1 $ip &> /dev/null; then
-        print_success "ping $ip"
-    else
-        print_failed "ping $ip"
-    fi
+    for k in $(seq 1 2); do
+        ip="192.168.$i.$k"
+        if ping -c 1 $ip &> /dev/null; then
+            print_success "ping $ip"
+        else
+            print_failed "ping $ip"
+        fi
+    done
 done
 
 

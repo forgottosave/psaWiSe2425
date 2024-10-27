@@ -64,8 +64,6 @@
       iptables -A OUTPUT -p tcp --sport 443 -j ACCEPT
 
       # Outgoing only to specific IPs
-      # github
-      iptables -A OUTPUT -d 140.82.112.4 -j ACCEPT
       # gitlab
       iptables -A OUTPUT -d 131.159.0.0/16 -j ACCEPT
       # nixos updater
