@@ -45,14 +45,24 @@ for i in $(seq 1 10); do
     done
 done
 
+## TEST #########################################
+## surfing through proxy
+start_test "surfing through proxy"
+test_addresses=(
+    "https://www.google.com"
+    "http://www.google.com"
+)
+for addr in ${test_addresses[@]}; do
+    status=$(curl -o - -I $addr | head -n 1)
+    if [[ $status =~ "200" ]]; then
+        print_success "curl $addr"
+    else
+        print_failed "curl $addr"
+    fi
+done
 
 ## TEST #########################################
-## TODO TODO TODO
-
-start_test "some test description"
-print_success "test something else 1"
-print_success "test something else 2"
-print_failed "test something else 3"
+## TODO add tests
 
 ## summary ######################################
 print_summary
