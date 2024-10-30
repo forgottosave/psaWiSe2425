@@ -62,6 +62,16 @@ for addr in ${test_addresses[@]}; do
 done
 
 ## TEST #########################################
+## check if connection is made through router
+start_test "check if connection is made through router"
+print_failed "TODO"
+
+## TEST #########################################
+## check not-allowed ports (TODO)
+start_test "check not-allowed ports"
+print_failed "TODO"
+
+## TEST #########################################
 ## TODO add tests
 
 ## summary ######################################
