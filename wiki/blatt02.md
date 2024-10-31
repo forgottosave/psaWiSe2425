@@ -106,8 +106,19 @@ Gewünschte Firewall–Regeln:
 - ICMP uneingeschränkt möglich
 
 
-TODO
+#TODO
 
+### 5) Testing
+Für das Testen der Netzwerk Verbindungen & Firewall soll (wie es die Aufgabe verlangt) ein bash script names `test_PSA_02.sh` in `/root` abgelegt werden.
+Das Script behandelt die folgenden Test-Fälle, welche jeweils mit einem `SUCCESS`, oder `FAILED` enden:
+1. **Verbindung zu anderen Teams**
+   - `ping -c 1 <ip>` an alle anderen Team VMs (1 & 2)
+2. **Surfen (über Proxy)**
+   - `curl -o - -I <adresse>` an google.com (`http` & `https`)
+   - prüfe ob Status `200` ausgegeben wird
+3. **Stichproben Check, ob andere Ports wirklich "verboten" sind**
+   - #TODO
+4. #TODO mehr Tests?
 
 ## Zusatz:
 Wir haben diese Woche zudem die synchronisierte Aktualisierung der config Dateien über ein git repository ermöglicht. Die Ausführung von [`scripts/sync-nixos-config.sh`](https://github.com/forgottosave/psaWiSe2425/blob/main/scripts/sync-nixos-config.sh) übernimmt...
