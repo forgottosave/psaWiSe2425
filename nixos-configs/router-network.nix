@@ -17,13 +17,13 @@
       ipv4.routes = [
         { address = "192.168.1.0"; prefixLength = 24; via = "192.168.31.1"; } # ids der anderen router vms
         { address = "192.168.2.0"; prefixLength = 24; via = "192.168.32.2"; }
-        { address = "192.168.4.0"; prefixLength = 24; via = "192.168.41.1"; }
-        { address = "192.168.5.0"; prefixLength = 24; via = "192.168.51.1"; }
-        { address = "192.168.6.0"; prefixLength = 24; via = "192.168.61.1"; }
-        { address = "192.168.7.0"; prefixLength = 24; via = "192.168.71.1"; }
-        { address = "192.168.8.0"; prefixLength = 24; via = "192.168.81.1"; }
-        { address = "192.168.9.0"; prefixLength = 24; via = "192.168.91.1"; }
-        { address = "192.168.10.0"; prefixLength = 24; via = "192.168.101.1"; }
+        { address = "192.168.4.0"; prefixLength = 24; via = "192.168.43.4"; }
+        { address = "192.168.5.0"; prefixLength = 24; via = "192.168.53.5"; }
+        { address = "192.168.6.0"; prefixLength = 24; via = "192.168.63.6"; }
+        { address = "192.168.7.0"; prefixLength = 24; via = "192.168.73.7"; }
+        { address = "192.168.8.0"; prefixLength = 24; via = "192.168.83.8"; }
+        { address = "192.168.9.0"; prefixLength = 24; via = "192.168.93.9"; }
+        { address = "192.168.10.0"; prefixLength = 24; via = "192.168.103.10"; }
       ];
     };
 
