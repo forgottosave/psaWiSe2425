@@ -90,23 +90,23 @@
       iptables -A OUTPUT -d 192.168.10.0/24 -j ACCEPT
 
       # Allow: Forrwarding between the networks
-      iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.1.0/24 -d 192.168.31.0/24 -j ACCEPT
+      iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.3.0/24 -d 192.168.31.0/24 -j ACCEPT
       iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.31.0/24 -d 192.168.3.0/24 -j ACCEPT
-      iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.2.0/24 -d 192.168.32.0/24 -j ACCEPT
+      iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.3.0/24 -d 192.168.32.0/24 -j ACCEPT
       iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.32.0/24 -d 192.168.3.0/24 -j ACCEPT
-      iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.4.0/24 -d 192.168.43.0/24 -j ACCEPT
+      iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.3.0/24 -d 192.168.43.0/24 -j ACCEPT
       iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.43.0/24 -d 192.168.3.0/24 -j ACCEPT
-      iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.5.0/24 -d 192.168.53.0/24 -j ACCEPT
+      iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.3.0/24 -d 192.168.53.0/24 -j ACCEPT
       iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.53.0/24 -d 192.168.3.0/24 -j ACCEPT
-      iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.6.0/24 -d 192.168.63.0/24 -j ACCEPT
+      iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.3.0/24 -d 192.168.63.0/24 -j ACCEPT
       iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.63.0/24 -d 192.168.3.0/24 -j ACCEPT
-      iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.7.0/24 -d 192.168.73.0/24 -j ACCEPT
+      iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.3.0/24 -d 192.168.73.0/24 -j ACCEPT
       iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.73.0/24 -d 192.168.3.0/24 -j ACCEPT
-      iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.8.0/24 -d 192.168.83.0/24 -j ACCEPT
+      iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.3.0/24 -d 192.168.83.0/24 -j ACCEPT
       iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.83.0/24 -d 192.168.3.0/24 -j ACCEPT
-      iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.9.0/24 -d 192.168.93.0/24 -j ACCEPT
+      iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.3.0/24 -d 192.168.93.0/24 -j ACCEPT
       iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.93.0/24 -d 192.168.3.0/24 -j ACCEPT
-      iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.10.0/24 -d 192.168.103.0/24 -j ACCEPT
+      iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.3.0/24 -d 192.168.103.0/24 -j ACCEPT
       iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.103.0/24 -d 192.168.3.0/24 -j ACCEPT
 
       # Allow: ICMP 
