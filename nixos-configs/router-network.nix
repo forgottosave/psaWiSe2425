@@ -92,8 +92,8 @@
       # Allow: Forrwarding between the networks
       iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.3.0/24 -d 192.168.31.0/24 -j ACCEPT
       iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.31.0/24 -d 192.168.3.0/24 -j ACCEPT
-      iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.3.0/24 -d 192.168.2.0/24 -j ACCEPT
-      iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.2.0/24 -d 192.168.3.0/24 -j ACCEPT
+      iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.3.0/24 -d 192.168.32.0/24 -j ACCEPT
+      iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.32.0/24 -d 192.168.3.0/24 -j ACCEPT
       iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.3.0/24 -d 192.168.4.0/24 -j ACCEPT
       iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.4.0/24 -d 192.168.3.0/24 -j ACCEPT
       iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.3.0/24 -d 192.168.5.0/24 -j ACCEPT
