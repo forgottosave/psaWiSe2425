@@ -3,16 +3,16 @@
   networking = {
     interfaces.enp0s8 = {
       ipv4.addresses = [
-        { address = "192.168.1.%%vm%%"; prefixLength = 24; }
-        { address = "192.168.2.%%vm%%"; prefixLength = 24; }
-        { address = "192.168.3.%%vm%%"; prefixLength = 24; }
-        { address = "192.168.4.%%vm%%"; prefixLength = 24; }
-        { address = "192.168.5.%%vm%%"; prefixLength = 24; }
-        { address = "192.168.6.%%vm%%"; prefixLength = 24; }
-        { address = "192.168.7.%%vm%%"; prefixLength = 24; }
-        { address = "192.168.8.%%vm%%"; prefixLength = 24; }
-        { address = "192.168.9.%%vm%%"; prefixLength = 24; }
-        { address = "192.168.10.%%vm%%"; prefixLength = 24; }
+        { address = "192.168.1.3"; prefixLength = 24; }
+        { address = "192.168.2.3"; prefixLength = 24; }
+        { address = "192.168.3.3"; prefixLength = 24; }
+        { address = "192.168.4.3"; prefixLength = 24; }
+        { address = "192.168.5.3"; prefixLength = 24; }
+        { address = "192.168.6.3"; prefixLength = 24; }
+        { address = "192.168.7.3"; prefixLength = 24; }
+        { address = "192.168.8.3"; prefixLength = 24; }
+        { address = "192.168.9.3"; prefixLength = 24; }
+        { address = "192.168.10.3"; prefixLength = 24; }
       ];
       ipv4.routes = [
         { address = "192.168.1.0"; prefixLength = 24; via = "192.168.3.1"; } # ids der anderen router vms
