@@ -3,18 +3,54 @@
 ## 0. configuration ##################################
 
 THIS_DIR=$(dirname "$0")
-# try to find vm number, if not provided
+## Defaults
 VM_NUMBER=$(hostname)
 VM_NUMBER=${VM_NUMBER: -1}
-if [ -n "$1" ]; then
-    VM_NUMBER=$1
-fi
-# paths
 PATH_CONFIG_SRC="$THIS_DIR/../nixos-configs/"
 PATH_CONFIG_DEST='/etc/nixos/'
-# script configs
 SYNC_GIT=false
 NIXOS_REBUILD=true
+# help page
+HELP="\033[0;1mPSA Team 03 - OS sync script\033[0;0m performs...
+...copy configs to $PATH_CONFIG_DEST
+...replace placeholders
+...nixos-rebuild switch
+
+\033[0;1mUsage:\033[0;0m
+$0 [OPTIONS]
+
+\033[0;1mOptions:          Description:\033[0;0m
+-h, --help        Display help page.
+-n, --vm          Specify VM (automatically set from hostname if not provided).
+-p, --pull        Pull latest changes from git repository before config changes.
+-x, --no-rebuild  Don't perform nixos-rebuild switch after config changes.
+"
+## Argument Parsing
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    -h|--help)
+        printf "$HELP"
+        exit 0
+    ;;
+    -p|--pull)
+        SYNC_GIT=true
+        shift
+    ;;
+    -n|--vm)
+        VM_NUMBER="$2"
+        shift
+        shift
+    ;;
+    -x|--no-rebuild)
+        NIXOS_REBUILD=false
+        shift
+    ;;
+    *)
+        echo "Unknown option: $1"
+        exit 1
+    ;;
+  esac
+done
 
 
 ## 1. synchronize with git repository ################
@@ -69,6 +105,7 @@ done
 
 
 ## 5. reload config ##################################
+
 if [ "$NIXOS_REBUILD" = true ] ; then
     sudo nixos-rebuild switch
 fi
