@@ -36,18 +36,18 @@
       # Allow: SSH
       iptables -A INPUT -p tcp --dport 22 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
       iptables -A OUTPUT -p tcp --sport 22 -m conntrack --ctstate ESTABLISHED -j ACCEPT
+      
+      # Allow: git (https://serverfault.com/questions/682373/setting-up-iptables-filter-to-allow-git)
+      iptables -A INPUT -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
+      iptables -A OUTPUT -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
+      iptables -A INPUT -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
+      iptables -A OUTPUT -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
 
       # Allow: DNS
       iptables -A OUTPUT -p udp --dport 53 -j ACCEPT
       iptables -A OUTPUT -p tcp --dport 53 -j ACCEPT
       iptables -A INPUT -p udp --dport 53 -j ACCEPT 
       iptables -A INPUT -p tcp --dport 53 -j ACCEPT
-
-      # Allow: git (https://serverfault.com/questions/682373/setting-up-iptables-filter-to-allow-git)
-      iptables -A INPUT -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
-      iptables -A OUTPUT -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
-      iptables -A INPUT -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
-      iptables -A OUTPUT -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
 
       # Allow: incoming HTTP, HTTPS, and responses to the requests
       iptables -A INPUT -p tcp --dport 80 -j ACCEPT

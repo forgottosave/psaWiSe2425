@@ -1,7 +1,6 @@
 # Aufgabenblatt 02
 In diesem Blatt geht es darum die Netzwerkkonfiguration zu erstellen und die VMs untereinander zu verbinden, als auch eine Firewall zu konfigurieren um die VMs zu schützen.
 
-
 ## Teilaufgaben:
 
 ### 1) Verbindung innerhalb des teams:
@@ -17,7 +16,8 @@ In diesem Blatt geht es darum die Netzwerkkonfiguration zu erstellen und die VMs
       };
     };
     ```
-    
+
+
 ### 2) Verbindung zwischen den Teams
 - für diese Teilaufgabe haben wir uns etnschieden einen Router VM zu erstellen, der die Verbindung zwischen den Teams herstellt (VM03)
 - Worauf wir uns in Matrix geeinig haben:
@@ -89,24 +89,92 @@ In diesem Blatt geht es darum die Netzwerkkonfiguration zu erstellen und die VMs
     networking.proxy.httpProxy = "http://proxy.cit.tum.de:8080/";
     ```
 
+
 ### 4) Firewall
-Gewünschte Firewall–Regeln:
-- TCP Verbindungen von außen zur VM:
-    - es sollen die folgender Verbindungen erlaubt sein (stateless!)
-        - Port 22 (Secure Shell)
-        - Port 80 (http) 
-        - Port 443 (https)
-    - alle anderen Ports sollen nicht erreichbar sein
-- TCP Verbindungen von der VM nach außen
-    - erlaubte Adressen:
-        - 131.159.0.0/16
-        - alle Subnetze (192.168.3.0/24, 192.168.31.0/24, ...)
-        - updateserver OS
-        - gitrepo
-- ICMP uneingeschränkt möglich
+Die gewünschte Firewall–Regeln können unter NixOS als `firewall.extraCommands = ...` konfiguriert werden:
+#TODO -> ping von anderen auf unsere VM 1 & 2 funktioniert noch nicht!!!
 
+- **per default** soll "nichts" erlaubt sein:
+  ```
+	iptables -P INPUT DROP
+	iptables -P FORWARD DROP
+	iptables -P OUTPUT DROP
+	```
 
-#TODO
+- **TCP Verbindungen** zur VM (stateless!) sollen nur auf folgenden Ports möglich sein:
+    - Port 22 (Secure Shell & Git)
+    - Port 80 (http) 
+    - Port 443 (https)
+```
+	# Allow: SSH
+	iptables -A INPUT -p tcp --dport 22 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
+	iptables -A OUTPUT -p tcp --sport 22 -m conntrack --ctstate ESTABLISHED -j ACCEPT
+	# Allow: git (https://serverfault.com/questions/682373/setting-up-iptables-filter-to-allow-git)
+	iptables -A INPUT -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
+	iptables -A OUTPUT -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
+	iptables -A INPUT -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
+	iptables -A OUTPUT -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
+	# Allow: incoming HTTP, HTTPS, and responses to the requests
+	iptables -A INPUT -p tcp --dport 80 -j ACCEPT
+	iptables -A OUTPUT -p tcp --sport 80 -j ACCEPT
+	iptables -A INPUT -p tcp --dport 443 -j ACCEPT
+	iptables -A OUTPUT -p tcp --sport 443 -j ACCEPT
+```
+
+- **Erlaubte Adressen** von der VM nach außen:
+    - Gitlab ( #TODO wieso?)
+    - alle Team-Subnetze (192.168.3.0/24, 192.168.31.0/24, ...)
+    - NixOS-Update-Server
+```
+	# Gitlab
+	iptables -A OUTPUT -d 131.159.0.0/16 -j ACCEPT
+	# NixOS (context switch)
+	iptables -A OUTPUT -d 151.101.2.217 -j ACCEPT
+	iptables -A OUTPUT -d 151.101.130.217 -j ACCEPT
+	iptables -A OUTPUT -d 151.101.66.217 -j ACCEPT
+	iptables -A OUTPUT -d 151.101.194.217 -j ACCEPT
+	# andere Teams
+	iptables -A OUTPUT -d 192.168.1.0/24 -j ACCEPT
+	iptables -A OUTPUT -d 192.168.2.0/24 -j ACCEPT
+	iptables -A OUTPUT -d 192.168.3.0/24 -j ACCEPT
+	iptables -A OUTPUT -d 192.168.4.0/24 -j ACCEPT
+	iptables -A OUTPUT -d 192.168.5.0/24 -j ACCEPT
+	iptables -A OUTPUT -d 192.168.6.0/24 -j ACCEPT
+	iptables -A OUTPUT -d 192.168.7.0/24 -j ACCEPT
+	iptables -A OUTPUT -d 192.168.8.0/24 -j ACCEPT
+	iptables -A OUTPUT -d 192.168.9.0/24 -j ACCEPT
+	iptables -A OUTPUT -d 192.168.10.0/24 -j ACCEPT
+```
+
+- **ICMP** uneingeschränkt möglich
+```
+	# Allow: ICMP
+	iptables -A INPUT -p icmp -j ACCEPT
+	iptables -A OUTPUT -p icmp -j ACCEPT  
+```
+
+- **Router**: zudem braucht der Router Konfigurationen für das Forwarding zwischen unseren Team-Subnetzen:
+```
+	iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.3.0/24 -d 192.168.31.0/24 -j ACCEPT
+	iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.31.0/24 -d 192.168.3.0/24 -j ACCEPT
+	iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.3.0/24 -d 192.168.32.0/24 -j ACCEPT
+	iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.32.0/24 -d 192.168.3.0/24 -j ACCEPT
+	iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.3.0/24 -d 192.168.43.0/24 -j ACCEPT
+	iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.43.0/24 -d 192.168.3.0/24 -j ACCEPT
+	iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.3.0/24 -d 192.168.53.0/24 -j ACCEPT
+	iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.53.0/24 -d 192.168.3.0/24 -j ACCEPT
+	iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.3.0/24 -d 192.168.63.0/24 -j ACCEPT
+	iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.63.0/24 -d 192.168.3.0/24 -j ACCEPT
+	iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.3.0/24 -d 192.168.73.0/24 -j ACCEPT
+	iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.73.0/24 -d 192.168.3.0/24 -j ACCEPT
+	iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.3.0/24 -d 192.168.83.0/24 -j ACCEPT
+	iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.83.0/24 -d 192.168.3.0/24 -j ACCEPT
+	iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.3.0/24 -d 192.168.93.0/24 -j ACCEPT
+	iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.93.0/24 -d 192.168.3.0/24 -j ACCEPT
+	iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.3.0/24 -d 192.168.103.0/24 -j ACCEPT
+	iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.103.0/24 -d 192.168.3.0/24 -j ACCEPT
+```
+
 
 ### 5) Testing
 Für das Testen der Netzwerk Verbindungen & Firewall soll (wie es die Aufgabe verlangt) ein bash script names `test_PSA_02.sh` in `/root` abgelegt werden.
