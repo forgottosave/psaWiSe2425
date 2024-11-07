@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-## test sertup ##################################
+## test setup ##################################
 
 # text styling
 TEXT_DEFAULT='\033[0;0m'
@@ -34,6 +34,13 @@ function print_summary {
 ## TEST #########################################
 ## connection to other teams
 start_test "connection to other teams"
+#declare -a ips
+#printf "scan team sub-networks...\n  "
+#for i in $(seq 1 10); do
+#    printf "$i..."
+#    ips+=($(nmap -sn 192.168.$i.0/24 | grep for | cut -c 22-))
+#done
+#echo
 for i in $(seq 1 10); do
     for k in $(seq 1 2); do
         ip="192.168.$i.$k"
