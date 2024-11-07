@@ -1,7 +1,5 @@
 {config, pkgs, ... }: 
 {
-  boot.initrd.systemd.network.wait-online.enable = false;
-
   # Legacy DHCP deaktivieren
   networking.nat.enable = false;
   networking.useDHCP = false;
@@ -9,7 +7,6 @@
   # Wir nutzen stattdessen systemd-networkd
   networking.useNetworkd = true;
   systemd.network = {
-    wait-online.enable = false;
     enable = true;
 
     # Interface für Internet Zugang
