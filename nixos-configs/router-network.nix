@@ -1,9 +1,11 @@
 {config, pkgs, ... }: 
 {
   # Legacy DHCP deaktivieren
+  networking.nat.enable = false;
   networking.useDHCP = false;
 
   # Wir nutzen stattdessen systemd-networkd
+  networking.useNetworkd = true;
   systemd.network = {
     enable = true;
 
