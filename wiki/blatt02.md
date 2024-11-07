@@ -7,7 +7,7 @@ In diesem Blatt geht es darum die Netzwerkkonfiguration zu erstellen und die VMs
 - zunächst muss der nicht konfigurierter Netzwerkadapter ermittelt werde, hierfür einfach `ifconfig` ausführen und den Adapter auswählen der nicht die IP `10.0.2.15` hat <br>-> `enp0s8`
 - nun soll den VMs eine static IP nach dem Schema `192.168.<TeamNummer>.0/24` vergeben werden <br>->  `192.168.3.1/24` bzw `192.168.3.2/24`
 - um dies umzusetzen muss die `configuration.nix` um folgenden Eintrag ergänzt werden:
-    ```shell
+    ```nixos
     networking = {
       interfaces.enp0s8 = {
         ipv4.addresses = [
@@ -49,7 +49,7 @@ In diesem Blatt geht es darum die Netzwerkkonfiguration zu erstellen und die VMs
     ```
 
 - um diese Änderungen um zu setzen muss bei der Router VM folgende Änderungen in der `configuration.nix` vorgenommen werden:
-    ```shell
+    ```nixos
     networking = {
     interfaces.enp0s8 = {
       ipv4.addresses = [
@@ -66,17 +66,15 @@ In diesem Blatt geht es darum die Netzwerkkonfiguration zu erstellen und die VMs
     };
     ```
 
-- und bei den anderen VMs:
-    ```shell
+- und bei den anderen VMs z.B. bei VM1:
+    ```nixos
     networking = {
     interfaces.enp0s8 = {
       ipv4.addresses = [
-        { address = "192.168.3.%%vm%%"; prefixLength = 24; }
+        { address = "192.168.3.1"; prefixLength = 24; }
       ];
       ipv4.routes = [
-        { address = "192.168.1.0"; prefixLength = 24; via = "192.168.31.3"; }
-        { address = "192.168.2.0"; prefixLength = 24; via = "192.168.32.3"; }
-        ...
+        { address = "192.168.0.0"; prefixLength = 16; via = "192.168.3.3"; }
       ];
     };
     ```
@@ -84,96 +82,121 @@ In diesem Blatt geht es darum die Netzwerkkonfiguration zu erstellen und die VMs
 
 ### 3) Http(s) Proxy
 - da das normale surfen im Netz nur über einen Proxy–Server möglich sein soll muss noch der `proxy.cit.tum.de` für alle VMs als systemweiten Proxy–Server gesetzt werden
-    ```
+    ```nixos
     networking.proxy.httpsProxy = "http://proxy.cit.tum.de:8080/";
     networking.proxy.httpProxy = "http://proxy.cit.tum.de:8080/";
     ```
 
 
 ### 4) Firewall
-Die gewünschte Firewall–Regeln können unter NixOS als `firewall.extraCommands = ...` konfiguriert werden:
-#TODO -> ping von anderen auf unsere VM 1 & 2 funktioniert noch nicht!!!
+Die gewünschte Firewall–Regeln können unter NixOS als `firewall.extraCommands = ...` konfiguriert werden und die folgenden Einstellungen sind für alle VMs dieselben:
 
-- **per default** soll "nichts" erlaubt sein:
+**nicht erlaubt seien soll**:
+- "nichts" soll per default erlaubt sein also alle packets gedroppen:
+  ```shell
+  iptables -P INPUT DROP
+  iptables -P FORWARD DROP
+  iptables -P OUTPUT DROP
   ```
-	iptables -P INPUT DROP
-	iptables -P FORWARD DROP
-	iptables -P OUTPUT DROP
-	```
+- für alle http(s) Verbindungen soll "connection tracking" deaktiviert sein:
+  ```shell
+  iptables -t raw -A PREROUTING -p tcp --dport 80 -j NOTRACK  
+  iptables -t raw -A OUTPUT -p tcp --sport 80 -j NOTRACK
+  iptables -t raw -A PREROUTING -p tcp --dport 443 -j NOTRACK 
+  iptables -t raw -A OUTPUT -p tcp --sport 443 -j NOTRACK
+  ```
+<br>
 
-- **TCP Verbindungen** zur VM (stateless!) sollen nur auf folgenden Ports möglich sein:
-    - Port 22 (Secure Shell & Git)
-    - Port 80 (http) 
-    - Port 443 (https)
-```
-	# Allow: SSH
+**erlaubt seien soll**:
+- loopback Verbindungen:
+  ```shell
+  iptables -A INPUT -i lo -j ACCEPT
+  iptables -A OUTPUT -o lo -j ACCEPT
+  ```
+- bereits bestehende Verbindungen:
+  ```shell
+  iptables -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT    
+  iptables -A FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+  ```
+- SSH Verbindungen:
+  ```shell
 	iptables -A INPUT -p tcp --dport 22 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
 	iptables -A OUTPUT -p tcp --sport 22 -m conntrack --ctstate ESTABLISHED -j ACCEPT
-	# Allow: git (https://serverfault.com/questions/682373/setting-up-iptables-filter-to-allow-git)
-	iptables -A INPUT -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
-	iptables -A OUTPUT -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
-	iptables -A INPUT -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
-	iptables -A OUTPUT -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
-	# Allow: incoming HTTP, HTTPS, and responses to the requests
+  ```
+- DNS requests und responses:
+  ```shell
 	iptables -A INPUT -p tcp --dport 80 -j ACCEPT
 	iptables -A OUTPUT -p tcp --sport 80 -j ACCEPT
 	iptables -A INPUT -p tcp --dport 443 -j ACCEPT
 	iptables -A OUTPUT -p tcp --sport 443 -j ACCEPT
+  ```
+- git Verbindungen bzw. sodass alle nötigen [git-Befehle funktionieren](https://serverfault.com/questions/682373/setting-up-iptables-filter-to-allow-git):
+  ```shell 
+  iptables -A INPUT -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
+  iptables -A OUTPUT -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
+  iptables -A INPUT -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
+  iptables -A OUTPUT -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
+  ```
+- eingehende HTTP(S) Verbindungen und responses:
+  ```shell
+  iptables -A INPUT -p tcp --dport 80 -j ACCEPT
+  iptables -A OUTPUT -p tcp --sport 80 -j ACCEPT
+  iptables -A INPUT -p tcp --dport 443 -j ACCEPT
+  iptables -A OUTPUT -p tcp --sport 443 -j ACCEPT
+  ```
+- ICMP requests und responses:
+  ```shell
+  iptables -A INPUT -p icmp -j ACCEPT
+  iptables -A OUTPUT -p icmp -j ACCEPT
+  ```
+- und nur bestimmte Verbindungen nach außen:
+  ```shell
+  # gitlab
+  iptables -A OUTPUT -d 131.159.0.0/16 -j ACCEPT
+  # nixos updater
+  iptables -A OUTPUT -d 151.101.2.217 -j ACCEPT  
+  iptables -A OUTPUT -d 151.101.130.217 -j ACCEPT
+  iptables -A OUTPUT -d 151.101.66.217 -j ACCEPT
+  iptables -A OUTPUT -d 151.101.194.217 -j ACCEPT
+  # praktikum
+  iptables -A OUTPUT -d 192.168.1.0/24 -j ACCEPT
+  iptables -A OUTPUT -d 192.168.2.0/24 -j ACCEPT 
+  iptables -A OUTPUT -d 192.168.3.0/24 -j ACCEPT
+  iptables -A OUTPUT -d 192.168.4.0/24 -j ACCEPT
+  iptables -A OUTPUT -d 192.168.5.0/24 -j ACCEPT
+  iptables -A OUTPUT -d 192.168.6.0/24 -j ACCEPT
+  iptables -A OUTPUT -d 192.168.7.0/24 -j ACCEPT
+  iptables -A OUTPUT -d 192.168.8.0/24 -j ACCEPT
+  iptables -A OUTPUT -d 192.168.9.0/24 -j ACCEPT
+  iptables -A OUTPUT -d 192.168.10.0/24 -j ACCEPT
+  ```
+
+<hr>
+
+für die Router VM muss zusätzlich noch folgendes hinzugefügt werden damit Forwarding erlaubt ist:
+```shell
+iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.3.0/24 -d 192.168.1.0/24 -j ACCEPT
+iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.31.0/24 -d 192.168.3.0/24 -j ACCEPT
+iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.3.0/24 -d 192.168.2.0/24 -j ACCEPT
+iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.32.0/24 -d 192.168.3.0/24 -j ACCEPT
+iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.3.0/24 -d 192.168.4.0/24 -j ACCEPT
+iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.43.0/24 -d 192.168.3.0/24 -j ACCEPT
+iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.3.0/24 -d 192.168.5.0/24 -j ACCEPT
+iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.53.0/24 -d 192.168.3.0/24 -j ACCEPT
+iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.3.0/24 -d 192.168.6.0/24 -j ACCEPT
+iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.63.0/24 -d 192.168.3.0/24 -j ACCEPT
+iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.3.0/24 -d 192.168.7.0/24 -j ACCEPT
+iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.73.0/24 -d 192.168.3.0/24 -j ACCEPT
+iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.3.0/24 -d 192.168.8.0/24 -j ACCEPT
+iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.83.0/24 -d 192.168.3.0/24 -j ACCEPT
+iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.3.0/24 -d 192.168.9.0/24 -j ACCEPT
+iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.93.0/24 -d 192.168.3.0/24 -j ACCEPT
+iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.3.0/24 -d 192.168.10.0/24 -j ACCEPT
+iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.103.0/24 -d 192.168.3.0/24 -j ACCEPT
 ```
 
-- **Erlaubte Adressen** von der VM nach außen:
-    - Gitlab ( #TODO wieso?)
-    - alle Team-Subnetze (192.168.3.0/24, 192.168.31.0/24, ...)
-    - NixOS-Update-Server
-```
-	# Gitlab
-	iptables -A OUTPUT -d 131.159.0.0/16 -j ACCEPT
-	# NixOS (context switch)
-	iptables -A OUTPUT -d 151.101.2.217 -j ACCEPT
-	iptables -A OUTPUT -d 151.101.130.217 -j ACCEPT
-	iptables -A OUTPUT -d 151.101.66.217 -j ACCEPT
-	iptables -A OUTPUT -d 151.101.194.217 -j ACCEPT
-	# andere Teams
-	iptables -A OUTPUT -d 192.168.1.0/24 -j ACCEPT
-	iptables -A OUTPUT -d 192.168.2.0/24 -j ACCEPT
-	iptables -A OUTPUT -d 192.168.3.0/24 -j ACCEPT
-	iptables -A OUTPUT -d 192.168.4.0/24 -j ACCEPT
-	iptables -A OUTPUT -d 192.168.5.0/24 -j ACCEPT
-	iptables -A OUTPUT -d 192.168.6.0/24 -j ACCEPT
-	iptables -A OUTPUT -d 192.168.7.0/24 -j ACCEPT
-	iptables -A OUTPUT -d 192.168.8.0/24 -j ACCEPT
-	iptables -A OUTPUT -d 192.168.9.0/24 -j ACCEPT
-	iptables -A OUTPUT -d 192.168.10.0/24 -j ACCEPT
-```
 
-- **ICMP** uneingeschränkt möglich
-```
-	# Allow: ICMP
-	iptables -A INPUT -p icmp -j ACCEPT
-	iptables -A OUTPUT -p icmp -j ACCEPT  
-```
 
-- **Router**: zudem braucht der Router Konfigurationen für das Forwarding zwischen unseren Team-Subnetzen:
-```
-	iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.3.0/24 -d 192.168.31.0/24 -j ACCEPT
-	iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.31.0/24 -d 192.168.3.0/24 -j ACCEPT
-	iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.3.0/24 -d 192.168.32.0/24 -j ACCEPT
-	iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.32.0/24 -d 192.168.3.0/24 -j ACCEPT
-	iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.3.0/24 -d 192.168.43.0/24 -j ACCEPT
-	iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.43.0/24 -d 192.168.3.0/24 -j ACCEPT
-	iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.3.0/24 -d 192.168.53.0/24 -j ACCEPT
-	iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.53.0/24 -d 192.168.3.0/24 -j ACCEPT
-	iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.3.0/24 -d 192.168.63.0/24 -j ACCEPT
-	iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.63.0/24 -d 192.168.3.0/24 -j ACCEPT
-	iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.3.0/24 -d 192.168.73.0/24 -j ACCEPT
-	iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.73.0/24 -d 192.168.3.0/24 -j ACCEPT
-	iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.3.0/24 -d 192.168.83.0/24 -j ACCEPT
-	iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.83.0/24 -d 192.168.3.0/24 -j ACCEPT
-	iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.3.0/24 -d 192.168.93.0/24 -j ACCEPT
-	iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.93.0/24 -d 192.168.3.0/24 -j ACCEPT
-	iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.3.0/24 -d 192.168.103.0/24 -j ACCEPT
-	iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.103.0/24 -d 192.168.3.0/24 -j ACCEPT
-```
 
 
 ### 5) Testing
