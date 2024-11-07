@@ -41,7 +41,7 @@ for i in $(seq 1 9); do
         print_success "found >=2 pingable VMs in 192.168.$i.0/24:"
         printf "  ${ips[*]}\n"
     else
-        print_failed "found < 2 VMs in 192.168.$i.0/24:"
+        print_failed "found < 2 pingable VMs in 192.168.$i.0/24:"
         printf "  ${ips[*]}\n"
     fi
 done
@@ -59,6 +59,26 @@ done
 #done
 
 ## TEST #########################################
+## check connection to allowed internal ip
+start_test "check connection to allowed internal ip"
+if ping -c 1 131.159.0.1 &> /dev/null; then
+    print_success "ping fmi (131.159.0.1)"
+else
+    print_failed "ping fmi (131.159.0.1)"
+fi
+
+## TEST #########################################
+## check not-allowed ports (TODO)
+start_test "check incoming ssh connections (team internal)"
+for i in $(seq 1 3); do
+    if [[ $(nmap -p 22 192.168.3.$i | grep open) == *"open"* ]]; then
+        print_success "192.168.3.$i ssh"
+    else
+        print_failed "192.168.3.$i ssh"
+    fi
+done
+
+## TEST #########################################
 ## surfing through proxy
 start_test "surfing through proxy"
 test_addresses=(
@@ -73,16 +93,6 @@ for addr in ${test_addresses[@]}; do
         print_failed "curl $addr"
     fi
 done
-
-## TEST #########################################
-## check if connection is made through router
-start_test "check if connection is made through router"
-print_failed "TODO"
-
-## TEST #########################################
-## check not-allowed ports (TODO)
-start_test "check not-allowed ports"
-print_failed "TODO"
 
 ## TEST #########################################
 ## TODO add tests
