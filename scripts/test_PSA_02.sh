@@ -34,30 +34,32 @@ function print_summary {
 
 ## TEST #########################################
 ## connection to other teams
-start_test "connection to other teams (min. 2 VMs per subnet)"
-# TODO test team 10, where nmap seems to fail...
-for i in $(seq 1 9); do
-    ips=($(nmap -sn 192.168.$i.0/24 | grep for | cut -c 22-))
-    if [[ ${#ips[@]} -ge 2 ]]; then
-        print_success "found >=2 pingable VMs in 192.168.$i.0/24:"
-        printf "         ${ips[*]}\n"
-    else
-        print_failed "found < 2 pingable VMs in 192.168.$i.0/24:"
-        printf "         ${ips[*]}\n"
-    fi
-done
-
-# old test, static search for .1 and .2 VMs
-#for i in $(seq 1 10); do
-#    for k in $(seq 1 2); do
-#        ip="192.168.$i.$k"
-#        if ping -c 1 $ip &> /dev/null; then
-#            print_success "ping $ip"
-#        else
-#            print_failed "ping $ip"
-#        fi
-#    done
+# WARNING:
+# nmap is quiet unreliable and under certain circumstances can take ages...
+# hence, the following test is disabled
+#start_test "connection to other teams (min. 2 VMs per subnet)"
+#for i in $(seq 1 9); do
+#    ips=($(nmap -sn 192.168.$i.0/24 | grep for | cut -c 22-))
+#    if [[ ${#ips[@]} -ge 2 ]]; then
+#        print_success "found >=2 pingable VMs in 192.168.$i.0/24:"
+#        printf "         ${ips[*]}\n"
+#    else
+#        print_failed "found < 2 pingable VMs in 192.168.$i.0/24:"
+#        printf "         ${ips[*]}\n"
+#    fi
 #done
+start_test "connection to other teams (some teams have different vm ips, hence some might fail)"
+# old test, static search for .1 and .2 VMs
+for i in $(seq 1 10); do
+    for k in $(seq 1 2); do
+        ip="192.168.$i.$k"
+        if ping -c 1 $ip &> /dev/null; then
+            print_success "ping $ip"
+        else
+            print_failed "ping $ip"
+        fi
+    done
+done
 
 ## TEST #########################################
 ## check connection to allowed internal ip
