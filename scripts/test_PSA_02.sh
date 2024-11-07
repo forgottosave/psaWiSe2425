@@ -41,6 +41,7 @@ start_test "connection to other teams"
 #    ips+=($(nmap -sn 192.168.$i.0/24 | grep for | cut -c 22-))
 #done
 #echo
+#for i in ${ips[@]}; do echo $i; done
 for i in $(seq 1 10); do
     for k in $(seq 1 2); do
         ip="192.168.$i.$k"

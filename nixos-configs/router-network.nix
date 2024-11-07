@@ -1,9 +1,5 @@
 {config, pkgs, ... }: 
 {
-  boot.kernel.sysctl = {
-    "net.ipv4.conf.all.forwarding" = true;
-  };
-
   networking = {
     useDHCP = false;
     nat.enable = false;
@@ -122,8 +118,11 @@
     '';
   };
 
-  # ICMP Redirects deaktivieren
+  # Forwarding aktivieren, ICMP Redirects deaktivieren
   boot.kernel.sysctl = {
+    "net.ipv4.conf.all.forwarding" = true;
+    "net.ipv4.conf.enp0s8.send_redirects" = false;
+    "net.ipv4.conf.enp0s8.accept_redirects" = false;
     "net.ipv4.conf.all.send_redirects" = false;
     "net.ipv4.conf.default.send_redirects" = false;
     "net.ipv6.conf.all.send_redirects" = false;
