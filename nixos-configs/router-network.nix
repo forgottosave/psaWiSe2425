@@ -5,6 +5,9 @@
   };
 
   networking = {
+    useDHCP = false;
+    nat.enable = false;
+
     interfaces.enp0s8 = {
       ipv4.addresses = [
         { address = "192.168.3.3"; prefixLength = 24; }
