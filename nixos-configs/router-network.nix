@@ -1,5 +1,9 @@
 {config, pkgs, ... }: 
 {
+  boot.kernel.sysctl = {
+    "net.ipv4.conf.all.forwarding" = true;
+  };
+
   networking = {
     interfaces.enp0s8 = {
       ipv4.addresses = [
