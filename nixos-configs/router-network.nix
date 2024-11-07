@@ -121,6 +121,18 @@
       iptables -A OUTPUT -p icmp -j ACCEPT
     '';
   };
+
+  # ICMP Redirects deaktivieren
+  boot.kernel.sysctl = {
+    "net.ipv4.conf.all.send_redirects" = false;
+    "net.ipv4.conf.default.send_redirects" = false;
+    "net.ipv6.conf.all.send_redirects" = false;
+    "net.ipv6.conf.default.send_redirects" = false;
+    "net.ipv4.conf.all.accept_redirects" = false;
+    "net.ipv4.conf.default.accept_redirects" = false;
+    "net.ipv6.conf.all.accept_redirects" = false;
+    "net.ipv6.conf.default.accept_redirects" = false;
+  };
 }
 
 
