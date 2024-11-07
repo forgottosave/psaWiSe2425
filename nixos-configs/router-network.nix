@@ -3,6 +3,7 @@
   networking = {
     useDHCP = false;
     nat.enable = false;
+    firewall.enable = false;
 
     interfaces.enp0s8 = {
       ipv4.addresses = [
