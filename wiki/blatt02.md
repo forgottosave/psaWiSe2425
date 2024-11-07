@@ -196,9 +196,6 @@ iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.103.0/24 -d 192.168.3.0/24 -j
 ```
 
 
-
-
-
 ### 5) Testing
 Für das Testen der Netzwerk Verbindungen & Firewall soll (wie es die Aufgabe verlangt) ein bash script names `test_PSA_02.sh` in `/root` abgelegt werden.
 Das Script behandelt die folgenden Test-Fälle, welche jeweils mit einem `SUCCESS`, oder `FAILED` enden:
@@ -207,9 +204,10 @@ Das Script behandelt die folgenden Test-Fälle, welche jeweils mit einem `SUCCES
 2. **Surfen (über Proxy)**
    - `curl -o - -I <adresse>` an google.com (`http` & `https`)
    - prüfe ob Status `200` ausgegeben wird
-3. **Stichproben Check, ob andere Ports wirklich "verboten" sind**
-   - #TODO
-4. #TODO mehr Tests?
+3. **Erreichbarkeit von FMI**
+   - `ping -c 1 131.159.0.1`
+4. **ssh Verbindung zu Team-internen VMs möglich**
+   - `nmap -p 22 192.168.3.x` an VMs 1-3
 
 ## Zusatz:
 Wir haben diese Woche zudem die synchronisierte Aktualisierung der config Dateien über ein git repository ermöglicht. Die Ausführung von [`scripts/sync-nixos-config.sh`](https://github.com/forgottosave/psaWiSe2425/blob/main/scripts/sync-nixos-config.sh) übernimmt...
