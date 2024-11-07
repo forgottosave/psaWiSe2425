@@ -1,8 +1,6 @@
 {config, pkgs, ... }:   
 {
   networking = {
-    #firewall.enable = false;
-
     interfaces.enp0s8 = {
       ipv4.addresses = [
         { address = "192.168.3.%%vm%%"; prefixLength = 24; }
@@ -11,6 +9,9 @@
         { address = "192.168.0.0"; prefixLength = 16; via = "192.168.3.3"; }
       ];
     };
+
+    proxy.httpsProxy = "http://proxy.cit.tum.de:8080/"; 
+    proxy.httpProxy = "http://proxy.cit.tum.de:8080/";
 
     firewall.extraCommands = '' 
       # by default: Disable connection tracking
