@@ -8,13 +8,13 @@
     enable = true;
 
     # Interface für Internet Zugang
-    networks."3-internet" = {
+    networks."10-internet" = {
       name = "enp0s3";
       DHCP = "yes";
     };
 
     # Interface für internen PSA Zugang
-    networks."3-psa" = {
+    networks."10-psa" = {
       name = "enp0s8";
       address = [
         "192.168.3.3" # Team Subnet
