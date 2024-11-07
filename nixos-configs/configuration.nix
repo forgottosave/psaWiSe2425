@@ -39,6 +39,7 @@
     #wget
     git
     nmap
+    tcpdump
   ];
   programs.mtr.enable = true;
 
