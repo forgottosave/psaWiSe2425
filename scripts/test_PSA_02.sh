@@ -12,15 +12,16 @@ TEXT_GREEN='\033[0;32m'
 success_count=0
 failed_count=0
 function start_test {
-    printf "\n${TEXT_BOLD}TEST: ${TEXT_CURSIVE}$1${TEXT_DEFAULT}\n"
+    printf "\n> ${TEXT_BOLD}TEST: ${TEXT_CURSIVE}$1${TEXT_DEFAULT}\n"
+    printf "Result:  Description:\n"
 }
 function print_success {
     success_count=$((success_count + 1))
-    printf "> $1: ${TEXT_GREEN}SUCCESS${TEXT_DEFAULT}\n"
+    printf "${TEXT_GREEN}SUCCESS${TEXT_DEFAULT}  $1\n"
 }
 function print_failed {
     failed_count=$((failed_count + 1))
-    printf "> $1: ${TEXT_RED}FAILED${TEXT_DEFAULT}\n"
+    printf "${TEXT_RED}FAILED${TEXT_DEFAULT}   $1\n"
 }
 function print_summary {
     printf "\n${TEXT_BOLD}______________________________________\n"
@@ -39,10 +40,10 @@ for i in $(seq 1 9); do
     ips=($(nmap -sn 192.168.$i.0/24 | grep for | cut -c 22-))
     if [[ ${#ips[@]} -ge 2 ]]; then
         print_success "found >=2 pingable VMs in 192.168.$i.0/24:"
-        printf "  ${ips[*]}\n"
+        printf "         ${ips[*]}\n"
     else
         print_failed "found < 2 pingable VMs in 192.168.$i.0/24:"
-        printf "  ${ips[*]}\n"
+        printf "         ${ips[*]}\n"
     fi
 done
 
