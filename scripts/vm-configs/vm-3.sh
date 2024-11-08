@@ -5,6 +5,7 @@ vm=$VM_NUMBER
 include_files=(
     configuration.nix
     router-network.nix
+    dns-config.nix
 )
 
 # SED placeholders
