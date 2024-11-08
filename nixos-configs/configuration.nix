@@ -35,12 +35,13 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    #vim
-    #wget
+    # default suggestions: vim wget
     git
+    # network tools
     nmap
     tcpdump
     traceroute
+    tcptraceroute
   ];
   programs.mtr.enable = true;
 
