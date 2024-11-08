@@ -16,7 +16,11 @@ In diesem Blatt geht es darum die Netzwerkkonfiguration zu erstellen und die VMs
       };
     };
     ```
-
+- IPs können für Testzwecke zunächst auch non persistant vergeben werden:
+    ```shell
+    sudo ip addr add 192.168.3.2/24 dev enp0s8
+    sudo ip link set enp0s8 up
+    ```
 
 ### 2) Verbindung zwischen den Teams
 - für diese Teilaufgabe haben wir uns etnschieden einen Router VM zu erstellen, der die Verbindung zwischen den Teams herstellt (VM03)
@@ -79,6 +83,11 @@ In diesem Blatt geht es darum die Netzwerkkonfiguration zu erstellen und die VMs
     };
     ```
 
+- auch hier gilt wieder dass die IPs und Routes für Testzwecke zunächst auch non persistant vergeben werden können:
+    ```shell
+    sudo ip addr add 192.168.31.3/24 dev enp0s8 
+    sudo ip route add 192.168.1.0/24 via 192.168.31.1 dev enp0s8
+    ```
 
 ### 3) Http(s) Proxy
 - da das normale surfen im Netz nur über einen Proxy–Server möglich sein soll muss noch der `proxy.cit.tum.de` für alle VMs als systemweiten Proxy–Server gesetzt werden
