@@ -40,6 +40,7 @@
     git
     nmap
     tcpdump
+    traceroute
   ];
   programs.mtr.enable = true;
 
