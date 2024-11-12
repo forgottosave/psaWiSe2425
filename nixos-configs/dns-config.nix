@@ -27,7 +27,7 @@
           vm2          IN      A       192.168.3.2
         '';
       };
-       OUR TEAM - reverse
+      # OUR TEAM - reverse
       "3.168.192.in-addr.arpa" = {
         master = true;
         file = pkgs.writeText "zone-3.168.192.in-addr.arpa" ''
