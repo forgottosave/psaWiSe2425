@@ -50,12 +50,27 @@
       #  file = "";
       #  extraConfig = "forward only;\nforwarders { 192.168.1.1; };";
       #};
-    };
+      #     ^
+    };#    /|\
+    #       |
+    #       |
+    # gives the same error as above solution, other DNS servers just not yet reachable...
+    # OTHER TEAMS
     extraConfig = ''
       zone "psa-team01.cit.tum.de" {
         type forward;
         forward only;
         forwarders { 192.168.1.1; };
+      };
+      zone "psa-team02.cit.tum.de" {
+        type forward;
+        forward only;
+        forwarders { 192.168.2.2; };
+      };
+      zone "psa-team04.cit.tum.de" {
+        type forward;
+        forward only;
+        forwarders { 192.168.1.4; };
       };
       '';
   };
