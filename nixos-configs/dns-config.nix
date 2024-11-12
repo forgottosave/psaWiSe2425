@@ -44,6 +44,12 @@
           2          IN      PTR       vm2.psa-team03.cit.tum.de.
         '';
       };
+      # OTHER TEAMS
+      "psa-team03.cit.tum.de" = {
+        master = true;
+        type = "forward";
+        forwardOnly = true;
+      };
     };
   };
 }
