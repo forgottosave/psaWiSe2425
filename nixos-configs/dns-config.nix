@@ -54,9 +54,13 @@
     };#    /|\
     #       |
     #       |
-    # gives the same error as above solution, other DNS servers just not yet reachable...
-    # OTHER TEAMS
+    # for Teams: gives the same error as above solution, other DNS servers just not yet reachable...
+    # non NixOS-able configs: (not supported yet -> use manual insertion)
     extraConfig = ''
+      // __ Default _____________________
+      // TODO
+      
+      // __ Teams _______________________
       zone "psa-team01.cit.tum.de" {
         type forward;
         forward only;
@@ -70,7 +74,84 @@
       zone "psa-team04.cit.tum.de" {
         type forward;
         forward only;
-        forwarders { 192.168.1.4; };
+        forwarders { 192.168.4.4; };
+      };
+      zone "psa-team05.cit.tum.de" {
+        type forward;
+        forward only;
+        forwarders { 192.168.5.5; };
+      };
+      zone "psa-team06.cit.tum.de" {
+        type forward;
+        forward only;
+        forwarders { 192.168.6.6; };
+      };
+      zone "psa-team07.cit.tum.de" {
+        type forward;
+        forward only;
+        forwarders { 192.168.7.7; };
+      };
+      zone "psa-team08.cit.tum.de" {
+        type forward;
+        forward only;
+        forwarders { 192.168.8.8; };
+      };
+      zone "psa-team09.cit.tum.de" {
+        type forward;
+        forward only;
+        forwarders { 192.168.9.9; };
+      };
+      zone "psa-team10.cit.tum.de" {
+        type forward;
+        forward only;
+        forwarders { 192.168.10.10; };
+      };
+
+      // __ Teams reverse _______________
+      zone "1.168.192.in-addr.arpa" {
+        type forward;
+        forward only;
+        forwarders { 192.168.1.1; };
+      };
+      zone "2.168.192.in-addr.arpa" {
+        type forward;
+        forward only;
+        forwarders { 192.168.2.2; };
+      };
+      zone "4.168.192.in-addr.arpa" {
+        type forward;
+        forward only;
+        forwarders { 192.168.4.4; };
+      };
+      zone "5.168.192.in-addr.arpa" {
+        type forward;
+        forward only;
+        forwarders { 192.168.5.5; };
+      };
+      zone "6.168.192.in-addr.arpa" {
+        type forward;
+        forward only;
+        forwarders { 192.168.6.6; };
+      };
+      zone "7.168.192.in-addr.arpa" {
+        type forward;
+        forward only;
+        forwarders { 192.168.7.7; };
+      };
+      zone "8.168.192.in-addr.arpa" {
+        type forward;
+        forward only;
+        forwarders { 192.168.8.8; };
+      };
+      zone "9.168.192.in-addr.arpa" {
+        type forward;
+        forward only;
+        forwarders { 192.168.9.9; };
+      };
+      zone "10.168.192.in-addr.arpa" {
+        type forward;
+        forward only;
+        forwarders { 192.168.10.10; };
       };
       '';
   };
