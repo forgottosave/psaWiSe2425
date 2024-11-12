@@ -48,7 +48,7 @@
       "psa-team02.cit.tum.de" = {
         master = true;
         file = "";
-        extraConfig = "type forward;\nforward only;\nforwarders { 192.168.2.1; };";
+        extraConfig = "forward only;\nforwarders { 192.168.2.1; };";
       };
     };
   };
