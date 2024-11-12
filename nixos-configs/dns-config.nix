@@ -28,15 +28,14 @@
       "3.168.192.in-addr.arpa" = {
         master = true;
         file = pkgs.writeText "zone-3.168.192.in-addr.arpa" ''
-          $ORIGIN psa-team03.cit.tum.de.
           $TTL    1h
-          @            IN      SOA     psa-team03.cit.tum.de. hostmaster (
+          @            IN      SOA     psa-team03.cit.tum.de. hostmaster.psa-team03.cit.tum.de. (
                                            1    ; Serial
                                            3h   ; Refresh
                                            1h   ; Retry
                                            1w   ; Expire
                                            1h)  ; Negative Cache TTL
-                       IN      NS      router
+                       IN      NS      router.psa-team03.cit.tum.de.
       
           3          IN      PTR       router.psa-team03.cit.tum.de.
       
