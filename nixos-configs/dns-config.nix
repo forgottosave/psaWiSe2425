@@ -54,7 +54,16 @@
     };#    /|\
     #       |
     #       |
-    # for Teams: gives the same error as above solution, other DNS servers just not yet reachable...
+    # for Teams: extraConfig gives the same error as above solution, other DNS servers just not yet reachable...
+    
+    # DEFAULT
+    forward = "only";
+    forwarders = [ "131.159.254.1" "131.159.254.2" ];
+    extraOptions = ''
+      dnssec-validation auto;
+      listen-on-v6 { any; };
+    '';
+
     # non NixOS-able configs: (not supported yet -> use manual insertion)
     extraConfig = ''
       // __ Default _____________________
