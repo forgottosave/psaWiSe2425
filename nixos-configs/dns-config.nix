@@ -47,7 +47,7 @@
       # OTHER TEAMS
       "psa-team02.cit.tum.de" = {
         master = false;
-        file = pkgs.writeText "team02"
+        file = pkgs.writeText "team02";
         extraConfig = "type forward;\nforward only;\nforwarders { 192.168.2.1; };";
       };
     };
