@@ -15,8 +15,7 @@
                                            1h   ; Retry
                                            1w   ; Expire
                                            1h)  ; Negative Cache TTL
-                       IN      NS      vm1
-                       IN      NS      vm2
+                       IN      NS      router
           
           @            IN      A       192.168.3.3
           
