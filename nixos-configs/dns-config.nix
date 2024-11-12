@@ -45,10 +45,10 @@
         '';
       };
       # OTHER TEAMS
-      "psa-team02.cit.tum.de" = {
+      "psa-team01.cit.tum.de" = {
         master = true;
         file = "";
-        extraConfig = "forward only;\nforwarders { 192.168.2.1; };";
+        extraConfig = "forward only;\nforwarders { 192.168.1.1; };";
       };
     };
   };
