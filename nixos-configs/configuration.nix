@@ -42,6 +42,7 @@
     tcpdump
     traceroute
     tcptraceroute
+    bind
   ];
   programs.mtr.enable = true;
 

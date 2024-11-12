@@ -1,5 +1,9 @@
 {config, pkgs, ... }:   
 {
+  environment.etc = {
+    "resolv.conf".text = "nameserver 192.168.3.3\nnameserver 8.8.8.8";
+  };
+
   networking = {
     interfaces.enp0s8 = {
       ipv4.addresses = [
@@ -10,8 +14,10 @@
       ];
     };
 
-    proxy.httpsProxy = "http://proxy.cit.tum.de:8080/"; 
-    proxy.httpProxy = "http://proxy.cit.tum.de:8080/";
+    #nameservers = [ "192.168.3.3" ];
+
+    #proxy.httpsProxy = "http://proxy.cit.tum.de:8080/"; 
+    #proxy.httpProxy = "http://proxy.cit.tum.de:8080/";
 
     firewall.extraCommands = '' 
       # by default: Disable connection tracking
