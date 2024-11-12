@@ -45,7 +45,7 @@
         '';
       };
       # OTHER TEAMS
-      "psa-team03.cit.tum.de" = {
+      "psa-team02.cit.tum.de" = {
         extraConfig = "type forward;\nforward only;\nforwarders { 192.168.2.1; };";
       };
     };
