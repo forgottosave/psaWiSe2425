@@ -15,8 +15,10 @@
                                            1h   ; Retry
                                            1w   ; Expire
                                            1h)  ; Negative Cache TTL
-
-          @            IN      NS      router.psa-team03.cit.tum.de
+                       IN      NS      vm1
+                       IN      NS      vm2
+                       IN      NS      router.psa-team03.cit.tum.de.
+                       IN      NS      8.8.8.8.
 
           router       IN      A       192.168.3.3
 
