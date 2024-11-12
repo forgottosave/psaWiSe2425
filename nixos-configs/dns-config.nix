@@ -17,13 +17,13 @@
                                            1h)  ; Negative Cache TTL
                        IN      NS      vm1
                        IN      NS      vm2
-                       IN      NS      router.psa-team03.cit.tum.de.
-                       IN      NS      8.8.8.8.
-
+          
+          @            IN      A       192.168.3.3
+          
           router       IN      A       192.168.3.3
-
+          
           vm1          IN      A       192.168.3.1
-
+          
           vm2          IN      A       192.168.3.2
         '';
       };
