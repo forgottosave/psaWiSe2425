@@ -50,13 +50,13 @@
       #  file = "";
       #  extraConfig = "forward only;\nforwarders { 192.168.1.1; };";
       #};
-      extraConfig = ''
+    };
+    extraConfig = ''
       zone "psa-team01.cit.tum.de" {
         type forward;
         forward only;
         forwarders { 192.168.1.1; };
       };
       '';
-    };
   };
 }
