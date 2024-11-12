@@ -17,8 +17,6 @@
                                            1h)  ; Negative Cache TTL
                        IN      NS      router
           
-          @            IN      A       192.168.3.3
-          
           router       IN      A       192.168.3.3
           
           vm1          IN      A       192.168.3.1
