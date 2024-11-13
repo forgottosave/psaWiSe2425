@@ -1,5 +1,13 @@
 { pkgs, ... }:
 {
+  environment.etc = {
+    "resolv.conf".text = ''
+    nameserver 192.168.3.3
+    nameserver 131.159.254.1
+    nameserver 131.159.254.2
+    '';
+  };
+
   services.bind = {
     enable = true;
     zones = {
