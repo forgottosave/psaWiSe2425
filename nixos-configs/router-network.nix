@@ -34,6 +34,8 @@
     proxy.httpsProxy = "http://proxy.cit.tum.de:8080/"; 
     proxy.httpProxy = "http://proxy.cit.tum.de:8080/";
 
+    proxy.noProxy = "vm1.psa-team03.cit.tum.de,vm2.psa-team03.cit.tum.de,router.psa-team01.cit.tum.de";
+
     firewall.extraCommands = '' 
       # by default: Disable connection tracking
       iptables -t raw -A PREROUTING -p tcp --dport 80 -j NOTRACK  
