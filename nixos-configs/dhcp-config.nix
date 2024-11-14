@@ -5,21 +5,20 @@
     # Interfaces, auf denen der DHCP-Server arbeitet
     "interfaces-config" = {
       "interfaces" = [ "enp0s8/192.168.3.3" ];
+      "dhcp-socket-type" = "raw";
     };
 
     # Lease Datenbank
     "lease-database" = {
         "type" = "memfile";
-        #"persist" = true;
-        #"name" = "/var/lib/kea/dhcp4.leases";
+        "persist" = true;
+        "name" = "/var/lib/kea/dhcp4.leases";
         "lfc-interval" = 1800;
     };
 
-    # Host identifizierung über mac addresse
-    #"host-reservation-identifiers" =  [ "hw-address" ];
-
     # DHCP soll nicht antworten, falls angefragte IP nicht verfügbar
-    #"authoritative" = false;
+    "host-reservation-identifiers" = [ "hw-address" ];
+    "authoritative" = false;
 
     
     # definition einer option für wpad
@@ -36,7 +35,8 @@
       {
         # Subnetz und Team spezifische IP-Bereiche
         "subnet" = "192.168.3.0/24"; 
-        "pools" = [{ "pool" = "192.168.3.1 - 192.168.3.250"; }];
+        "pools" = [];
+        "reservations-out-of-pool" = true;
         "reservations" = [
           {
             "hw-address" = "08:00:27:7a:a5:78"; 
