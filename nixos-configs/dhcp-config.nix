@@ -13,7 +13,7 @@
         # Subnetz und Team spezifische IP-Bereiche
         "subnet" = "192.168.3.0/24"; 
         "pools" = [
-          { "pool" = "192.168.3.1 - 192.168.3.200"; }
+          { "pool" = "192.168.3.1 - 192.168.3.250"; }
         ];
         "client-class" = "vm1"; # TODO vm2
 
@@ -22,7 +22,7 @@
           { "name" = "domain-name"; "data" = "psa-team03.cit.tum.de"; }
           { "name" = "domain-name-servers"; "data" = "192.168.3.3"; }
           { "name" = "routers"; "data" = "192.168.3.3"; }
-          { "name" = "netmask"; "data" = "255.255.255.0"; }
+          # { "name" = "netmask"; "data" = "255.255.255.0"; } # auto calculated
           { "name" = "wpad"; "data" = "http://pac.lrz.de"; }
           # https://gitlab.isc.org/isc-projects/kea/-/merge_requests/2135
           {
