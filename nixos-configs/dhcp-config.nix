@@ -3,12 +3,12 @@
   services.kea.dhcp4.enable = true;
   services.kea.dhcp4.settings = {
 
-    # Gültigkeit eines Lease
-    "valid-lifetime" = 300;
-    # Nach wie vielen sec soll neu angefragt werden
-    "renew-timer" = 150;
-    # Falls renew nicht funktioniert hat
-    "rebind-timer" = 240;
+    ## Gültigkeit eines Lease
+    #"valid-lifetime" = 300;
+    ## Nach wie vielen sec soll neu angefragt werden
+    #"renew-timer" = 150;
+    ## Falls renew nicht funktioniert hat
+    #"rebind-timer" = 240;
 
     # Lease Datenbank
     "lease-database" = {
@@ -19,28 +19,31 @@
     };
 
     # Host identifizierung über mac addresse
-    "host-reservation-identifiers" =  [ "hw-address" ];
+    #"host-reservation-identifiers" =  [ "hw-address" ];
 
     # DHCP soll nicht antworten, falls angefragte IP nicht verfügbar
-    "authoritative" = false;
+    #"authoritative" = false;
 
     # Interfaces, auf denen der DHCP-Server arbeitet
     "interfaces-config" = {
-      "interfaces" = [ "enp0s8" ];
-      "dhcp-socket-type" = "raw";
+      "interfaces" = [ "enp0s8/192.168.3.3" ];
     };
     
-
+    # definition einer option für wpad
+    "option-def" = [
+        {
+            "code" = 252;
+            "name" = "wpad";
+            "type" = "string";
+        }
+    ];
 
     # Überwacht nur das spezifizierte Subnetz
     "subnet4" = [
       {
         # Subnetz und Team spezifische IP-Bereiche
         "subnet" = "192.168.3.0/24"; 
-        "pools" = [
-          { "pool" = "192.168.3.1 - 192.168.3.250"; }
-        ];
-        # "client-class" = "vm1"; # TODO vm2
+        "pools" = [{ "pool" = "192.168.3.1 - 192.168.3.250"; }];
 
         "reservations" = [
           {
@@ -54,33 +57,22 @@
             "hostname" = "vm2";
           }
         ];
+
+         # Domain-Informationen und Routen
+        "option-data" = [
+          { "name" = "domain-name"; "data" = "psa-team03.cit.tum.de"; "always-send" = true; }
+          { "name" = "domain-name-servers"; "data" = "192.168.3.3"; "always-send" = true; }
+          { "name" = "routers"; "data" = "192.168.3.3"; "always-send" = true; }
+          { "name" = "wpad"; "data" = "http://pac.lrz.de"; "always-send" = true; }
+          # https://gitlab.isc.org/isc-projects/kea/-/merge_requests/2135
+          #{
+          #  "code" = 121;
+          #  "name" = "classless-static-route";
+          #  "data" = "192.168.1.0/24 - 192.168.31.1, 192.168.2.0/24 - 192.168.32.1, 192.168.4.0/24 - 192.168.43.1, 192.168.5.0/24 - 192.168.53.1, 192.168.6.0/24 - 192.168.63.1, 192.168.7.0/24 - 192.168.73.1, 192.168.8.0/24 - 192.168.83.1, 192.168.9.0/24 - 192.168.93.1, 192.168.10.0/24 - 192.168.103.1";
+          #  "always-send" = true;
+          #}
+        ];
       }
-    ];
-
-
-    # definition einer option für wpad-proxy-url
-    "option-def" = [
-        {
-            "code" = 252;
-            "name" = "wpad-proxy-url";
-            "type" = "string";
-        }
-    ];
-
-
-    # Domain-Informationen und Routen
-    "option-data" = [
-      { "name" = "domain-name"; "data" = "psa-team03.cit.tum.de"; "always-send" = true; }
-      { "name" = "domain-name-servers"; "data" = "192.168.3.3"; "always-send" = true; }
-      { "name" = "routers"; "data" = "192.168.3.3"; "always-send" = true; }
-      { "name" = "wpad-proxy-url"; "data" = "http://pac.lrz.de"; "always-send" = true; }
-      # https://gitlab.isc.org/isc-projects/kea/-/merge_requests/2135
-      #{
-      #  "code" = 121;
-      #  "name" = "classless-static-route";
-      #  "data" = "192.168.1.0/24 - 192.168.31.1, 192.168.2.0/24 - 192.168.32.1, 192.168.4.0/24 - 192.168.43.1, 192.168.5.0/24 - 192.168.53.1, 192.168.6.0/24 - 192.168.63.1, 192.168.7.0/24 - 192.168.73.1, 192.168.8.0/24 - 192.168.83.1, 192.168.9.0/24 - 192.168.93.1, 192.168.10.0/24 - 192.168.103.1";
-      #  "always-send" = true;
-      #}
     ];
 
 
