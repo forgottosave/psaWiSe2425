@@ -3,6 +3,21 @@
   services.kea.dhcp4.enable = true;
   services.kea.dhcp4.settings = {
 
+    # Gültigkeit eines Lease
+    "valid-lifetime" = 300;
+    # Nach wie vielen sec soll neu angefragt werden
+    "renew-timer" = 150;
+    # Falls renew nicht funktioniert hat
+    "rebind-timer" = 240;
+
+    # Lease Datenbank
+    "lease-database" = {
+        "type" = "memfile";
+        "persist" = true;
+        "name" = "/var/lib/kea/dhcp4.leases";
+        "lfc-interval" = 1800
+    };
+
     # Host identifizierung über mac addresse
     "host-reservation-identifiers" =  [ "hw-address" ];
 
@@ -12,7 +27,7 @@
     # Interfaces, auf denen der DHCP-Server arbeitet
     "interfaces-config" = {
       "interfaces" = [ "enp0s8" ];
-      # "dhcp-socket-type" = "raw";
+      "dhcp-socket-type" = "raw";
     };
     
 
@@ -58,8 +73,7 @@
       { "name" = "domain-name"; "data" = "psa-team03.cit.tum.de"; "always-send" = true; }
       { "name" = "domain-name-servers"; "data" = "192.168.3.3"; "always-send" = true; }
       { "name" = "routers"; "data" = "192.168.3.3"; "always-send" = true; }
-      # { "name" = "netmask"; "data" = "255.255.255.0"; } # auto calculated
-        { "name" = "wpad-proxy-url"; "data" = "http://pac.lrz.de"; "always-send" = true; }
+      { "name" = "wpad-proxy-url"; "data" = "http://pac.lrz.de"; "always-send" = true; }
       # https://gitlab.isc.org/isc-projects/kea/-/merge_requests/2135
       #{
       #  "code" = 121;
@@ -82,5 +96,20 @@
         "test" = "pkt4.giaddr == 192.168.3.2";
       }
     ];
+
+
+    # Settings für den Logger
+    "loggers" = [
+      {
+        "name" = "kea-dhcp4";
+        "output-options" = [
+          {
+              "output" = "stdout";
+          }
+        ];
+        "severity" = "DEBUG";
+      }
+    ];
+
   };
 }
