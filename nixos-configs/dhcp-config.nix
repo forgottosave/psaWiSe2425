@@ -23,7 +23,7 @@
           { "name" = "domain-name-servers"; "data" = "192.168.3.3"; }
           { "name" = "routers"; "data" = "192.168.3.3"; }
           # { "name" = "netmask"; "data" = "255.255.255.0"; } # auto calculated
-          { "name" = "wpad"; "data" = "http://pac.lrz.de"; }
+          # { "name" = "wpad"; "data" = "http://pac.lrz.de"; } # not possible?
           # https://gitlab.isc.org/isc-projects/kea/-/merge_requests/2135
           {
             "code" = 121;
