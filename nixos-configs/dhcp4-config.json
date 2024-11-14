@@ -1,0 +1,108 @@
+{
+    "Dhcp4": {
+
+        # Gültigkeit eines Lease
+        "valid-lifetime": 300,
+        # Nach wie vielen sec soll neu angefragt werden
+        "renew-timer": 150,
+        # Falls renew nicht funktioniert hat
+        "rebind-timer": 240,
+
+        # Lease Datenbank
+        "lease-database": {
+            "type": "memfile",
+            "persist": true,
+            "name": "/var/lib/kea/dhcp4.leases",
+            "lfc-interval": 1800
+        },
+
+        "host-reservation-identifiers": [ "hw-address" ],
+
+        # DHCP soll nicht antworten, falls angefragte IP nicht verfügbar
+        "authoritative": false,
+
+        # Auf welchen Interface soll DHCP hören
+        "interfaces-config": {
+            "interfaces": ["enp0s8/192.168.3.3"],
+            "dhcp-socket-type": "raw"
+        },
+
+        "subnet4": [
+            {
+                "id": 1,
+                "subnet": "192.168.3.0/24",
+                "pools": [],
+                "reservations-out-of-pool": true,
+
+                "reservations" : [
+                    # Router - VM1
+                    {
+                        "hw-address": "08:00:27:7a:a5:78",
+                        "ip-address": "192.168.3.1",
+                        "hostname": "vm1"
+                    },
+                    # VM2
+                    {
+                        "hw-address": "08:00:27:4b:46:40",
+                        "ip-address": "192.168.3.2",
+                        "hostname": "vm2"
+                    }
+                ]
+            }
+        ],
+
+        # Kea supportet 252 noch nicht, daher müssen wir eine custom option schreiben
+        "option-def": [
+            {
+                "code": 252,
+                "name": "wpad-proxy-url",
+                "type": "string"
+            }
+        ],
+
+        # DHCP options 
+        "option-data" : [
+            # Netzmaske wird automatische berechnet
+            {
+                "name": "routers",
+                "data": "192.168.3.3",
+                "always-send": true
+            },
+            {
+                "name": "domain-name-servers",
+                "data": "192.168.3.3",
+                "always-send": true
+            },
+            {
+                "name": "domain-name",
+                "data": "psa-team03.cit.tum.de.",
+                "always-send": true
+            },
+            {
+                "code": 121,
+                "name": "classless-static-route",
+                "data": "192.168.0.0/16 - 192.168.3.3",
+                "always-send": true
+            },
+            {
+                "name": "wpad-proxy-url",
+                "data": "http://pac.lrz.de",
+                "always-send": true
+            }
+        ],
+
+        # Settings für den Logger
+        "loggers": [
+            {
+                "name": "kea-dhcp4",
+                "output-options": [
+                    {
+                        "output": "stdout"
+                    }
+                ],
+                "severity": "DEBUG"
+            }
+        ]
+
+    }
+}
