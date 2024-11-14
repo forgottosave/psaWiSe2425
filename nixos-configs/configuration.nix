@@ -43,6 +43,7 @@
     traceroute
     tcptraceroute
     bind
+    dhcping
   ];
   programs.mtr.enable = true;
 
