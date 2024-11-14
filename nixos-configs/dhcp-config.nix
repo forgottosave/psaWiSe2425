@@ -99,17 +99,17 @@
 
 
     # Settings für den Logger
-    "loggers" = [
-      {
-        "name" = "kea-dhcp4";
-        "output-options" = [
-          {
-              "output" = "stdout";
-          }
-        ];
-        "severity" = "DEBUG";
-      }
-    ];
+    #"loggers" = [
+    #  {
+    #    "name" = "kea-dhcp4";
+    #    "output-options" = [
+    #      {
+    #          "output" = "stdout";
+    #      }
+    #    ];
+    #    "severity" = "DEBUG";
+    #  }
+    #];
 
   };
 }
