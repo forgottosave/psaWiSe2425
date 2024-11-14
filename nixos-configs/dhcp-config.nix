@@ -2,19 +2,16 @@
 {
   services.kea.dhcp4.enable = true;
   services.kea.dhcp4.settings = {
-
-    ## Gültigkeit eines Lease
-    #"valid-lifetime" = 300;
-    ## Nach wie vielen sec soll neu angefragt werden
-    #"renew-timer" = 150;
-    ## Falls renew nicht funktioniert hat
-    #"rebind-timer" = 240;
+    # Interfaces, auf denen der DHCP-Server arbeitet
+    "interfaces-config" = {
+      "interfaces" = [ "enp0s8/192.168.3.3" ];
+    };
 
     # Lease Datenbank
     "lease-database" = {
         "type" = "memfile";
-        "persist" = true;
-        "name" = "/var/lib/kea/dhcp4.leases";
+        #"persist" = true;
+        #"name" = "/var/lib/kea/dhcp4.leases";
         "lfc-interval" = 1800;
     };
 
@@ -24,10 +21,6 @@
     # DHCP soll nicht antworten, falls angefragte IP nicht verfügbar
     #"authoritative" = false;
 
-    # Interfaces, auf denen der DHCP-Server arbeitet
-    "interfaces-config" = {
-      "interfaces" = [ "enp0s8/192.168.3.3" ];
-    };
     
     # definition einer option für wpad
     "option-def" = [
@@ -44,7 +37,6 @@
         # Subnetz und Team spezifische IP-Bereiche
         "subnet" = "192.168.3.0/24"; 
         "pools" = [{ "pool" = "192.168.3.1 - 192.168.3.250"; }];
-
         "reservations" = [
           {
             "hw-address" = "08:00:27:7a:a5:78"; 
@@ -60,10 +52,10 @@
 
          # Domain-Informationen und Routen
         "option-data" = [
-          { "name" = "domain-name"; "data" = "psa-team03.cit.tum.de"; "always-send" = true; }
-          { "name" = "domain-name-servers"; "data" = "192.168.3.3"; "always-send" = true; }
-          { "name" = "routers"; "data" = "192.168.3.3"; "always-send" = true; }
-          { "name" = "wpad"; "data" = "http://pac.lrz.de"; "always-send" = true; }
+          { "name" = "domain-name"; "data" = "psa-team03.cit.tum.de";}
+          { "name" = "domain-name-servers"; "data" = "192.168.3.3";}
+          { "name" = "routers"; "data" = "192.168.3.3";}
+          { "name" = "wpad"; "data" = "http://pac.lrz.de";}
           # https://gitlab.isc.org/isc-projects/kea/-/merge_requests/2135
           #{
           #  "code" = 121;
@@ -74,21 +66,6 @@
         ];
       }
     ];
-
-
-    # Steuerung von Anfragen, um nur auf bestimmte Clients zu antworten
-    # https://kb.isc.org/docs/understanding-client-classification
-    "client-classes" = [
-      {
-        "name" = "vm1";
-        "test" = "pkt4.giaddr == 192.168.3.1";
-      }
-      {
-        "name" = "vm2";
-        "test" = "pkt4.giaddr == 192.168.3.2";
-      }
-    ];
-
 
     # Settings für den Logger
     #"loggers" = [
