@@ -15,7 +15,7 @@
         "type" = "memfile";
         "persist" = true;
         "name" = "/var/lib/kea/dhcp4.leases";
-        "lfc-interval" = 1800
+        "lfc-interval" = 1800;
     };
 
     # Host identifizierung über mac addresse
