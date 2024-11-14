@@ -1,19 +1,44 @@
-{ inputs, ... }:
-let 
-  overlay-kea-unstable = final: prev: {
-    kea = inputs.unstable.legacyPackages."x86_64-linux".kea;
-  };
-in
 {
-  imports = [
-    { nixpkgs.overlays = [ overlay-kea-unstable ]; }
-  ];
+  description = "NixOS configuration with nixpkgs-unstable overlay";
 
-  services.kea.dhcp4 = {
-    enable = true;
-    configFile = ./dhcp4-config.json;
+  # Define the inputs section
+  inputs = {
+    # Standard nixpkgs input for stable packages (replace with desired branch or channel)
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
+
+    # Add nixpkgs-unstable as an input for access to unstable packages
+    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
   };
+
+  # Define the outputs section, configuring NixOS modules with the unstable overlay
+  outputs = { self, nixpkgs, nixpkgs-unstable, ... }:
+    let
+      # Create an overlay for using packages from nixpkgs-unstable
+      unstableOverlay = final: prev: {
+        kea = nixpkgs-unstable.legacyPackages.x86_64-linux.kea;
+      };
+    in {
+      # NixOS system configuration
+      nixosConfigurations.my-machine = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [
+          ./configuration.nix
+
+          # Apply the overlay by including it in nixpkgs.overlays
+          {
+            nixpkgs.overlays = [ unstableOverlay ];
+
+            # Enable and configure the Kea DHCP service
+            services.kea.dhcp4 = {
+              enable = true;
+              configFile = ./dhcp4-config.json;
+            };
+          }
+        ];
+      };
+    };
 }
+
 #    # Interfaces, auf denen der DHCP-Server arbeitet
 #    "interfaces-config" = {
 #      "interfaces" = [ "enp0s8/192.168.3.3" ];
