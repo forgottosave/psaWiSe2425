@@ -114,7 +114,7 @@
       zone "psa-team08.cit.tum.de" {
         type forward;
         forward only;
-        forwarders { 192.168.8.8; };
+        forwarders { 192.168.8.6; };
       };
       zone "psa-team09.cit.tum.de" {
         type forward;
