@@ -67,8 +67,8 @@
       iptables -A INPUT -p tcp --dport 53 -j ACCEPT
 
       # Allow: DHCP
-      sudo iptables -A INPUT -p udp --sport 68 --dport 67 -j ACCEPT
-      sudo iptables -A OUTPUT -p udp --sport 67 --dport 68 -j ACCEPT
+      iptables -A INPUT -p udp --sport 68 --dport 67 -j ACCEPT
+      iptables -A OUTPUT -p udp --sport 67 --dport 68 -j ACCEPT
 
       # Allow: git (https://serverfault.com/questions/682373/setting-up-iptables-filter-to-allow-git)
       iptables -A INPUT -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
