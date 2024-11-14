@@ -66,6 +66,10 @@
       iptables -A INPUT -p udp --dport 53 -j ACCEPT 
       iptables -A INPUT -p tcp --dport 53 -j ACCEPT
 
+      # Allow: DHCP
+      udp dport 68 accept
+      udp dport 67 accept
+
       # Allow: git (https://serverfault.com/questions/682373/setting-up-iptables-filter-to-allow-git)
       iptables -A INPUT -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
       iptables -A OUTPUT -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
