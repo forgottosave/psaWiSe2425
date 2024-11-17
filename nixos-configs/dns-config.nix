@@ -75,9 +75,6 @@
 
     # non NixOS-able configs: (not supported yet -> use manual insertion)
     extraConfig = ''
-      // __ Default _____________________
-      // TODO
-      
       // __ Teams _______________________
       zone "psa-team01.cit.tum.de" {
         type forward;

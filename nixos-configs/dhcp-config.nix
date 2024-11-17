@@ -1,5 +1,5 @@
 {
-  description = "NixOS configuration with nixpkgs-unstable overlay";
+  #description = "NixOS configuration with nixpkgs-unstable overlay";
 
   # Define the inputs section
   inputs = {
