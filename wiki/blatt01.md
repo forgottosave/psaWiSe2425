@@ -58,7 +58,9 @@ Zum erstellen einer VM gibt es ein [skript](https://github.com/forgottosave/psaW
     - `w` - write -> schreibt alle Änderungen und beendet das Tool
 
 - um die Partitionen zu erstellen folgende Befehle ausführen:  
-    `n` -> \\n -> \\n -> `+64M` -> `ef00`  
+    `d` -> \\n 
+    `n` -> \\n -> 63 -> `+64M` -> `0700`
+    `n` -> \\n -> \\n -> `+512M` -> `ef00`  
     `n` -> \\n -> \\n -> `+1G` -> `8200`  
     `n` -> \\n -> \\n -> \\n -> `8300`  
     `w` -> `y`  
@@ -71,29 +73,75 @@ Zum erstellen einer VM gibt es ein [skript](https://github.com/forgottosave/psaW
     ```bash  
     sudo mkfs.fat -F 32 -n boot /dev/sda2 &&  
     sudo mkswap -L swap /dev/sda3 &&  
-    sudo mkfs.ext4 -L nixos /dev/sda4 &&  
-    sudo mkdir -p /mnt/boot  
+    sudo mkfs.ext4 -L nixos /dev/sda4  
     ```
 
 - enable swap und partitionen mounten:  
     ```shell  
     sudo swapon /dev/sda3 &&  
     sudo mount /dev/disk/by-label/nixos /mnt &&  
+    sudo mkdir /mnt/boot &&
     sudo mount -o umask=077 /dev/disk/by-label/boot /mnt/boot  
     ```
 
 - generrieren der nixos configs + installieren  
     ```shell  
     sudo nixos-generate-config --root /mnt  
-    sudo nixos-install  
+    sudo nixos-install --no-root-passwd
     ```
 
 - edit config `/mnt/etc/nixos/configuration.nix`  
-    TODO: use skript
+    TODO: use skript (git ...)
+
+    Temp config for enabeling ssh and git:
+    ```nix
+    { config, lib, pkgs, ... }:
+    {
+    imports = [ # Include the results of the hardware scan.
+        ./hardware-configuration.nix
+    ];
+
+    # Use the systemd-boot EFI boot loader.
+    boot.loader.systemd-boot.enable = true;
+    boot.loader.efi.canTouchEfiVariables = true;
+
+    # https://nixos.wiki/wiki/SSH_public_key_authentication
+    services.sshd.enable = true;
+    services.openssh = {
+        enable = true;
+        settings.PasswordAuthentication = true;
+        settings.KbdInteractiveAuthentication = false;
+        settings.PermitRootLogin = "yes";
+    };
+
+    networking.firewall.allowedTCPPorts = [ 22 ];
+    networking.hostName = "vmpsateam03-03"; # change accordingly to vm number
+    networking.networkmanager.enable = true;
+    time.timeZone = "Europe/Amsterdam";
+
+    users.users."root".openssh.authorizedKeys.keys = [
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIFKywkjovjz87VQHeNVSGUlc/5Nl4eH4Hj1SrYHIeqM"
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBwkCLE+pDy8HvHy98MwsNH/sxPYmBRXuREOd2jTMXPV timon.ensel@tum.de"
+    ];
+
+    environment.systemPackages = with pkgs; [
+        git
+    ];
+
+    system.stateVersion = "24.05";
+
+    }
+    ```
+
 
 - reboot:  
     ```shell  
     sudo reboot  
+    ```
+
+- nixos rebuild um die erstellte config zu laden:  
+    ```shell  
+    sudo nixos-rebuild switch  
     ```
 
 
