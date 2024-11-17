@@ -7,8 +7,8 @@
   #  nameserver 131.159.254.2
   #  '';
   #};
-  networking.nameservers = [ "192.168.3.3" "131.159.254.1" "131.159.254.2" ];
-  networking.search = [ "cit.tum.de" ];
+  networking.nameservers = [ "192.168.3.3" "131.159.254.1" "131.159.254.2" "127.0.0.53" ];
+  networking.search = [ "cit.tum.de" "in.tum.de" ];
 
   services.bind = {
     enable = true;
