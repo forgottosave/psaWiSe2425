@@ -1,12 +1,14 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 {
-  environment.etc = {
-    "resolv.conf".text = ''
-    nameserver 192.168.3.3
-    nameserver 131.159.254.1
-    nameserver 131.159.254.2
-    '';
-  };
+  #environment.etc = {
+  #  "resolv.conf".text = ''
+  #  nameserver 192.168.3.3
+  #  nameserver 131.159.254.1
+  #  nameserver 131.159.254.2
+  #  '';
+  #};
+  networking.nameservers = [ "192.168.3.3" "131.159.254.1" "131.159.254.2" ];
+  networking.search = [ "cit.tum.de" ];
 
   services.bind = {
     enable = true;
@@ -58,13 +60,9 @@
       #  file = "";
       #  extraConfig = "forward only;\nforwarders { 192.168.1.1; };";
       #};
-      #     ^
-    };#    /|\
-    #       |
-    #       |
-    # for Teams: extraConfig gives the same error as above solution, other DNS servers just not yet reachable...
-    
-    # DEFAULT
+    };
+
+    # DEFAULT FORWARDING
     directory = "/var/cache/bind";
     forward = "only";
     forwarders = [ "131.159.254.1" "131.159.254.2" ];
