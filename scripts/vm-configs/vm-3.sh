@@ -7,6 +7,7 @@ include_files=(
     router-network.nix
     dns-config.nix
     dhcp-config.nix
+    flake.nix
 )
 
 # SED placeholders
