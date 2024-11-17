@@ -104,16 +104,16 @@ for file in ${include_files[@]}; do
 done
 
 
+## (EXERCISE SHEET SPECIFIC REQUIREMENTS) ##############
+
+# Week 02
+cp ${THIS_DIR}/test_PSA_02.sh /root/
+
+#cp -a ${THIS_DIR}/../nixos-configs/bind-configs/. /var/bind/
+
+
 ## 5. reload config ##################################
 
 if [ "$NIXOS_REBUILD" = true ] ; then
     sudo nixos-rebuild switch
 fi
-
-
-## EXERCISE SHEET SPECIFIC REQUIREMENTS ##############
-
-# Week 02
-cp ${THIS_DIR}/test_PSA_02.sh /root/
-
-cp -a ${THIS_DIR}/../nixos-configs/bind-configs/. /var/bind/
