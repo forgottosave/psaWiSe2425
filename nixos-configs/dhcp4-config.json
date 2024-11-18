@@ -35,9 +35,9 @@
                 "reservations-out-of-pool": true,
 
                 "reservations" : [
-                    # Router - VM1
+                    # VM1
                     {
-                        "hw-address": "08:00:27:7a:a5:78",
+                        "hw-address": "08:00:27:4c:bb:84",
                         "ip-address": "192.168.3.1",
                         "hostname": "vm1"
                     },
