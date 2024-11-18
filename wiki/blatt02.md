@@ -246,4 +246,21 @@ Nun stehen die Voraussetzungen für das Benutzen. Um die Konfigurationen mit dem
 2. `./scripts/sync-nixos-config.sh -p` führt die open beschriebenen Schritte aus
 3. je nach Änderungen in der config: `reboot`
 
+Das Skript stellt auch Hilfe unter `-h` / `--help` bereit:
+```
+PSA Team 03 - OS sync script performs...
+...copy configs to /etc/nixos/
+...replace placeholders
+...nixos-rebuild switch
+
+Usage:
+./scripts/sync-nixos-config.sh [OPTIONS]
+
+Options:          Description:
+-h, --help        Display help page.
+-n, --vm          Specify VM (automatically set from hostname if not provided).
+-p, --pull        Pull latest changes from git repository before config changes.
+-x, --no-rebuild  Don't perform nixos-rebuild switch after config changes.
+```
+
 Änderungen sollen jetzt nicht mehr direkt im `/etc/nixos/...` vorgenommen werden, sondern nur in den Dateien im git-Repository, unter `<path-to-repo>/nixos-configs`.
