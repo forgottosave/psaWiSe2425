@@ -10,10 +10,11 @@ Wir haben uns für NIXOS entschieden, da hier mit der zentralen Konfigurationsda
 Um nix os zu installiert muss man zu beginn sich einmal mit vnc auf den server verbinden um die installation zu starten oder temporär ssh zu akivieren um die installation per ssh durchzuführen.
 
 - per ssh mit psa server verbinden: `ge78zig@psa.in.tum.de`  
-- prüfen ob ein vnc-server mit eigener Nutzerkennung (ge78zig) bereits läuft: `ps -ef | grep vnc` <br>-> vnc-Adresse gegeben durch `psa.in.tum.de:<nummer nach vnc:>`  
+- prüfen ob ein vnc-server mit eigener Nutzerkennung (ge78zig) bereits läuft: `ps -ef | grep vnc`
+  -> vnc-Adresse gegeben durch `psa.in.tum.de:<nummer nach vnc:>`  
 - falls nicht starten einen vnc-Server mit: `vncserver`  
 - falls mehrere laufen, überflüssige mit `kill <pid>` beenden  
-- dann vnc-Client der wahl öffnen z.B. KRDC und mit adresse verbinden (ggf bei anzeigefehlern "scale"-button drücken)
+- dann vnc-Client der wahl öffnen z.B. KRDC und mit Adresse verbinden (ggf bei anzeigefehlern "scale"-button drücken)
 
 ### 2) VM Setup
 
@@ -24,7 +25,7 @@ Zum erstellen einer VM gibt es ein [skript](https://github.com/forgottosave/psaW
   ```shell  
   curl https://github.com/forgottosave/psaWiSe2425/blob/main/scripts/create_vm.sh 
   chmod +x create_vm.sh  
-  ./create_vm.sh 03 01  
+  ./create_vm.sh 03 01  # 03 01 -> Team 03, VM 01
   ```
 
 - dann via der vnc-Verbindung ein Passwort erstellen damit SSH nutzbar wird:
@@ -34,12 +35,11 @@ Zum erstellen einer VM gibt es ein [skript](https://github.com/forgottosave/psaW
   ```
 
   -> vnc viewer kann geschlossen werden
-- terminal öffnenssh und per ssh mit vm verbinden:
+- terminal öffnen und per ssh mit der VM verbinden (user hier noch `nixos` während der installation):
 
   ```shell
   ssh -p 60301 nixos@psa.in.tum.de
   ```
-
 
 ### 3) Speicher anpassen
 
@@ -59,11 +59,11 @@ Zum erstellen einer VM gibt es ein [skript](https://github.com/forgottosave/psaW
   sudo ntfsresize --size 64M /dev/sda1  
   ```
 
-- nun die VM herunterfahren und die Festplatte vergrößern in VirtualBox (Tools->Media->Properties) und dort die Size der ensprechenden Platte auf 32GB erhöhen. Nun die VM wieder starten und die Partitionen neu erstellen.
+- nun die VM herunterfahren und die Festplatte vergrößern in VirtualBox (Tools->Media->Properties) und dort die Size der ensprechenden Platte auf 32GB erhöhen. Nun die VM wieder starten und die Partitionen neu erstellen. Dieser Schritt ist nötig da bei der verwendung von nix flake stets die Partition zu klein war um alle temporären Dateien zu speichern. Da bei der Vergrößerung der Disk leider aber der Partitiontable kaputt geht, muss dieser zunächst die alte Partition verkleinert werden bevor die disk vergrößert werden kann.
 
 #### neue Partitionen erstellen  
 
-- Zunächst ist wichtig von vorhandenen Partitionsschema MBR zu GPT für EFI suport zu wechseln. Dann muss die alte Partition noch verkleinert und die Neuen erstellt werden:
+- Zunächst ist wichtig von vorhandenen Partitionsschema MBR zu GPT für EFI suport zu wechseln daher ferwenden wir `gdisk`bei welchem dies automatisch der Fall ist. Dann müsses nur noch die neuen partitionen erstellt werden (swap nötig sonnst hängt sich der installer bei 1G Ram auf): 
 
   ```shell  
   sudo gdisk /dev/sda  
@@ -84,9 +84,7 @@ Zum erstellen einer VM gibt es ein [skript](https://github.com/forgottosave/psaW
 
 #### Partitionen formatieren  
 
-(swap nötig sonnst hängt sich der installer bei 1G Ram auf)
-
-- formatieren der Partitionen:  
+- zunächst müssen die Partitionen formatiert werden:  
 
   ```bash  
   sudo mkfs.fat -F 32 -n boot /dev/sda2 &&  
@@ -94,7 +92,7 @@ Zum erstellen einer VM gibt es ein [skript](https://github.com/forgottosave/psaW
   sudo mkfs.ext4 -L nixos /dev/sda4  
   ```
 
-- enable swap und partitionen mounten:  
+- und dann die swap-Partition aktiviert und die andere partitionen gemounten werden:  
 
   ```shell  
   sudo swapon /dev/sda3 &&  
@@ -103,14 +101,13 @@ Zum erstellen einer VM gibt es ein [skript](https://github.com/forgottosave/psaW
   sudo mount -o umask=077 /dev/disk/by-label/boot /mnt/boot  
   ```
 
-- generrieren der nixos configs + installieren  
+- nun kann die nixos Config-Datein generrieren werden:
 
   ```shell  
   sudo nixos-generate-config --root /mnt  
   ```
 
-- edit config `/mnt/etc/nixos/configuration.nix`  
-  Temp config for enabeling ssh and git:
+- befor nun nixos installiert wird is es wichtig die Config anzupassen damit nach einen neustart gleich ssh und z.B. auch git funktioniert. Dafür nun `sudo nano /mnt/etc/nixos/configuration.nix` und die alte Konfig durch die folgende temporäre Config ersetzen:
 
   ```nix
   { config, lib, pkgs, ... }:
@@ -126,47 +123,52 @@ Zum erstellen einer VM gibt es ein [skript](https://github.com/forgottosave/psaW
     # https://nixos.wiki/wiki/SSH_public_key_authentication
     services.sshd.enable = true;
     services.openssh = {
-      enable = true;
-      settings.PasswordAuthentication = true;
-      settings.KbdInteractiveAuthentication = false;
-      settings.PermitRootLogin = "yes";
+      enable = true;                                  # Enable the OpenSSH daemon
+      PermitRootLogin = "prohibit-password";          # Disable root passwd login
+      PasswordAuthentication = false;                 # Disable password authentication
+      settings.KbdInteractiveAuthentication = false;  # Disable keyboard-interactive authentication
+      settings.PermitRootLogin = "yes";               # Enable root login
     };
 
     networking.firewall.allowedTCPPorts = [ 22 ];
-    networking.hostName = "vmpsateam03-03"; # change accordingly to vm number
+    networking.hostName = "vmpsateam03-03";           # change accordingly to vm number
     networking.networkmanager.enable = true;
     time.timeZone = "Europe/Amsterdam";
 
+    # all keys for ssh access
     users.users."root".openssh.authorizedKeys.keys = [
+          "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC1bL8aC20ERDdJE2NqzIBvs8zXmCbFZ7fh5qXyqGNF7XfdfbsPBfQBSeJoncVfTJRFNYF4E+1Me918QMIpqa9XR4nJYOdOzff1JLYp1Z1X28Dx3//aOir8ziPCvGZShFDXoxLp6MNFIiEpI/IEW9OqxLhKj6YWVEDwK1ons7+pXnPM6Nd9lPd2UeqWWRpuuf9sa2AimQ1ZBJlnp7xHFTxvxdWMkTu6aH0j+aTT1w1+UDN2laS4nsmAJOO2KjeZq6xpbdmj9cjuxBJtM3Dsoq4ZJGdzez7XYhvCTQoQFl/5G0+4FBZeAgL/4ov12flGijZIIaXvmMBkLZRYg3E2m1Rp PraktikumSystemadministration"
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIFKywkjovjz87VQHeNVSGUlc/5Nl4eH4Hj1SrYHIeqM"
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBwkCLE+pDy8HvHy98MwsNH/sxPYmBRXuREOd2jTMXPV timon.ensel@tum.de"
     ];
 
+    # to install git
     environment.systemPackages = with pkgs; [
       git
     ];
 
+    # to enable nix-command and flakes
     nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
     system.stateVersion = "24.05";
   }
   ```
 
-- reboot:  
+- nun ist alles fertig konfiguriert um nixos zu installieren und neu zu starten:  
 
   ```shell  
   sudo nixos-install --no-root-passwd &&
   sudo reboot  
   ```
 
-- nixos rebuild um die erstellte config zu laden:  
+- nun wird noch eine flake Config angelegt um bei pkgs auch die unstable Version verwenden zu können:  
 
   ```shell
   cd /etc/nixos/ &&
   nano flake.nix
   ```
 
-- flake cinfig:
+- und die folgende Config einfügen:
 
   ```nix
   {
@@ -178,7 +180,7 @@ Zum erstellen einer VM gibt es ein [skript](https://github.com/forgottosave/psaW
     outputs = inputs@{ nixpkgs, ... }:
     {
       nixosConfigurations = {
-        "vmpsateam03-03" = nixpkgs.lib.nixosSystem {
+        "vmpsateam03-03" = nixpkgs.lib.nixosSystem { # change accordingly to vm number
           system = "x86_64-linux";
           specialArgs = {
             inherit inputs;
@@ -192,15 +194,60 @@ Zum erstellen einer VM gibt es ein [skript](https://github.com/forgottosave/psaW
   }
   ```
 
-- lock und rebuild:
+- nun noch flake update und nixos neu starten:
 
   ```shell
   nix flake update &&
   sudo nixos-rebuild switch --flake .#vmpsateam03-03 
   ```
 
-## User konfigurieren
+- die VM sollte nun fertig installiert sein und per ssh erreichbar sein.
 
-TODO: use skript
+## Aktive Dienste
 
+nun kann noch getetstet werden welche Dienste auf der VM laufen per default laufen:
 
+```shell
+sudo systemctl list-units --type=service --state=running
+```
+
+wie zu sehen ist, sind nur die nötigsten Dienste aktiviert, da die minimal version von nixos installiert wurde.
+
+## Konfiguration der VM
+
+in diesen Aufgabenblatt war nun nur noch die Aufgabe einen ssh Zugang für root einzurichten.
+Da bereits in unserer temporären Config ssh nur per key für root aktiviert wurde und auch alle nötigen keys bereits hinterlegt sind, ist dies bereits erfüllt.
+
+Auch soll für alle Praktikumteilnehmer:innen einen User erstellt werden wobei auch diese sich über ssh einloggen können sollen. Dafür haben wir die folgende [zusätzliche Config](https://github.com/forgottosave/psaWiSe2425/blob/main/nixos-configs/user-config.nix) erstellt wobei die gid und uids dem davor festgelegten Schema folgen:
+
+```nix
+{config, pkgs, ... }:
+{
+  users.groups.students.gid = 1000;
+
+  #Team1  
+  users.users.ge95vir = {  
+    isNormalUser = true;  
+    home = "/home/ge95vir";  
+    uid = 1010;  
+    group = "students";  
+    openssh.authorizedKeys.keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEXPasCKmYHeTJ06DBWXCaYYUVM/Euo+X5tU0WpGWxRt gedeon.lenz@tum.de" ];  
+  };  
+  users.users.ge43fim = {  
+    isNormalUser = true;  
+    home = "/home/ge43fim";  
+    uid = 1011;  
+    group = "students";  
+    openssh.authorizedKeys.keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICJxRi9ByDSdft3zbasPq04DvoDHZDKHLzg5vtP+Caii andrey.maleev@tum.de" ];  
+  };  
+  #Team2 
+...
+```
+
+diese Config wird dann in die `configuration.nix` importiert wie auch bereits die `hardware-configuration.nix` und dann ein nixos rebuild durchgeführt.
+
+```shell
+sudo nixos-rebuild switch
+```
+
+Hiermit ist die Konfiguration der VM abgeschlossen und alle User können sich per ssh einloggen.

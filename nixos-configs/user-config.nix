@@ -15,7 +15,7 @@
     home = "/home/ge43fim";  
     uid = 1011;  
     group = "students";  
-    openssh.authorizedKeys.keys = [ "" ];  
+    openssh.authorizedKeys.keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICJxRi9ByDSdft3zbasPq04DvoDHZDKHLzg5vtP+Caii andrey.maleev@tum.de" ];  
   };  
   #Team2  
   users.users.ge78nes = {  

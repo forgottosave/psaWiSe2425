@@ -17,10 +17,11 @@
   # https://nixos.wiki/wiki/SSH_public_key_authentication
   services.sshd.enable = true;
   services.openssh = {
-    enable = true;
-    settings.PasswordAuthentication = true;
-    settings.KbdInteractiveAuthentication = false;
-    settings.PermitRootLogin = "yes";
+      enable = true;                                  # Enable the OpenSSH daemon
+      PermitRootLogin = "prohibit-password";          # Disable root passwd login
+      PasswordAuthentication = false;                 # Disable password authentication
+      settings.KbdInteractiveAuthentication = false;  # Disable keyboard-interactive authentication
+      settings.PermitRootLogin = "yes";               # Enable root login
   };
 
   #networking.firewall.allowedTCPPorts = [ 22 ];
