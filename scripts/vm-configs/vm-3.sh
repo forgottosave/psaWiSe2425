@@ -8,6 +8,7 @@ include_files=(
     #dns-config.nix
     dhcp-config.nix
     flake.nix
+    dhcp4-config.json
 )
 
 # SED placeholders
