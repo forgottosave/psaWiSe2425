@@ -218,10 +218,32 @@ Das Script behandelt die folgenden Test-Fälle, welche jeweils mit einem `SUCCES
 4. **ssh Verbindung zu Team-internen VMs möglich**
    - `nmap -p 22 192.168.3.x` an VMs 1-3
 
-## Zusatz:
-Wir haben diese Woche zudem die synchronisierte Aktualisierung der config Dateien über ein git repository ermöglicht. Die Ausführung von [`scripts/sync-nixos-config.sh`](https://github.com/forgottosave/psaWiSe2425/blob/main/scripts/sync-nixos-config.sh) übernimmt...
-1. ...das Kopieren der `.nix` Dateien an den richtigen Ort (`/etc/nixos/`).
-2. ...das VM spezifische konfigurieren der `.nix` Dateien (Einsetzen der richtigen root-ssh-keys, IP-Adressen, ...). Die VM spezifischen Konfigurationen können in `scripts/vm-configs/` gefunden werden.
-3. ...`nixos-rebuild switch`.
+# Zusatz: automatische NixOS configuration sync
+Wir haben diese Woche zudem die synchronisierte Aktualisierung der config Dateien über ein git repository ermöglicht. Das Repository ist [hier](https://github.com/forgottosave/psaWiSe2425) zu finden.
+### sync-nixos-config.sh
+Die Ausführung von [`scripts/sync-nixos-config.sh`](https://github.com/forgottosave/psaWiSe2425/blob/main/scripts/sync-nixos-config.sh) in NixOS übernimmt...
+1. ...(optional) `git pull` zum Synchronisieren des Repos
+2. ...das Kopieren der `.nix` Dateien an den richtigen Ort (`/etc/nixos/`).
+3. ...das VM spezifische Konfigurieren der `.nix` Dateien (Einsetzen der richtigen root-ssh-keys, IP-Adressen, ...). Die VM spezifischen Konfigurationen können in `scripts/vm-configs/` gefunden werden. Das Erkennen, um welche VM es sich handelt, wird automatisch über den hostname versucht, kann aber auch manuell dem Skript übergeben werden.
+4. ...`nixos-rebuild switch`.
+### Einrichten
+Auf einer fertigen NixOS Installation (siehe Blatt 1) muss zuerst der **Zugriff auf das GitHub Repository** ermöglicht werden:
+1. Hinzufügen von `git` in `configurations.nix`:
+```
+   environment.systemPackages = with pkgs; [
+     # default suggestions: vim wget
+     [...]
+     git
+   ];
+```
+2. `nixos-rebuild switch` & `reboot`
+3. Hinzufügen eines ssh-keys mit `ssh-keygen`
+4. `cat ~/.ssh/<keyfile>.pub` in die GitHub Deployment-Keys für das Repository hinzufügen
+5. `git clone git@github.com:forgottosave/psaWiSe2425.git`
+### Benutzung
+Nun stehen die Voraussetzungen für das Benutzen. Um die Konfigurationen mit dem git-repo zu **synchronisieren** und umzusetzen:
+1. `cd psaWiSe2425`
+2. `./scripts/sync-nixos-config.sh -p` führt die open beschriebenen Schritte aus
+3. je nach Änderungen in der config: `reboot`
 
-Details zur Benutzung können zudem in der repository [README](../README.md) gefunden werden.
+Änderungen sollen jetzt nicht mehr direkt im `/etc/nixos/...` vorgenommen werden, sondern nur in den Dateien im git-Repository, unter `<path-to-repo>/nixos-configs`.
