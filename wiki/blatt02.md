@@ -4,7 +4,7 @@ In diesem Blatt geht es darum die Netzwerkkonfiguration zu erstellen und die VMs
 
 ## Teilaufgaben
 
-### 1) Verbindung innerhalb des teams
+### 1) Verbindung innerhalb des Teams
 
 - zunächst muss der nicht konfigurierter Netzwerkadapter ermittelt werde, hierfür einfach `ifconfig` ausführen und den Adapter auswählen der nicht die IP `10.0.2.15` hat
   -> `enp0s8`
@@ -34,7 +34,7 @@ In diesem Blatt geht es darum die Netzwerkkonfiguration zu erstellen und die VMs
 - für diese Teilaufgabe haben wir uns etnschieden einen Router VM zu erstellen, der die Verbindung zwischen den Teams herstellt (VM03)
 - Worauf wir uns in Matrix geeinig haben:
   - mesh netzwerk (jeder mit jeden verbunden)
-  - in TeamzuTeam Netzwerken hat die Router VM stets die ip:`192.168.<teamNr1><teamNr2>.<teamNr>` wobei teamNr1 > teamNr2
+  - in TeamZuTeam Netzwerken hat die Router VM stets die ip:`192.168.<teamNr1><teamNr2>.<teamNr>` wobei teamNr1 > teamNr2
 - dafür muss man den `enp0s8`-Adapter einer zusätzlichen, IP–Adresse aus dem Verbindungs–Subnetz vergeben
 - das dadürch entstehende Netzwerk sieht wie folgt aus:
 
@@ -61,35 +61,35 @@ In diesem Blatt geht es darum die Netzwerkkonfiguration zu erstellen und die VMs
   └───────────────────┘   └───────────────────┘             
   ```
 
-- um diese Änderungen um zu setzen muss bei der Router VM folgende Änderungen in der `configuration.nix` vorgenommen werden:
+- um diese Änderungen um zu setzen muss bei der **Router-VM** folgende Änderungen in der `configuration.nix` vorgenommen werden:
 
   ```nixos
   networking = {
   interfaces.enp0s8 = {
     ipv4.addresses = [
-      { address = "192.168.3.3"; prefixLength = 24; }
-      { address = "192.168.31.3"; prefixLength = 24; }
-      { address = "192.168.32.3"; prefixLength = 24; }
+      { address = "192.168.3.3"; prefixLength = 24; }     # fügt die statische IP für das interne Netzwerk hinzu
+      { address = "192.168.31.3"; prefixLength = 24; }    # fügt die statische IP für die TeamZuTeam Verbindung zu Team 1 hinzu
+      { address = "192.168.32.3"; prefixLength = 24; }    # fügt die statische IP für die TeamZuTeam Verbindung zu Team 2 hinzu
       ...
     ];
     ipv4.routes = [
-      { address = "192.168.1.0"; prefixLength = 24; via = "192.168.31.1"; } 
-      { address = "192.168.2.0"; prefixLength = 24; via = "192.168.32.2"; }
+      { address = "192.168.1.0"; prefixLength = 24; via = "192.168.31.1"; }   # fügt die Route zu Team 1 hinzu
+      { address = "192.168.2.0"; prefixLength = 24; via = "192.168.32.2"; }   # fügt die Route zu Team 2 hinzu
       ...
     ];
   };
   ```
 
-- und bei den anderen VMs z.B. bei VM1:
+- und bei **VM 1&2**:
 
   ```nixos
   networking = {
   interfaces.enp0s8 = {
     ipv4.addresses = [
-      { address = "192.168.3.1"; prefixLength = 24; }
+      { address = "192.168.3.1"; prefixLength = 24; }     # fügt die statische IP für das interne Netzwerk hinzu
     ];
     ipv4.routes = [
-      { address = "192.168.0.0"; prefixLength = 16; via = "192.168.3.3"; }
+      { address = "192.168.0.0"; prefixLength = 16; via = "192.168.3.3"; }    # fügt die Route zur Weiterleitung an den Router hinzu
     ];
   };
   ```
