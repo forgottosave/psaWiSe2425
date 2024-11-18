@@ -270,19 +270,19 @@ Auf einer fertigen NixOS Installation (siehe Blatt 1) muss zuerst der **Zugriff 
 
 1. Hinzufügen von `git` in `configurations.nix`:
 
-  ```nix
-    environment.systemPackages = with pkgs; [
-      # default suggestions: vim wget
-      [...]
-      git
-    ];
-  ```
+    ```nix
+      environment.systemPackages = with pkgs; [
+        # default suggestions: vim wget
+        [...]
+        git
+      ];
+    ```
 
 2. `nixos-rebuild switch` & `reboot`
 3. Hinzufügen eines ssh-keys mit `ssh-keygen`
 4. `cat ~/.ssh/<keyfile>.pub` in die GitHub Deployment-Keys für das Repository hinzufügen
 
-![image](https://github.com/user-attachments/assets/384daea2-e412-4c3b-9352-6dd11002c83c)
+    ![image](https://github.com/user-attachments/assets/384daea2-e412-4c3b-9352-6dd11002c83c)
 
 5. `git clone git@github.com:forgottosave/psaWiSe2425.git`
 
