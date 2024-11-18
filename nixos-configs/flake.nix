@@ -11,7 +11,7 @@
   outputs = { self, nixpkgs, unstable }: {
     # Define the NixOS configuration
     nixosConfigurations = {
-      hostname = nixpkgs.lib.nixosSystem {
+      vmpsateam03-01 = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux"; 
         modules = [
           # Include the main system configuration

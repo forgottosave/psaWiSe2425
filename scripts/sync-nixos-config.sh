@@ -86,7 +86,7 @@ done
 imports='
         ./hardware-configuration.nix'
 for file in ${include_files[@]}; do
-    if ! [ "$file" = "configuration.nix" ] && ! [ "$file" = "flake.nix" ]; then
+    if ! [ "$file" = "configuration.nix" ] && ! [ "$file" = "flake.nix" ] && ! [ "$file" = "dhcp-config.nix" ]; then
         imports+="
         ./$file"
     fi
