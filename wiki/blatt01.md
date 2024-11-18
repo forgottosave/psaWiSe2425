@@ -175,7 +175,7 @@ Zum erstellen einer VM gibt es ein [skript](https://github.com/forgottosave/psaW
 
 - lock und rebuild:
 		```shell
-		nix flake lock &&
+		nix flake update &&
     sudo nixos-rebuild switch --flake .#vmpsateam03-03 
     ```
 
