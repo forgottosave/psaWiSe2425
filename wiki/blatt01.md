@@ -46,6 +46,8 @@ Zum erstellen einer VM gibt es ein [skript](https://github.com/forgottosave/psaW
     sudo ntfsresize --size 64M /dev/sda1  
     ```
 
+- nun die VM herunterfahren und die Festplatte vergrößern in VirtualBox (Tools->Media->Properties) und dort die Size der ensprechenden Platte auf 32GB erhöhen. Nun die VM wieder starten und die Partitionen neu erstellen.
+
 #### neue Partitionen erstellen  
 - Zunächst ist wichtig von vorhandenen Partitionsschema MBR zu GPT für EFI suport zu wechseln. Dann muss die alte Partition noch verkleinert und die Neuen erstellt werden:  
     ```shell  
@@ -58,11 +60,11 @@ Zum erstellen einer VM gibt es ein [skript](https://github.com/forgottosave/psaW
     - `w` - write -> schreibt alle Änderungen und beendet das Tool
 
 - um die Partitionen zu erstellen folgende Befehle ausführen:  
-    `d` -> \\n 
-    `n` -> \\n -> 63 -> `+64M` -> `0700`
-    `n` -> \\n -> \\n -> `+512M` -> `ef00`  
-    `n` -> \\n -> \\n -> `+1G` -> `8200`  
-    `n` -> \\n -> \\n -> \\n -> `8300`  
+    `d` -> \\n <br>
+    `n` -> \\n -> 63 -> `+64M` -> `0700` <br>
+    `n` -> \\n -> \\n -> `+512M` -> `ef00` <br>
+    `n` -> \\n -> \\n -> `+1G` -> `8200` <br>
+    `n` -> \\n -> \\n -> \\n -> `8300` <br> 
     `w` -> `y`  
    
 
@@ -87,7 +89,6 @@ Zum erstellen einer VM gibt es ein [skript](https://github.com/forgottosave/psaW
 - generrieren der nixos configs + installieren  
     ```shell  
     sudo nixos-generate-config --root /mnt  
-    sudo nixos-install --no-root-passwd
     ```
 
 - edit config `/mnt/etc/nixos/configuration.nix`  
@@ -97,51 +98,56 @@ Zum erstellen einer VM gibt es ein [skript](https://github.com/forgottosave/psaW
     ```nix
     { config, lib, pkgs, ... }:
     {
-    imports = [ # Include the results of the hardware scan.
-        ./hardware-configuration.nix
-    ];
+			imports = [ # Include the results of the hardware scan.
+					./hardware-configuration.nix
+			];
 
-    # Use the systemd-boot EFI boot loader.
-    boot.loader.systemd-boot.enable = true;
-    boot.loader.efi.canTouchEfiVariables = true;
+			# Use the systemd-boot EFI boot loader.
+			boot.loader.systemd-boot.enable = true;
+			boot.loader.efi.canTouchEfiVariables = true;
 
-    # https://nixos.wiki/wiki/SSH_public_key_authentication
-    services.sshd.enable = true;
-    services.openssh = {
-        enable = true;
-        settings.PasswordAuthentication = true;
-        settings.KbdInteractiveAuthentication = false;
-        settings.PermitRootLogin = "yes";
-    };
+			# https://nixos.wiki/wiki/SSH_public_key_authentication
+			services.sshd.enable = true;
+			services.openssh = {
+					enable = true;
+					settings.PasswordAuthentication = true;
+					settings.KbdInteractiveAuthentication = false;
+					settings.PermitRootLogin = "yes";
+			};
 
-    networking.firewall.allowedTCPPorts = [ 22 ];
-    networking.hostName = "vmpsateam03-03"; # change accordingly to vm number
-    networking.networkmanager.enable = true;
-    time.timeZone = "Europe/Amsterdam";
+			networking.firewall.allowedTCPPorts = [ 22 ];
+			networking.hostName = "vmpsateam03-03"; # change accordingly to vm number
+			networking.networkmanager.enable = true;
+			time.timeZone = "Europe/Amsterdam";
 
-    users.users."root".openssh.authorizedKeys.keys = [
-        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIFKywkjovjz87VQHeNVSGUlc/5Nl4eH4Hj1SrYHIeqM"
-        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBwkCLE+pDy8HvHy98MwsNH/sxPYmBRXuREOd2jTMXPV timon.ensel@tum.de"
-    ];
+			users.users."root".openssh.authorizedKeys.keys = [
+					"ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIFKywkjovjz87VQHeNVSGUlc/5Nl4eH4Hj1SrYHIeqM"
+					"ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBwkCLE+pDy8HvHy98MwsNH/sxPYmBRXuREOd2jTMXPV timon.ensel@tum.de"
+			];
 
-    environment.systemPackages = with pkgs; [
-        git
-    ];
+			environment.systemPackages = with pkgs; [
+					git
+			];
 
-    system.stateVersion = "24.05";
+			nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
+			system.stateVersion = "24.05";
     }
     ```
 
 
 - reboot:  
     ```shell  
+    sudo nixos-install --no-root-passwd
     sudo reboot  
     ```
 
 - nixos rebuild um die erstellte config zu laden:  
     ```shell  
-    sudo nixos-rebuild switch  
+		nix store gc
+		nix-collect-garbage -d
+		nix flake lock
+    sudo nixos-rebuild switch --flake .#vmpsateam03-03 
     ```
 
 
