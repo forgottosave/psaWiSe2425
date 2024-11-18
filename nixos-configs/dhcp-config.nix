@@ -9,7 +9,7 @@ in
     { nixpkgs.overlays = [ overlay-kea-unstable ]; }
   ];
 
-  services.kea.dhcp4.enable = {
+  services.kea.dhcp4 = {
     enable = true;
     configFile = ./dhcp4-config.json;
   };
