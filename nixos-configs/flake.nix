@@ -14,6 +14,7 @@
       vmpsateam03-01 = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux"; 
         modules = [
+          { networking.hostName = "vmpsateam03-03"; }
           # Include the main system configuration
           ./configuration.nix
 
