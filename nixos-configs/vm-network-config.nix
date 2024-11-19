@@ -1,23 +1,19 @@
 {config, pkgs, ... }:   
 {
-  environment.etc = {
-    "resolv.conf".text = "nameserver 192.168.3.3\nnameserver 8.8.8.8";
-  };
+  #environment.etc = {
+  #  "resolv.conf".text = "nameserver 192.168.3.3\nnameserver 8.8.8.8";
+  #};
 
   networking = {
     interfaces.enp0s8 = {
-      ipv4.addresses = [
-        { address = "192.168.3.%%vm%%"; prefixLength = 24; }
-      ];
-      ipv4.routes = [
-        { address = "192.168.0.0"; prefixLength = 16; via = "192.168.3.3"; }
-      ];
+      useDHCP = true;
+      #ipv4.addresses = [
+      #  { address = "192.168.3.%%vm%%"; prefixLength = 24; }
+      #];
+      #ipv4.routes = [
+      #  { address = "192.168.0.0"; prefixLength = 16; via = "192.168.3.3"; }
+      #];
     };
-
-    #nameservers = [ "192.168.3.3" ];
-
-    #proxy.httpsProxy = "http://proxy.cit.tum.de:8080/"; 
-    #proxy.httpProxy = "http://proxy.cit.tum.de:8080/";
 
     firewall.extraCommands = '' 
       #iptables -P INPUT ACCEPT
