@@ -1,14 +1,14 @@
 $TTL    1h
-@            IN      SOA     psa-team03.cit.tum.de. hostmaster.psa-team03.cit.tum.de. (
-                                 1    ; Serial
+@            IN      SOA     psa-team03.cit.tum.de. admin.psa-team03.cit.tum.de. (
+                                 24111901    ; Serial
                                  3h   ; Refresh
                                  1h   ; Retry
                                  1w   ; Expire
                                  1h)  ; Negative Cache TTL
-             IN      NS      router.psa-team03.cit.tum.de.
+@       NS        ns1.psa-team03.cit.tum.de.
+@       NS        ns1.psa-team02.cit.tum.de.
+@       NS        ns1.psa-team04.cit.tum.de.
 
-3          IN      PTR       router.psa-team03.cit.tum.de.
-
-1          IN      PTR       vm1.psa-team03.cit.tum.de.
-
-2          IN      PTR       vm2.psa-team03.cit.tum.de.
+3       PTR       ns1.psa-team03.cit.tum.de.
+1       PTR       vm1.psa-team03.cit.tum.de.
+2       PTR       vm2.psa-team03.cit.tum.de.
