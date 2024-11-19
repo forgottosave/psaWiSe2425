@@ -109,7 +109,7 @@ done
 # Week 02
 cp ${THIS_DIR}/test_PSA_02.sh /root/
 
-#cp -a ${THIS_DIR}/../nixos-configs/bind-configs/. /var/bind/
+cp -a ${THIS_DIR}/../nixos-configs/bind-configs/. /etc/nixos/dns/
 
 
 ## 5. reload config ##################################
