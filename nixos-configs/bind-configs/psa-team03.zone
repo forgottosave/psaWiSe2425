@@ -9,7 +9,7 @@ $TTL    1h
 @       NS      ns1
 @       NS      ns1.psa-team02.cit.tum.de
 @       NS      ns1.psa-team04.cit.tum.de
-@       IN      192.168.3.3
+ns1     A       192.168.3.3
 
 vm1     A       192.168.3.1
 vm2     A       192.168.3.2
