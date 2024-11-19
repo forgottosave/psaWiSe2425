@@ -7,10 +7,10 @@ In diesem Blatt geht es darum DNS & DHCP einzurichten. Wir lassen beide services
 ### 1) DNS Server
 **Gescheiterte Versuche:**
 Wir haben lange Zeit versucht **bind** auf NixOS zum laufen zu bekommen. Ähnlich wie für viele Dinge ist hier der support leider sehr bedingt und der Großteil muss in `extraOptions`, oder `extraConfig` gelöst werden (manuelle Eintragungen in die config Dateien).
-Nachdem alle Konfigurationen implementiert waren, lief leider das *forwarding* an andere Teams und das *default-forwarding* nicht. Anfragen mit `psa-team03.cit.tum.de` liefen einwandfrei. Nach sehr langem try-and-error mussten wir **bind** leider aufgeben.
+Nachdem alle Konfigurationen implementiert waren, lief leider das *forwarding* an andere Teams und das *default-forwarding* nicht. Anfragen mit `psa-team03.cit.tum.de` liefen einwandfrei. Nach sehr langem try-and-error mussten wir **bind** leider aufgeben und haben uns, inspiriert durch Team 06, **CoreDNS** zugewandt.
 
 **CoreDNS:**
-Der support für **CoreDNS** ist in NixOS ähnlich wie für **bind**, aber die Umsetzung lief, im Gegensatz dazu, einwandfrei: 
+Der support für **CoreDNS** ist in NixOS ähnlich wie für **bind**, aber die Umsetzung lief, im Gegensatz dazu, einwandfrei:
 
 1. Einrichten der Zone `psa-team03.cit.tum.de` in der Datei `psa-team03.zone`:
    Wir brauchen Einträge für unseren Nameserver (standardmäßig *ns1*), sowie unsere beiden VMs (*vm1* & *vm2*). Auch unsere "Nachbar-Teams" (*team02*, *team04*) bekommen Einträge.
@@ -55,7 +55,10 @@ Der support für **CoreDNS** ist in NixOS ähnlich wie für **bind**, aber die U
 
 4. Als nächstes wird die **DNS-config** in `dns-config.nix`, welche auch zu den imports für VM 3 in `vm-3.sh` hinzugefügt, erstellt:
 
-5. #TODO ?
+5. Wir konfigurieren eine allgemeine Konfiguration für unsere Zonen.
+   - `bind` bestimmt die Netzwerkkarte
+   - `root` bestimmt den Ordner, wo die `.zone` Dateien vorzufinden sind.
+   - #TODO maybe brauchen wir den Rest gar nicht mehr
 ```nixos
   (common) {
     bind enp0s8
@@ -66,18 +69,16 @@ Der support für **CoreDNS** ist in NixOS ähnlich wie für **bind**, aber die U
   }
   ```
 
-6. #TODO default forwarding
+6. **Default forwarding** (.) an die internen Nameserver, [chaos](https://coredns.io/plugins/chaos/) für Versions- & Autoren-Informationen
 ```nixos
   . {
-    # Normaler traffic soll an die internen Nameserver weitergeleitet werden
     forward . 131.159.254.1 131.159.254.2
-    # Haha funny DNS
     chaos MayItFinallyWork Benni Timon
     import common
   }
   ```
 
-7. #TODO unsere team subnets
+7. Unsere Subnetze müssen eingerichtet werden und Transfers zu den "Nachbar-Teams" eingerichtet werden. Wir verwenden hierfür die eben errichteten jeweiligen `.zone` Dateien, sowie die oben definierte Konfiguration `common`.
 ```nixos
   psa-team03.cit.tum.de {
     file psa-team03.zone
@@ -102,7 +103,7 @@ Der support für **CoreDNS** ist in NixOS ähnlich wie für **bind**, aber die U
   }
   ```
   
-8. #TODO team forwarding, "Nachbar-Teams" als secondary Nameserver
+8. Zuletzt wird das Forwarding zu den anderen Teams (DNS-Servern) eingerichtet. Jedes Team bekommt hier eine weitere Zone mit forwarding an den jeweiligen Router. Unsere "Nachbar-Teams" werden als secondary Nameserver eingetragen.
 ```nixos
   psa-team01.cit.tum.de 1.168.192.in-addr.arpa {
     forward . 192.168.1.1
@@ -154,6 +155,9 @@ Der support für **CoreDNS** ist in NixOS ähnlich wie für **bind**, aber die U
   }
   ```
 
+Quellen:
+- https://coredns.io/2017/07/24/quick-start/
+- https://psa.in.tum.de/xwiki/bin/download/PSA%20WiSe%202024%20%202025/Pr%C3%A4sentation%20der%20Aufgaben/WebHome/DNS_DHCP.pdf?rev=1.1
 ### 2) DHCP Server
 
 #TODO
