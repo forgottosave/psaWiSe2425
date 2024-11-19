@@ -18,8 +18,7 @@
   services.sshd.enable = true;
   services.openssh = {
       enable = true;                                  # Enable the OpenSSH daemon
-      PermitRootLogin = "prohibit-password";          # Disable root passwd login
-      PasswordAuthentication = false;                 # Disable password authentication
+      settings.PasswordAuthentication = false;                 # Disable password authentication
       settings.KbdInteractiveAuthentication = false;  # Disable keyboard-interactive authentication
       settings.PermitRootLogin = "yes";               # Enable root login
   };
