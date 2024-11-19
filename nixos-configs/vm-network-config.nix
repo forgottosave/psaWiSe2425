@@ -1,7 +1,7 @@
 {config, pkgs, ... }:   
 {
   networking = {
-    interfaces.enp0s8 = {
+    #interfaces.enp0s8 = {
       #useDHCP = true;
       #ipv4.addresses = [
       #  { address = "192.168.3.%%vm%%"; prefixLength = 24; }
@@ -9,7 +9,9 @@
       #ipv4.routes = [
       #  { address = "192.168.0.0"; prefixLength = 16; via = "192.168.3.3"; }
       #];
-    };
+    #};
+
+
 
     firewall.extraCommands = '' 
       #iptables -P INPUT ACCEPT
@@ -84,6 +86,8 @@
     '';
   };  
 
+  networking.useNetworkd = true;
+
   systemd.network = {
     enable = true;
     networks."psa-internal" = {
@@ -106,6 +110,10 @@
           "192.168.10.2"
         ];
       };
+    };
+    networks."external" = {
+      name = "enp0s3";
+      DHCP = "yes";
     };
   };
 }
