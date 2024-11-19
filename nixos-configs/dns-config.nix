@@ -13,8 +13,6 @@ in
                 bind enp0s8
                 root ${zones}
                 log
-                errors
-                nsid https://youtu.be/xvFZjo5PgG0
         }
         
         . {

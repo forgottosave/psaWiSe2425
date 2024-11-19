@@ -58,14 +58,12 @@ Der support für **CoreDNS** ist in NixOS ähnlich wie für **bind**, aber die U
 5. Wir konfigurieren eine allgemeine Konfiguration für unsere Zonen.
    - `bind` bestimmt die Netzwerkkarte
    - `root` bestimmt den Ordner, wo die `.zone` Dateien vorzufinden sind.
-   - #TODO maybe brauchen wir den Rest gar nicht mehr
+   - `log` activates logging
 ```nixos
   (common) {
     bind enp0s8
     root ${zones}
     log
-    errors
-    nsid https://youtu.be/xvFZjo5PgG0
   }
   ```
 
