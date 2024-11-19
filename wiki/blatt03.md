@@ -55,12 +55,12 @@ Der support für **CoreDNS** ist in NixOS ähnlich wie für **bind**, aber die U
 
 4. Als nächstes wird die **DNS-config** in `dns-config.nix`, welche auch zu den imports für VM 3 in `vm-3.sh` hinzugefügt, erstellt:
 
-5. Wir konfigurieren eine allgemeine Konfiguration für unsere Zonen.
+5. Wir konfigurieren eine allgemeine Konfiguration (`default`) für unsere Zonen.
    - `bind` bestimmt die Netzwerkkarte
    - `root` bestimmt den Ordner, wo die `.zone` Dateien vorzufinden sind.
    - `log` activates logging
 ```nixos
-  (common) {
+  (default) {
     bind enp0s8
     root ${zones}
     log
@@ -72,11 +72,11 @@ Der support für **CoreDNS** ist in NixOS ähnlich wie für **bind**, aber die U
   . {
     forward . 131.159.254.1 131.159.254.2
     chaos MayItFinallyWork Benni Timon
-    import common
+    import default
   }
   ```
 
-7. Unsere Subnetze müssen eingerichtet werden und Transfers zu den "Nachbar-Teams" eingerichtet werden. Wir verwenden hierfür die eben errichteten jeweiligen `.zone` Dateien, sowie die oben definierte Konfiguration `common`.
+7. Unsere Subnetze müssen eingerichtet werden und Transfers zu den "Nachbar-Teams" eingerichtet werden. Wir verwenden hierfür die eben errichteten jeweiligen `.zone` Dateien, sowie die oben definierte Konfiguration `default`.
 ```nixos
   psa-team03.cit.tum.de {
     file psa-team03.zone
@@ -86,7 +86,7 @@ Der support für **CoreDNS** ist in NixOS ähnlich wie für **bind**, aber die U
       to 192.168.4.1
       to 192.168.43.4
     }
-    import common
+    import default
   }
 
   3.168.192.in-addr.arpa {
@@ -97,7 +97,7 @@ Der support für **CoreDNS** ist in NixOS ähnlich wie für **bind**, aber die U
       to 192.168.4.1
       to 192.168.43.4
     }
-    import common
+    import default
   }
   ```
   
@@ -105,51 +105,51 @@ Der support für **CoreDNS** ist in NixOS ähnlich wie für **bind**, aber die U
 ```nixos
   psa-team01.cit.tum.de 1.168.192.in-addr.arpa {
     forward . 192.168.1.1
-    import common
+    import default
   }
 
   psa-team02.cit.tum.de 2.168.192.in-addr.arpa {
     secondary {
       transfer from 192.168.2.1
     }
-    import common
+    import default
   }
 
   psa-team04.cit.tum.de 4.168.192.in-addr.arpa {
     secondary {
       transfer from 192.168.4.1
     }
-    import common
+    import default
   }
 
   psa-team05.cit.tum.de 5.168.192.in-addr.arpa {
     forward . 192.168.5.1
-    import common
+    import default
   }
 
   psa-team06.cit.tum.de 6.168.192.in-addr.arpa {
     forward . 192.168.6.1
-    import common
+    import default
   }
 
   psa-team07.cit.tum.de 7.168.192.in-addr.arpa {
     forward . 192.168.7.1
-    import common
+    import default
   }
 
   psa-team08.cit.tum.de 8.168.192.in-addr.arpa {
     forward . 192.168.8.6
-    import common
+    import default
   }
 
   psa-team09.cit.tum.de 9.168.192.in-addr.arpa {
     forward . 192.168.9.1
-    import common
+    import default
   }
 
   psa-team10.cit.tum.de 10.168.192.in-addr.arpa {
     forward . 192.168.10.2
-    import common
+    import default
   }
   ```
 

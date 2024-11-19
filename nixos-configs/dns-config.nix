@@ -9,20 +9,15 @@ in
     enable = true;
     config =
       ''
-        (common) {
+        (default) {
                 bind enp0s8
                 root ${zones}
                 log
         }
         
         . {
-                # Normaler traffic soll an die internen Nameserver weitergeleitet werden
                 forward . 131.159.254.1 131.159.254.2
-        
-                # Haha funny DNS
-                chaos MayItFinallyWork Benni Timon
-        
-                import common
+                import default
         }
         
         # Unser Team DNS
@@ -34,7 +29,7 @@ in
                         to 192.168.4.1
                         to 192.168.43.4
                 }
-                import common
+                import default
         }
         
         # Unser Team Reverse DNS
@@ -46,7 +41,7 @@ in
                         to 192.168.4.1
                         to 192.168.43.4
                 }
-                import common
+                import default
         }
         
         
@@ -54,51 +49,51 @@ in
         
         psa-team01.cit.tum.de 1.168.192.in-addr.arpa {
                 forward . 192.168.1.1
-                import common
+                import default
         }
         
         psa-team02.cit.tum.de 2.168.192.in-addr.arpa {
                 secondary {
                         transfer from 192.168.2.1
                 }
-                import common
+                import default
         }
         
         psa-team04.cit.tum.de 4.168.192.in-addr.arpa {
                 secondary {
                         transfer from 192.168.4.1
                 }
-                import common
+                import default
         }
         
         psa-team05.cit.tum.de 5.168.192.in-addr.arpa {
                 forward . 192.168.5.1
-                import common
+                import default
         }
 
         psa-team06.cit.tum.de 6.168.192.in-addr.arpa {
                 forward . 192.168.6.1
-                import common
+                import default
         }
         
         psa-team07.cit.tum.de 7.168.192.in-addr.arpa {
                 forward . 192.168.7.1
-                import common
+                import default
         }
         
         psa-team08.cit.tum.de 8.168.192.in-addr.arpa {
                 forward . 192.168.8.6
-                import common
+                import default
         }
         
         psa-team09.cit.tum.de 9.168.192.in-addr.arpa {
                 forward . 192.168.9.1
-                import common
+                import default
         }
         
         psa-team10.cit.tum.de 10.168.192.in-addr.arpa {
                 forward . 192.168.10.2
-                import common
+                import default
         }
       '';
   };
