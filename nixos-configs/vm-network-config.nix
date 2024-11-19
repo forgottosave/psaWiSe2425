@@ -1,9 +1,5 @@
 {config, pkgs, ... }:   
 {
-  environment.etc = {
-    "resolv.conf".text = "nameserver 192.168.3.3\nnameserver 8.8.8.8";
-  };
-
   networking = {
     interfaces.enp0s8 = {
       #useDHCP = true;
