@@ -1,15 +1,15 @@
-$ORIGIN psa-team03.cit.tum.de.
 $TTL    1h
-@            IN      SOA     psa-team03.cit.tum.de. hostmaster (
-                                 1    ; Serial
-                                 3h   ; Refresh
-                                 1h   ; Retry
-                                 1w   ; Expire
-                                 1h)  ; Negative Cache TTL
-             IN      NS      router
+@       IN      SOA     ns1 admin (
+                        24111901    ; Serial
+                        3h   ; Refresh
+                        1h   ; Retry
+                        1w   ; Expire
+                        1h)  ; Negative Cache TTL
 
-router       IN      A       192.168.3.3
+@       NS      ns1
+@       NS      ns1.psa-team02.cit.tum.de
+@       NS      ns1.psa-team04.cit.tum.de
+@       IN      192.168.3.3
 
-vm1          IN      A       192.168.3.1
-
-vm2          IN      A       192.168.3.2
+vm1     A       192.168.3.1
+vm2     A       192.168.3.2
