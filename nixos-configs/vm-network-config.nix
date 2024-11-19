@@ -7,12 +7,12 @@
   networking = {
     interfaces.enp0s8 = {
       #useDHCP = true;
-      ipv4.addresses = [
-        { address = "192.168.3.%%vm%%"; prefixLength = 24; }
-      ];
-      ipv4.routes = [
-        { address = "192.168.0.0"; prefixLength = 16; via = "192.168.3.3"; }
-      ];
+      #ipv4.addresses = [
+      #  { address = "192.168.3.%%vm%%"; prefixLength = 24; }
+      #];
+      #ipv4.routes = [
+      #  { address = "192.168.0.0"; prefixLength = 16; via = "192.168.3.3"; }
+      #];
     };
 
     firewall.extraCommands = '' 
@@ -87,4 +87,28 @@
       iptables -A OUTPUT -p icmp -j ACCEPT
     '';
   };  
+
+  systemd.networks = {
+    "psa-internal" = {
+      name = "enp0s8";
+      DHCP = "yes";
+      dhcpV4Config = {
+        UseDNS = true;
+        UseRoutes = true;
+        ClientIdentifier = "mac";
+        UseDomains = true;
+        BlackList = [
+          "192.168.56.100"
+          "192.168.1.53"
+          "192.168.2.2"
+          "192.168.4.10"
+          "192.168.6.1"
+          "192.168.7.2"
+          "192.168.8.7"
+          "192.168.9.1"
+          "192.168.10.2"
+        ];
+      };
+    };
+  };
 }
