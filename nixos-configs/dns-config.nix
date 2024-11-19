@@ -2,7 +2,7 @@
 # CoreDNS, wie bei Team 06
 { ... }:
 let
-  zones = /etc/nixos/dns/;
+  zones = /etc/nixos/dns;
 in
 {
   services.coredns = {
