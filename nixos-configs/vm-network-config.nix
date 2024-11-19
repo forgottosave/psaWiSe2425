@@ -88,8 +88,9 @@
     '';
   };  
 
-  systemd.networks = {
-    "psa-internal" = {
+  systemd.network = {
+    enable = true;
+    networks."psa-internal" = {
       name = "enp0s8";
       DHCP = "yes";
       dhcpV4Config = {
