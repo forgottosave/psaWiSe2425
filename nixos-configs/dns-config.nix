@@ -1,5 +1,4 @@
-# Nach gescheiterten Versuchen:
-# CoreDNS, wie bei Team 06
+# Nach vielen gescheiterten Versuchen: CoreDNS
 { ... }:
 let
   zones = /etc/nixos/dns;
@@ -7,96 +6,95 @@ in
 {
   services.coredns = {
     enable = true;
-    config =
-      ''
+    config = ''
         (default) {
-                bind enp0s8
-                root ${zones}
-                log
+            bind enp0s8
+            root ${zones}
+            log
         }
         
         . {
-                forward . 131.159.254.1 131.159.254.2
-                import default
+            forward . 131.159.254.1 131.159.254.2
+            import default
         }
         
         # Unser Team DNS
         psa-team03.cit.tum.de {
-                file psa-team03.zone
-                transfer {
-                        to 192.168.2.1
-                        to 192.168.32.2
-                        to 192.168.4.1
-                        to 192.168.43.4
-                }
-                import default
+            file psa-team03.zone
+            transfer {
+                    to 192.168.2.1
+                    to 192.168.32.2
+                    to 192.168.4.1
+                    to 192.168.43.4
+            }
+            import default
         }
         
         # Unser Team Reverse DNS
         3.168.192.in-addr.arpa {
-                file 3.168.192.zone
-                transfer {
-                        to 192.168.2.1
-                        to 192.168.32.2
-                        to 192.168.4.1
-                        to 192.168.43.4
-                }
-                import default
+            file 3.168.192.zone
+            transfer {
+                    to 192.168.2.1
+                    to 192.168.32.2
+                    to 192.168.4.1
+                    to 192.168.43.4
+            }
+            import default
         }
         
         
         ### OTHER TEAMS FORWARDING ###
         
         psa-team01.cit.tum.de 1.168.192.in-addr.arpa {
-                forward . 192.168.1.1
-                import default
+            forward . 192.168.1.1
+            import default
         }
         
         psa-team02.cit.tum.de 2.168.192.in-addr.arpa {
-                secondary {
-                        transfer from 192.168.2.1
-                }
-                import default
+            secondary {
+                    transfer from 192.168.2.1
+            }
+            import default
         }
         
         psa-team04.cit.tum.de 4.168.192.in-addr.arpa {
-                secondary {
-                        transfer from 192.168.4.1
-                }
-                import default
+            secondary {
+                    transfer from 192.168.4.1
+            }
+            import default
         }
         
         psa-team05.cit.tum.de 5.168.192.in-addr.arpa {
-                forward . 192.168.5.1
-                import default
+            forward . 192.168.5.1
+            import default
         }
 
         psa-team06.cit.tum.de 6.168.192.in-addr.arpa {
-                forward . 192.168.6.1
-                import default
+            forward . 192.168.6.1
+            import default
         }
         
         psa-team07.cit.tum.de 7.168.192.in-addr.arpa {
-                forward . 192.168.7.1
-                import default
+            forward . 192.168.7.1
+            import default
         }
         
         psa-team08.cit.tum.de 8.168.192.in-addr.arpa {
-                forward . 192.168.8.6
-                import default
+            forward . 192.168.8.6
+            import default
         }
         
         psa-team09.cit.tum.de 9.168.192.in-addr.arpa {
-                forward . 192.168.9.1
-                import default
+            forward . 192.168.9.1
+            import default
         }
         
         psa-team10.cit.tum.de 10.168.192.in-addr.arpa {
-                forward . 192.168.10.2
-                import default
+            forward . 192.168.10.2
+            import default
         }
-      '';
-  };
+    '';
+    };
 }
 
 
