@@ -5,7 +5,7 @@ vm=$VM_NUMBER
 include_files=(
     configuration.nix
     router-network.nix
-    #dns-config.nix
+    dns-config.nix
     dhcp-config.nix
     flake.nix
     dhcp4-config.json
