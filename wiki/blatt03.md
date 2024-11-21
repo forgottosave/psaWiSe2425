@@ -176,4 +176,8 @@ Quellen:
 
 ### 3) Testing
 
-#TODO
+Das grundlegende Test-Setup bleibt identisch zu letzter Woche (siehe Blatt03).
+
+1. Um DNS zu testen, nutzen wir `host -a` und `nslookup`. #TODO
+
+2. DHCP #TODO
