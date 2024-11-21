@@ -22,6 +22,10 @@
           (import ./dhcp-config.nix {
             inputs = { inherit unstable; };
           })
+          # Include the database-specific configuration with PostgreSQL
+          (import ./database.nix {
+            inputs = { inherit unstable; };
+          })
         ];
       };
     };
