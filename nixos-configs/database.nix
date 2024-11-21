@@ -1,21 +1,15 @@
-{ inputs, ... }:
-let 
-  overlay-pgsql-unstable = final: prev: {
-    pgsql = inputs.unstable.legacyPackages."x86_64-linux".postgresql;
+{ inputs, pkgs, ... }:
+let
+  overlay-pg-unstable = final: prev: {
+    postgresql = inputs.unstable.legacyPackages."x86_64-linux".postgresql_17;
   };
 in
 {
-  imports = [
-    { nixpkgs.overlays = [ overlay-pgsql-unstable ]; }
-  ];
-  
+  nixpkgs.overlays = [ overlay-pg-unstable ];
+
   services.postgresql = {
     enable = true;
-    package = pkgs.postgresql_17;
+    dataDir = "/var/lib/postgresql/data";
     ensureDatabases = [ "mydatabase" ];
-    authentication = pkgs.lib.mkOverride 10 ''
-      #type database  DBuser  auth-method
-      local all       all     trust
-    '';
   };
 }

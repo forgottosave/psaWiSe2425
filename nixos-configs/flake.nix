@@ -1,5 +1,5 @@
 {
-  description = "NixOS configuration with Kea DHCP service";
+  description = "NixOS configuration with Kea DHCP and PostgreSQL 17";
 
   inputs = {
     # Use the stable NixOS channel for the base system
@@ -9,22 +9,19 @@
   };
 
   outputs = { self, nixpkgs, unstable }: {
-    # Define the NixOS configuration
     nixosConfigurations = {
       vmpsateam03-03 = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux"; 
         modules = [
-          #{ networking.hostName = "vmpsateam03-03"; }
-          # Include the main system configuration
           ./configuration.nix
-
           # Include the DHCP-specific configuration with Kea
           (import ./dhcp-config.nix {
             inputs = { inherit unstable; };
           })
-          # Include the database-specific configuration with PostgreSQL
+          # Database configuration using PostgreSQL 17
           (import ./database.nix {
             inputs = { inherit unstable; };
+            pkgs = nixpkgs.legacyPackages."x86_64-linux";
           })
         ];
       };
