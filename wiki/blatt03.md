@@ -55,19 +55,32 @@ Der support für **CoreDNS** ist in NixOS ähnlich wie für **bind**, aber die U
 
 4. Als nächstes wird die **DNS-config** in `dns-config.nix`, welche auch zu den imports für VM 3 in `vm-3.sh` hinzugefügt, erstellt:
 
-5. Wir konfigurieren eine allgemeine Konfiguration (`default`) für unsere Zonen.
+5. Dafür aktivieren wir CoreDNS in einer neuen NixOS config (`dns-config.nix`) und konfigurieren es in den nächsten Schritten:
+```nixos
+  { ... }:
+  {
+    services.coredns = {
+      enable = true;
+      config = ''
+        ...
+      '';
+    }
+  }
+  ```
+
+6. Wir konfigurieren eine allgemeine Konfiguration (`default`) für unsere Zonen.
    - `bind` bestimmt die Netzwerkkarte
    - `root` bestimmt den Ordner, wo die `.zone` Dateien vorzufinden sind.
    - `log` activates logging
 ```nixos
   (default) {
     bind enp0s8
-    root ${zones}
+    root /etc/nixos/dns
     log
   }
   ```
 
-6. **Default forwarding** (.) an die internen Nameserver, [chaos](https://coredns.io/plugins/chaos/) für Versions- & Autoren-Informationen
+7. **Default forwarding** (.) an die internen Nameserver, [chaos](https://coredns.io/plugins/chaos/) für Versions- & Autoren-Informationen
 ```nixos
   . {
     forward . 131.159.254.1 131.159.254.2
@@ -76,7 +89,7 @@ Der support für **CoreDNS** ist in NixOS ähnlich wie für **bind**, aber die U
   }
   ```
 
-7. Unsere Subnetze müssen eingerichtet werden und Transfers zu den "Nachbar-Teams" eingerichtet werden. Wir verwenden hierfür die eben errichteten jeweiligen `.zone` Dateien, sowie die oben definierte Konfiguration `default`.
+8. Unsere Subnetze müssen eingerichtet werden und Transfers zu den "Nachbar-Teams" eingerichtet werden. Wir verwenden hierfür die eben errichteten jeweiligen `.zone` Dateien, sowie die oben definierte Konfiguration `default`.
 ```nixos
   psa-team03.cit.tum.de {
     file psa-team03.zone
@@ -101,7 +114,7 @@ Der support für **CoreDNS** ist in NixOS ähnlich wie für **bind**, aber die U
   }
   ```
   
-8. Zuletzt wird das Forwarding zu den anderen Teams (DNS-Servern) eingerichtet. Jedes Team bekommt hier eine weitere Zone mit forwarding an den jeweiligen Router. Unsere "Nachbar-Teams" werden als secondary Nameserver eingetragen.
+9. Zuletzt wird das Forwarding zu den anderen Teams (DNS-Servern) eingerichtet. Jedes Team bekommt hier eine weitere Zone mit forwarding an den jeweiligen Router. Unsere "Nachbar-Teams" werden als secondary Nameserver eingetragen.
 ```nixos
   psa-team01.cit.tum.de 1.168.192.in-addr.arpa {
     forward . 192.168.1.1
@@ -156,6 +169,7 @@ Der support für **CoreDNS** ist in NixOS ähnlich wie für **bind**, aber die U
 Quellen:
 - https://coredns.io/2017/07/24/quick-start/
 - https://psa.in.tum.de/xwiki/bin/download/PSA%20WiSe%202024%20%202025/Pr%C3%A4sentation%20der%20Aufgaben/WebHome/DNS_DHCP.pdf?rev=1.1
+
 ### 2) DHCP Server
 
 #TODO
