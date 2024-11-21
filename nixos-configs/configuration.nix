@@ -43,8 +43,8 @@
     traceroute
     tcptraceroute
     bind
-    dhclient
     dhcpdump
+    dhcping
   ];
   programs.mtr.enable = true;
 
