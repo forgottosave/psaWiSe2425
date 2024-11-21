@@ -1,15 +1,12 @@
 # Nach vielen gescheiterten Versuchen: CoreDNS
 { ... }:
-let
-  zones = /etc/nixos/dns;
-in
 {
   services.coredns = {
     enable = true;
     config = ''
         (default) {
             bind enp0s8
-            root ${zones}
+            root /etc/nixos/dns
             log
         }
         
