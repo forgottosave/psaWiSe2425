@@ -54,6 +54,10 @@
       iptables -A INPUT -p udp --dport 53 -j ACCEPT 
       iptables -A INPUT -p tcp --dport 53 -j ACCEPT
 
+      # Allow: DHCP
+      iptables -A INPUT -p udp --sport 68 --dport 67 -j ACCEPT
+      iptables -A OUTPUT -p udp --sport 67 --dport 68 -j ACCEPT
+
       # Allow: incoming HTTP, HTTPS, and responses to the requests
       iptables -A INPUT -p tcp --dport 80 -j ACCEPT
       iptables -A OUTPUT -p tcp --sport 80 -j ACCEPT
