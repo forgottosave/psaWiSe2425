@@ -1,14 +1,10 @@
 {
     "Dhcp4": {
 
-        # Gültigkeit eines Lease
         "valid-lifetime": 300,
-        # Nach wie vielen sec soll neu angefragt werden
         "renew-timer": 150,
-        # Falls renew nicht funktioniert hat
         "rebind-timer": 240,
 
-        # Lease Datenbank
         "lease-database": {
             "type": "memfile",
             "persist": true,
@@ -18,10 +14,8 @@
 
         "host-reservation-identifiers": [ "hw-address" ],
 
-        # DHCP soll nicht antworten, falls angefragte IP nicht verfügbar
         "authoritative": false,
 
-        # Auf welchen Interface soll DHCP hören
         "interfaces-config": {
             "interfaces": ["enp0s8/192.168.3.3"],
             "dhcp-socket-type": "raw"
@@ -35,13 +29,11 @@
                 "reservations-out-of-pool": true,
 
                 "reservations" : [
-                    # VM1
                     {
                         "hw-address": "08:00:27:4c:bb:84",
                         "ip-address": "192.168.3.1",
                         "hostname": "vm1"
                     },
-                    # VM2
                     {
                         "hw-address": "08:00:27:4b:46:40",
                         "ip-address": "192.168.3.2",
@@ -51,7 +43,6 @@
             }
         ],
 
-        # Kea supportet 252 noch nicht, daher müssen wir eine custom option schreiben
         "option-def": [
             {
                 "code": 252,
@@ -60,9 +51,7 @@
             }
         ],
 
-        # DHCP options 
         "option-data" : [
-            # Netzmaske wird automatische berechnet
             {
                 "name": "routers",
                 "data": "192.168.3.3",
@@ -91,7 +80,6 @@
             }
         ],
 
-        # Settings für den Logger
         "loggers": [
             {
                 "name": "kea-dhcp4",
