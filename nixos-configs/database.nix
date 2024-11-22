@@ -12,12 +12,12 @@ in
   # Enable the PostgreSQL service
   services.postgresql = {
     enable = true;
-    package = pkgs.postgresql; # Use the PostgreSQL package from the overlay
+    #package = pkgs.postgresql; # Use the PostgreSQL package from the overlay
     dataDir = "/var/lib/postgresql"; # Default data directory for PostgreSQL
     # Initialize with a simple configuration
-    initialScript = ''
-      CREATE USER admin WITH PASSWORD 'admin_password';
-      CREATE DATABASE example_db OWNER admin;
-    '';
+    #initialScript = ''
+    #  CREATE USER admin WITH PASSWORD 'admin_password';
+    #  CREATE DATABASE example_db OWNER admin;
+    #'';
   };
 }
