@@ -18,13 +18,20 @@
           (import ./dhcp-config.nix {
             inputs = { inherit unstable; };
           })
+        ];
+      };
+      vmpsateam03-04 = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux"; 
+        modules = [
+          ./configuration.nix
           # Database configuration using PostgreSQL 17
           (import ./database.nix {
             inputs = { inherit unstable; };
-            pkgs = nixpkgs.legacyPackages."x86_64-linux";
           })
         ];
       };
     };
   };
 }
+
+ 
