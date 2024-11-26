@@ -40,7 +40,7 @@
                         "hostname": "vm2"
                     },
                     {
-                        "hw-address": "08:00:27:3b:3e:25",
+                        "hw-address": "08:00:27:70:68:22",
                         "ip-address": "192.168.3.4",
                         "hostname": "database"
                     }
