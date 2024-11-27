@@ -22,7 +22,7 @@
 #  };
 #}
 
-{ inputs, ... }:
+{ inputs, pkgs, config, ... }:
 {
   config.services.postgresql = {
     enable = true;
