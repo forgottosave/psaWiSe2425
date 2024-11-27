@@ -11,5 +11,6 @@ $TTL    1h
 @       NS      ns1.psa-team04.cit.tum.de
 ns1     A       192.168.3.3
 
-vm1     A       192.168.3.1
-vm2     A       192.168.3.2
+vm1          A       192.168.3.1
+vm2          A       192.168.3.2
+database     A       192.168.3.4

@@ -12,3 +12,4 @@ $TTL    1h
 3       PTR       ns1.psa-team03.cit.tum.de.
 1       PTR       vm1.psa-team03.cit.tum.de.
 2       PTR       vm2.psa-team03.cit.tum.de.
+4       PTR       database.psa-team03.cit.tum.de.
