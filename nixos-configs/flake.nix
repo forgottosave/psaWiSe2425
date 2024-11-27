@@ -25,9 +25,9 @@
         modules = [
           ./configuration.nix
           # Database configuration using PostgreSQL 17
-          #(import ./database.nix {
-          #  inputs = { inherit unstable; };
-          #})
+          (import ./database.nix {
+            inputs = { inherit unstable; };
+          })
         ];
       };
     };
