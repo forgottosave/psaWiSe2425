@@ -116,5 +116,12 @@ cp -a ${THIS_DIR}/../nixos-configs/bind-configs/. /etc/nixos/dns/
 ## 5. reload config ##################################
 
 if [ "$NIXOS_REBUILD" = true ] ; then
+    # WARNING: removes firewall, as long as the problem isn't fixed
+    # remove after fixing firewall
+    iptables -P INPUT ACCEPT
+    iptables -P OUTPUT ACCEPT
+    iptables -P FORWARD ACCEPT
+    iptables -F
+    # rebuild
     sudo nixos-rebuild switch
 fi
