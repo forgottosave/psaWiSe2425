@@ -45,7 +45,7 @@
     bind
     dhcpdump
     dhcping
-    postgresql
+    postgresql_17
   ];
   programs.mtr.enable = true;
 
