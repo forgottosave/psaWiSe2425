@@ -3,7 +3,7 @@
 
   inputs = {
     # Use the stable NixOS channel for the base system
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
     # Use the unstable channel for the latest Kea package
     unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
   };
@@ -25,9 +25,9 @@
         modules = [
           ./configuration.nix
           # Database configuration using PostgreSQL 17
-          (import ./database.nix {
-            inputs = { inherit unstable; };
-          })
+          #(import ./database.nix {
+          #  inputs = { inherit unstable; };
+          #})
         ];
       };
     };
