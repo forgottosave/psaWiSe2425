@@ -24,6 +24,7 @@
 
 { config, lib, pkgs, ... }:
 {
+  # DATABASE SETUP
   services.postgresql = {
     enable = true;
     package = pkgs.postgresql_17;
@@ -38,11 +39,13 @@
        # Let other names login as themselves
        #superuser_map      /^(.*)$   \1
     '';
+    # SysUser -> DBUser map
     authentication = pkgs.lib.mkOverride 10 ''
       #type database  DBuser  auth-method                  optional_ident_map
       local all       all     trust                        #map=superuser_map
       host  team02    team02  127.0.0.1/32 scram-sha-256
     '';
+    # Users & Databases
     initialScript = pkgs.writeText "backend-initScript" ''
       CREATE ROLE nixcloud WITH LOGIN PASSWORD 'nixcloud' CREATEDB;
       CREATE ROLE team02 WITH LOGIN PASSWORD 'team02' CREATEDB;
@@ -52,5 +55,13 @@
       GRANT ALL PRIVILEGES ON DATABASE team02 TO nixcloud;
       GRANT ALL PRIVILEGES ON DATABASE team02 TO team02;
     '';
+  };
+  # BACKUP SETUP
+  services.postgresqlBackup = {
+    enable = true;
+    startAt = "*-*-* 01:15:00";
+    location = "/root/database_backups/";
+    backupAll = true;
+    compression = "gzip";
   };
 }
