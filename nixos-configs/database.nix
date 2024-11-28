@@ -42,7 +42,7 @@
     # SysUser -> DBUser map
     authentication = pkgs.lib.mkOverride 10 ''
       #type database  DBuser  auth-method                  optional_ident_map
-      local all       all     trust                        #map=superuser_map
+      local all       all     peer                         map=superuser_map
       host  team02    team02  127.0.0.1/32 scram-sha-256
     '';
     # Users & Databases
