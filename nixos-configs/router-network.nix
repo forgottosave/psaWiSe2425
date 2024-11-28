@@ -138,6 +138,10 @@
       # Allow: ICMP 
       iptables -A INPUT -p icmp -j ACCEPT
       iptables -A OUTPUT -p icmp -j ACCEPT
+
+      # Allow: database access
+      iptables -A INPUT -p tcp --dport 5432 -j ACCEPT
+      iptables -A OUTPUT -p tcp --sport 5432 -j ACCEPT
     '';
   };
 

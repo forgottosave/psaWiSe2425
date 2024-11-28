@@ -29,7 +29,7 @@
     package = pkgs.postgresql_17;
     ensureDatabases = [ "rootdb" "team02db" ];
     enableTCPIP = true;
-    # settings.port = 5432;
+    settings.port = 5432;
     # limit users from accessing databases
     identMap = ''
        # ArbitraryMapName systemUser DBUser
