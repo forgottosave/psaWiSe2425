@@ -43,7 +43,7 @@
     authentication = pkgs.lib.mkOverride 10 ''
       #type database  DBuser  auth-method                  optional_ident_map
       local all       all     peer                         map=superuser_map
-      host  team02    team02  127.0.0.1/32 scram-sha-256
+      host  team02    team02  192.168.0.0/16 scram-sha-256
     '';
     # Users & Databases
     initialScript = pkgs.writeText "backend-initScript" ''
