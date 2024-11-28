@@ -26,7 +26,7 @@
 {
   services.postgresql = {
     enable = true;
-    package = pkgs.postgresql_16;
+    package = pkgs.postgresql_17;
     ensureDatabases = [ "rootdb" "team02db" ];
     enableTCPIP = true;
     # settings.port = 5432;
@@ -40,7 +40,7 @@
     '';
     authentication = pkgs.lib.mkOverride 10 ''
       #type database  DBuser  auth-method                  optional_ident_map
-      local all       all     trust                        map=superuser_map
+      local all       all     trust                        #map=superuser_map
       host  team02    team02  127.0.0.1/32 scram-sha-256
     '';
     initialScript = pkgs.writeText "backend-initScript" ''
