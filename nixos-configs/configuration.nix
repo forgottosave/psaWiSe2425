@@ -46,6 +46,7 @@
     dhcpdump
     dhcping
     postgresql_17
+    docker-compose
   ];
   programs.mtr.enable = true;
 
