@@ -88,6 +88,7 @@
       iptables -A OUTPUT -p tcp --sport 443 -j ACCEPT
 
       # Outgoing only to specific IPs
+      iptables -A OUTPUT -d 146.75.118.217 -j ACCEPT # nixos cache
       iptables -A OUTPUT -d 151.101.2.217 -j ACCEPT
       iptables -A OUTPUT -d 151.101.130.217 -j ACCEPT
       iptables -A OUTPUT -d 151.101.66.217 -j ACCEPT
@@ -103,6 +104,10 @@
       iptables -A OUTPUT -d 192.168.8.0/24 -j ACCEPT
       iptables -A OUTPUT -d 192.168.9.0/24 -j ACCEPT
       iptables -A OUTPUT -d 192.168.10.0/24 -j ACCEPT
+      # docker compose
+      iptables -A OUTPUT -d 54.227.20.253 -j ACCEPT
+      iptables -A OUTPUT -d 54.236.113.205 -j ACCEPT
+      iptables -A OUTPUT -d 54.198.86.24 -j ACCEPT
 
       # Allow: Forrwarding between the networks
       # intern->extern
