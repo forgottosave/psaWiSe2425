@@ -43,6 +43,11 @@
                         "hw-address": "08:00:27:70:68:22",
                         "ip-address": "192.168.3.4",
                         "hostname": "database"
+                    },
+                    {
+                        "hw-address": "08:00:27:9f:27:cf",
+                        "ip-address": "192.168.3.5",
+                        "hostname": "homeassistant"
                     }
                 ]
             }
