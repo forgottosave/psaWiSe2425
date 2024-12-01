@@ -28,31 +28,30 @@
   services.postgresql = {
     enable = true;
     package = pkgs.postgresql_17;
-    ensureDatabases = [ "team03db" "team02db" ];
+    ensureDatabases = [ "team02db" ];
     enableTCPIP = true;
     #settings.port = 5432;
-    ## limit users from accessing databases
-    #identMap = ''
-    #   # ArbitraryMapName systemUser DBUser
-    #   superuser_map      root      postgres
-    #   superuser_map      postgres  postgres
-    #   superuser_map      root      team02
-    #   superuser_map      team02    team02
-    #   # Let other names login as themselves
-    #   #superuser_map      /^(.*)$   \1
-    #'';
+    # limit users from accessing databases
+    identMap = ''
+       # ArbitraryMapName systemUser DBUser
+       superuser_map      root      postgres
+       superuser_map      postgres  postgres
+       superuser_map      root      team02
+       superuser_map      team02    team02
+       # Let other names login as themselves
+       #superuser_map      /^(.*)$   \1
+    '';
     # SysUser -> DBUser map
     authentication = pkgs.lib.mkOverride 10 ''
-      #type database  DBuser    host            auth-method
-      local all       all                       peer
-      host  all       postgres  localhost       peer
-      host  team02db  team02    192.168.0.0/32  password
+      #type database  DBuser  auth-method                  optional_ident_map
+      local all       all     peer                         map=superuser_map
+      host  team02    team02  192.168.0.0/16   password
     '';
     # Users & Databases
     initialScript = pkgs.writeText "backend-initScript" ''
       CREATE ROLE team02 WITH LOGIN PASSWORD 'team02pwd' CREATEDB;
       CREATE DATABASE team02db;
-      GRANT ALL ON DATABASE team02db TO team02;
+      GRANT ALL PRIVILEGES ON DATABASE team02db TO team02;
     '';
   };
   ## BACKUP SETUP
