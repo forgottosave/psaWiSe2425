@@ -59,9 +59,8 @@
   ## BACKUP SETUP
   services.postgresqlBackup = {
     enable = true;
-    startAt = "*-*-* 20:50:00";
-    location = "/root/database_backups/";
-    backupAll = true;
+    startAt = "*-*-* 21:05:00";
+    location = "/var/backup/postgresql";
     compression = "gzip";
   };
   ## Should maybe be changed to more efficient backup using WAL...
