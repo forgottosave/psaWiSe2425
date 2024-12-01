@@ -28,7 +28,7 @@
   services.postgresql = {
     enable = true;
     package = pkgs.postgresql_17;
-    ensureDatabases = [ "rootdb" "team02db" ];
+    ensureDatabases = [ "team02db" ];
     enableTCPIP = true;
     #settings.port = 5432;
     # limit users from accessing databases
@@ -36,6 +36,8 @@
        # ArbitraryMapName systemUser DBUser
        superuser_map      root      postgres
        superuser_map      postgres  postgres
+       superuser_map      root      team02
+       superuser_map      team02    team02
        # Let other names login as themselves
        #superuser_map      /^(.*)$   \1
     '';
@@ -52,12 +54,12 @@
       GRANT ALL PRIVILEGES ON DATABASE team02db TO team02;
     '';
   };
-  # BACKUP SETUP
-  services.postgresqlBackup = {
-    enable = true;
-    startAt = "*-*-* 01:15:00";
-    location = "/root/database_backups/";
-    backupAll = true;
-    compression = "gzip";
-  };
+  ## BACKUP SETUP
+  #services.postgresqlBackup = {
+  #  enable = true;
+  #  startAt = "*-*-* 01:15:00";
+  #  location = "/root/database_backups/";
+  #  backupAll = true;
+  #  compression = "gzip";
+  #};
 }
