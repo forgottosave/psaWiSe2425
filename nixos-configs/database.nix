@@ -45,32 +45,17 @@
     authentication = pkgs.lib.mkOverride 10 ''
       #type database  DBuser    host            auth-method
       host  all       postgres  localhost       password
-      host  all       readonly  localhost       password
-      host  team03db  team03    192.168.0.0/32  password
-      host  team03db  remote03  192.168.0.0/32  password
       host  team02db  team02    192.168.0.0/32  password
     '';
     # Users & Databases
     initialScript = pkgs.writeText "backend-initScript" ''
       ALTER USER postgres WITH PASSWORD 'postgrespwd';
-      
-      CREATE ROLE readonly WITH LOGIN PASSWORD 'readonlypwd' CREATEDB;
-      CREATE ROLE team03 WITH LOGIN PASSWORD 'team03pwd' CREATEDB;
-      CREATE ROLE remote03 WITH LOGIN PASSWORD 'remote03pwd' CREATEDB;
+
       CREATE ROLE team02 WITH LOGIN PASSWORD 'team02pwd' CREATEDB;
-      
-      CREATE DATABASE team03db;
-      CREATE DATABASE remote03db;
       CREATE DATABASE team02db;
       
       GRANT ALL ON DATABASE team02db TO team02;
       GRANT ALL PRIVILEGES ON SCHEMA public TO team02;
-      GRANT ALL ON DATABASE team03db TO team03;
-      GRANT ALL PRIVILEGES ON SCHEMA public TO team03;
-      GRANT ALL ON DATABASE remote03db TO remote03;
-      GRANT ALL PRIVILEGES ON SCHEMA public TO remote03;
-
-      ALTER DEFAULT PRIVILEGES GRANT SELECT ON TABLES TO readonly;
     '';
   };
   ## BACKUP SETUP
