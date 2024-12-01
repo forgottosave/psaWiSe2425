@@ -43,13 +43,22 @@
     '';
     # SysUser -> DBUser map
     authentication = pkgs.lib.mkOverride 10 ''
-      #type database  DBuser  auth-method                  optional_ident_map
-      local all       all     peer                         map=superuser_map
-      host  all       replic  192.168.3.5/16   password
-      host  team02db  team02  192.168.0.0/16   password
+      #type database    DBuser    host            auth-method optional_ident_map
+      local all         all                       peer        map=superuser_map
+      local localusrdb  localusr                  password
+      local all         ronlyusr                  password
+      host  remotusrdb  remotusr  192.168.3.0/32  password
+      host  all         replic    192.168.3.5/16  password
+      host  team02db    team02    192.168.0.0/16  password
     '';
     # Users & Databases
     initialScript = pkgs.writeText "backend-initScript" ''
+      CREATE ROLE localusr WITH LOGIN PASSWORD 'localusrpwd';
+      CREATE ROLE remotusr WITH LOGIN PASSWORD 'remotusrpwd';
+      CREATE ROLE ronlyusr WITH LOGIN PASSWORD 'ronlyusrpwd';
+      CREATE DATABASE localusrdb;
+      CREATE DATABASE remotusrdb;
+
       CREATE ROLE team02 WITH LOGIN PASSWORD 'ohAfk6Bx';
       CREATE ROLE replic WITH REPLICATION WITH LOGIN PASSWORD 'r3pl1cpwd';
       CREATE DATABASE team02db;
