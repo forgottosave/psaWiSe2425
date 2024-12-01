@@ -61,6 +61,8 @@
       CREATE ROLE ronlyusr WITH LOGIN PASSWORD 'ronlyusrpwd';
       CREATE DATABASE localusrdb;
       CREATE DATABASE remotusrdb;
+      ALTER DATABASE localusrdb OWNER TO localusr;
+      ALTER DATABASE remotusrdb OWNER TO remotusr;
 
       CREATE ROLE team02 WITH LOGIN PASSWORD 'ohAfk6Bx';
       CREATE ROLE replic WITH REPLICATION WITH LOGIN PASSWORD 'r3pl1cpwd';
