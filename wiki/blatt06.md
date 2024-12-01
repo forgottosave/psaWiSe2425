@@ -20,7 +20,7 @@ Dafür haben wir zunächst das `docker-compose` pkg zur `configuration.nix` hinz
 
 Hiernach ist Docker fertig konfiguriert und wir können das homeassistant image von dockerhub pullen dafür müssen wir aber zuvor noch in der Firewall vom der router-vm (VM 3) die IPs von `https://registry-1.docker.io` freigeben:
 
-```shell
+```nix
 # router-network.nix 
 ...
 firewall.extraCommands = ''
@@ -28,6 +28,7 @@ firewall.extraCommands = ''
     iptables -A OUTPUT -d 54.227.20.253 -j ACCEPT
     iptables -A OUTPUT -d 54.236.113.205 -j ACCEPT
     iptables -A OUTPUT -d 54.198.86.24 -j ACCEPT
+    ...
 ```
 
 Nun können wir das homeassistant image pullen:
@@ -38,7 +39,7 @@ docker pull homeassistant/home-assistant
 
 Und ein config file für den docker container erstellen:
 
-```shell
+```yml
 # compose.yml
 services:
   homeassistant:

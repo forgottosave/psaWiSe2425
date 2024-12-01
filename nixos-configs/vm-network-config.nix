@@ -91,6 +91,10 @@
       # Allow: database access
       iptables -A INPUT -p tcp --dport 5432 -j ACCEPT
       iptables -A OUTPUT -p tcp --sport 5432 -j ACCEPT
+
+      # Allow: homeassistant
+      iptables -A INPUT -p tcp --dport 8123 -j ACCEPT
+      iptables -A OUTPUT -p tcp --sport 8123 -j ACCEPT
     '';
   };  
 
