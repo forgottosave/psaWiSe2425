@@ -35,8 +35,11 @@
     identMap = ''
        # ArbitraryMapName systemUser DBUser
        superuser_map      root      postgres
-       superuser_map      postgres  postgres
+       superuser_map      root      localusr
+       superuser_map      root      replic
        superuser_map      root      team02
+       superuser_map      postgres  postgres
+       superuser_map      localusr  localusr
        superuser_map      team02    team02
        # Let other names login as themselves
        #superuser_map      /^(.*)$   \1
