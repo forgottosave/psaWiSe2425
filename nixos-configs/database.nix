@@ -59,7 +59,7 @@
   ## BACKUP SETUP
   services.postgresqlBackup = {
     enable = true;
-    startAt = "*-*-* 01:15:00";
+    startAt = "*-*-* 20:15:00";
     location = "/root/database_backups/";
     backupAll = true;
     compression = "gzip";
