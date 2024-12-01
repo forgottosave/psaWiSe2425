@@ -53,13 +53,13 @@
       CREATE ROLE team02 WITH LOGIN PASSWORD 'ohAfk6Bx';
       CREATE ROLE replic WITH REPLICATION WITH LOGIN PASSWORD 'r3pl1cpwd';
       CREATE DATABASE team02db;
-      GRANT ALL PRIVILEGES ON DATABASE team02db TO team02;
+      ALTER DATABASE team02db OWNER TO team02;
     '';
   };
   ## BACKUP SETUP
   services.postgresqlBackup = {
     enable = true;
-    startAt = "*-*-* 20:40:00";
+    startAt = "*-*-* 20:50:00";
     location = "/root/database_backups/";
     backupAll = true;
     compression = "gzip";
