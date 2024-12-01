@@ -45,21 +45,34 @@
     authentication = pkgs.lib.mkOverride 10 ''
       #type database  DBuser  auth-method                  optional_ident_map
       local all       all     peer                         map=superuser_map
+      host  all       replic  192.168.3.5/16   password
       host  team02db  team02  192.168.0.0/16   password
     '';
     # Users & Databases
     initialScript = pkgs.writeText "backend-initScript" ''
-      CREATE ROLE team02 WITH LOGIN PASSWORD 'team02pwd' CREATEDB;
+      CREATE ROLE team02 WITH LOGIN PASSWORD 'ohAfk6Bx';
+      CREATE ROLE replic WITH REPLICATION WITH LOGIN PASSWORD 'r3pl1cpwd';
       CREATE DATABASE team02db;
       GRANT ALL PRIVILEGES ON DATABASE team02db TO team02;
     '';
   };
   ## BACKUP SETUP
-  #services.postgresqlBackup = {
-  #  enable = true;
-  #  startAt = "*-*-* 01:15:00";
-  #  location = "/root/database_backups/";
-  #  backupAll = true;
-  #  compression = "gzip";
+  services.postgresqlBackup = {
+    enable = true;
+    startAt = "*-*-* 01:15:00";
+    location = "/root/database_backups/";
+    backupAll = true;
+    compression = "gzip";
+  };
+  ## Should maybe be changed to more efficient backup using WAL...
+  #services.postgresqlWalReceiver = {
+  #  receivers = {
+  #    main = {
+  #      postgresqlPackage = pkgs.postgresql_17;
+  #      directory = /mnt/pg_wal/main/;
+  #      slot = "main_wal_receiver";
+  #      connection = "postgresql://user@somehost";
+  #    };
+  #  };
   #};
 }
