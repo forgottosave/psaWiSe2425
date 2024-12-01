@@ -47,10 +47,7 @@
     '';
     # Users & Databases
     initialScript = pkgs.writeText "backend-initScript" ''
-      CREATE ROLE nixcloud WITH LOGIN PASSWORD 'nixcloud' CREATEDB;
       CREATE ROLE team02 WITH LOGIN PASSWORD 'team02' CREATEDB;
-      CREATE DATABASE nixcloud;
-      GRANT ALL PRIVILEGES ON DATABASE nixcloud TO nixcloud;
       CREATE DATABASE team02db;
       GRANT ALL PRIVILEGES ON DATABASE team02db TO team02;
     '';
