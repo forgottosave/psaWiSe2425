@@ -30,7 +30,7 @@
     package = pkgs.postgresql_17;
     ensureDatabases = [ "rootdb" "team02db" ];
     enableTCPIP = true;
-    settings.port = 5432;
+    #settings.port = 5432;
     # limit users from accessing databases
     identMap = ''
        # ArbitraryMapName systemUser DBUser
@@ -51,9 +51,8 @@
       CREATE ROLE team02 WITH LOGIN PASSWORD 'team02' CREATEDB;
       CREATE DATABASE nixcloud;
       GRANT ALL PRIVILEGES ON DATABASE nixcloud TO nixcloud;
-      CREATE DATABASE team02;
-      GRANT ALL PRIVILEGES ON DATABASE team02 TO nixcloud;
-      GRANT ALL PRIVILEGES ON DATABASE team02 TO team02;
+      CREATE DATABASE team02db;
+      GRANT ALL PRIVILEGES ON DATABASE team02db TO team02;
     '';
   };
   # BACKUP SETUP
