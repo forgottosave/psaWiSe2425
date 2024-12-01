@@ -44,7 +44,8 @@
     # SysUser -> DBUser map
     authentication = pkgs.lib.mkOverride 10 ''
       #type database  DBuser    host            auth-method
-      host  all       postgres  localhost       password
+      local all       all                       peer
+      host  all       postgres  localhost       peer
       host  team02db  team02    192.168.0.0/32  password
     '';
     # Users & Databases
@@ -52,8 +53,6 @@
       CREATE ROLE team02 WITH LOGIN PASSWORD 'team02pwd' CREATEDB;
       CREATE DATABASE team02db;
       GRANT ALL ON DATABASE team02db TO team02;
-      GRANT ALL PRIVILEGES ON SCHEMA public TO team02;
-      ALTER USER postgres WITH PASSWORD 'postgrespwd';
     '';
   };
   ## BACKUP SETUP
