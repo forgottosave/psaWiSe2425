@@ -49,13 +49,11 @@
     '';
     # Users & Databases
     initialScript = pkgs.writeText "backend-initScript" ''
-      ALTER USER postgres WITH PASSWORD 'postgrespwd';
-
       CREATE ROLE team02 WITH LOGIN PASSWORD 'team02pwd' CREATEDB;
       CREATE DATABASE team02db;
-      
       GRANT ALL ON DATABASE team02db TO team02;
       GRANT ALL PRIVILEGES ON SCHEMA public TO team02;
+      ALTER USER postgres WITH PASSWORD 'postgrespwd';
     '';
   };
   ## BACKUP SETUP
