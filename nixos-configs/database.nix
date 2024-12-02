@@ -38,17 +38,11 @@
        superuser_map      root      localusr
        superuser_map      root      replic
        superuser_map      root      team02
-       superuser_map      postgres  postgres
-       superuser_map      localusr  localusr
-       superuser_map      team02    team02
-       # Let other names login as themselves
-       #superuser_map      /^(.*)$   \1
     '';
     # SysUser -> DBUser map
     authentication = pkgs.lib.mkOverride 10 ''
       #type database    DBuser    host            auth-method optional_ident_map
-      #local all         all                       peer        map=superuser_map
-      local all         postgres                  password    map=superuser_map
+      local all         postgres                  peer        map=superuser_map
       local localusrdb  localusr                  password
       local all         ronlyusr                  password
       host  remotusrdb  remotusr  192.168.3.0/24  password
