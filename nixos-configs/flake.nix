@@ -10,6 +10,16 @@
 
   outputs = { self, nixpkgs, unstable }: {
     nixosConfigurations = {
+      vmpsateam03-02 = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux"; 
+        modules = [
+          ./configuration.nix
+          # Database configuration using PostgreSQL 17
+          #(import ./database.nix {
+          #  inputs = { inherit unstable; };
+          #})
+        ];
+      };
       vmpsateam03-03 = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux"; 
         modules = [
