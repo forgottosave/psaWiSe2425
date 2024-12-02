@@ -35,7 +35,7 @@
                         "hostname": "vm1"
                     },
                     {
-                        "hw-address": "08:00:27:4b:46:40",
+                        "hw-address": "08:00:27:af:7f:28",
                         "ip-address": "192.168.3.2",
                         "hostname": "vm2"
                     },

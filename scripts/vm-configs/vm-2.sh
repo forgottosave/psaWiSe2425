@@ -6,6 +6,7 @@ include_files=(
     configuration.nix
     user-config.nix
     vm-network-config.nix
+    flake.nix
 )
 
 # SED placeholders
