@@ -38,6 +38,7 @@
        superuser_map      root      localusr
        superuser_map      root      replic
        superuser_map      root      team02
+       superuser_map      postgres  postgres
     '';
     # SysUser -> DBUser map
     authentication = pkgs.lib.mkOverride 10 ''
