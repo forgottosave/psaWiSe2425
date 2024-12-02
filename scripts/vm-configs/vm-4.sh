@@ -18,3 +18,24 @@ sed_placeholders[root_access]='
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIFKywkjovjz87VQHeNVSGUlc/5Nl4eH4Hj1SrYHIeqM"
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBwkCLE+pDy8HvHy98MwsNH/sxPYmBRXuREOd2jTMXPV timon.ensel@tum.de"
 '
+
+
+# WARNGING:
+# The passwords are obviously not placed in this repositoy.
+# Insert all passwords into the according files in /root/db-user-pwds manually.
+
+# database passwords are stored in a file only accessable by root
+# get those passwords and insert them into the database setup process
+postgrespwd=`cat /root/db-user-pwds/postgres.pwd`
+localusrpwd=`cat /root/db-user-pwds/localusr.pwd`
+remotusrpwd=`cat /root/db-user-pwds/remotusr.pwd`
+ronlyusrpwd=`cat /root/db-user-pwds/ronlyusr.pwd`
+replicpwd=`cat /root/db-user-pwds/replic.pwd`
+team02pwd=`cat /root/db-user-pwds/team02.pwd`
+
+sed_placeholders[postgrespwd]="$postgrespwd"
+sed_placeholders[localusrpwd]="$localusrpwd"
+sed_placeholders[remotusrpwd]="$remotusrpwd"
+sed_placeholders[ronlyusrpwd]="$ronlyusrpwd"
+sed_placeholders[replicpwd]="$replicpwd"
+sed_placeholders[team02pwd]="$team02pwd"

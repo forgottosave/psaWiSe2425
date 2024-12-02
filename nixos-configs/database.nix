@@ -56,16 +56,16 @@
     '';
     # Users & Databases
     initialScript = pkgs.writeText "backend-initScript" ''
-      CREATE ROLE localusr WITH LOGIN PASSWORD 'localusrpwd';
-      CREATE ROLE remotusr WITH LOGIN PASSWORD 'remotusrpwd';
-      CREATE ROLE ronlyusr WITH LOGIN PASSWORD 'ronlyusrpwd';
+      CREATE ROLE localusr WITH LOGIN PASSWORD '%%localusrpwd%%';
+      CREATE ROLE remotusr WITH LOGIN PASSWORD '%%remotusrpwd%%';
+      CREATE ROLE ronlyusr WITH LOGIN PASSWORD '%%ronlyusrpwd%%';
       CREATE DATABASE localusrdb;
       CREATE DATABASE remotusrdb;
       ALTER DATABASE localusrdb OWNER TO localusr;
       ALTER DATABASE remotusrdb OWNER TO remotusr;
 
-      CREATE ROLE team02 WITH LOGIN PASSWORD 'ohAfk6Bx';
-      CREATE ROLE replic WITH REPLICATION WITH LOGIN PASSWORD 'r3pl1cpwd';
+      CREATE ROLE team02 WITH LOGIN PASSWORD '%%team02pwd%%';
+      CREATE ROLE replic WITH REPLICATION WITH LOGIN PASSWORD '%%replicpwd%%';
       CREATE DATABASE team02db;
       ALTER DATABASE team02db OWNER TO team02;
     '';
