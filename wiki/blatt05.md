@@ -29,6 +29,8 @@ In diesem Blatt geht es darum eine Datenbank einzurichten. Wir hosten sie auf de
     ```
 
 2. **Einrichten von PostgreSQL:**
+    Zunächst erstellen wir eine neue `database.nix` Konfiguration. Diese wird auch in `scripts/vm-configs/vm-4.sh` zu den `include_files` hinzugefügt.
+    Das aktivieren von PostgreSQL wird dann wie folgt eingetragen:
 
     ```nixos
     { config, lib, pkgs, ... }:
@@ -41,7 +43,7 @@ In diesem Blatt geht es darum eine Datenbank einzurichten. Wir hosten sie auf de
     }
     ```
 
-    Alle weiteren Konfigurationen werden in `services.postgresql` vorgenommen.
+    Alle weiteren Konfigurationen werden hier in `services.postgresql = {...}` vorgenommen.
 
 3. **User & Datenbanken:**
     In den nächsten Schritten werden die 2 geforderten Datenbanken und 3 geforderten User eingerichtet.
@@ -53,21 +55,49 @@ In diesem Blatt geht es darum eine Datenbank einzurichten. Wir hosten sie auf de
     | ronlyusr |            | Nutzer, der nur read-only Zugriff auf alle Datenbanken hat |
 
 4. **TCP Verbindungen erlauben**
+    Nachdem wir mit mindestens einem Nutzer remote-Zugriff benötigen aktivieren wir zunächst TCP/IP für unsere Datenbank:
 
     ```nixos
     enableTCPIP = true;
     ```
 
 5. **Nutzer einrichten**
+    Die 3 Nutzer werden wie folgt eingerichtet:
 
     ```nixos
     initialScript = pkgs.writeText "backend-initScript" ''
-        ALTER USER postgres WITH PASSWORD '%%postgrespwd%%';
         CREATE ROLE localusr WITH LOGIN PASSWORD '%%localusrpwd%%';
         CREATE ROLE remotusr WITH LOGIN PASSWORD '%%remotusrpwd%%';
         CREATE ROLE ronlyusr WITH LOGIN PASSWORD '%%ronlyusrpwd%%';
     '';
     ```
+
+    Da wir die vergebenen Passwörter nicht auf das git-Repository pushen wollen, nutzen wir hier Wildcards, die bei der Ausführung des Skripes durch die eigentlichen Passwörter ersetzt werden (siehe Blatt 2). Die Passwörter werden aus einem nur für root lesbaren directory unter `/root/db-user-pwds/<Nutzer>.pwd` erwartet.
+
+    Die Wildcards tragen wir in `scripts/vm-configs/vm-4.sh` als Wildcards ein:
+
+    ```shell
+    postgrespwd=`cat /root/db-user-pwds/postgres.pwd`
+    localusrpwd=`cat /root/db-user-pwds/localusr.pwd`
+    remotusrpwd=`cat /root/db-user-pwds/remotusr.pwd`
+    ronlyusrpwd=`cat /root/db-user-pwds/ronlyusr.pwd`
+
+    sed_placeholders[postgrespwd]="$postgrespwd"
+    sed_placeholders[localusrpwd]="$localusrpwd"
+    sed_placeholders[remotusrpwd]="$remotusrpwd"
+    sed_placeholders[ronlyusrpwd]="$ronlyusrpwd"
+    ```
+
+    Dem per default erstellen Nutzer `postgres` vergeben wir ebenfalls ein Passwort mit Wildcard:
+
+    ```nixos
+    initialScript = pkgs.writeText "backend-initScript" ''
+        ...
+        ALTER USER postgres WITH PASSWORD '%%postgrespwd%%';
+    '';
+    ```
+
+    NAls nächstes schränken wir den Zugriff auf die Datenbanken jedes Nutzers ein. Dies geschieht in `authentication = ...` indem für jede Verbindung erst der Verbindungs-Typ, die Datenbank auf die zugegriffen werden soll, der Nutzer, optional die host-IP und die Authentifizierung-Methode eingegeben werden soll. Wie oben beschrieben sollen die Nutzer `localusr` und `ronlyusr` nur lokal zugreifen, der `remotusr` nur von einer anderen VM in unserem Team-Netzwerk auf die Datenbanken, bzw. nur seine Datenbank, zugreifen können.
 
     ```nixos
     authentication = pkgs.lib.mkOverride 10 ''
@@ -81,6 +111,10 @@ In diesem Blatt geht es darum eine Datenbank einzurichten. Wir hosten sie auf de
     '';
     ```
 
+    *Achtung:*
+    Zur Einrichtung der Datenbank benötigt NixOS Vollzugriff auf den Nutzer postgres, *OHNE* Passwort, deshalb erlaubt hier der Einfachheit halber die erste Zeile Zugriff von root auf dieser Machiene auf alle Nutzer. Die Authentifizierung kann später manuell in `/var/postgresql/17/main/pg_hba.conf` geändert werden und erfordert einen Neustart des postgres services.
+    Wir haben zudem die identMap `superuser_map` angelegt, um den Zugriff auf die Datenbank-Nutzer explizit nur mit root zu ermöglichen.
+
     ```nixos
     identMap = ''
        # ArbitraryMapName systemUser DBUser
@@ -91,6 +125,8 @@ In diesem Blatt geht es darum eine Datenbank einzurichten. Wir hosten sie auf de
        superuser_map      postgres  postgres
     '';
     ```
+
+    Als letztes kümmern wir uns um den Read-Only-Nutzer `ronlyusr` und geben ihm lese (`SELECT`) Rechte auf allen Datenbanken, sowie default-lese Rechte für später erstellte Datenbanken. Die existierenden Schemata können mit`\du *.*` abgerufen werden.
 
     ```nixos
     initialScript = pkgs.writeText "backend-initScript" ''
@@ -104,6 +140,7 @@ In diesem Blatt geht es darum eine Datenbank einzurichten. Wir hosten sie auf de
     ```
 
 6. **Datenbanken einrichten**
+    Als letztes müssen wir nurnoch die Datenbanken `localusrdb` und `remotusrdb` anlegen. Ihre jeweiligen Nutzer sollen Voll-Zugriff auf die Datenbanken erhalten. Nachdem die Datenbanken in unserem Scenario logisch gesehen den Nutzern gehören, setzen wir das auch hier um. Dies ermöglicht auch den Vollzugriff.
 
     ```nixos
     initialScript = pkgs.writeText "backend-initScript" ''
