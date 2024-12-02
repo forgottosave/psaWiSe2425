@@ -50,8 +50,8 @@
       local all         all                       peer        map=superuser_map
       local localusrdb  localusr                  password
       local all         ronlyusr                  password
-      host  remotusrdb  remotusr  192.168.3.2/32  password
-      host  all         replic    192.168.3.5/16  password
+      host  remotusrdb  remotusr  192.168.3.0/24  password
+      host  all         replic    192.168.3.0/24  password
       host  team02db    team02    192.168.0.0/16  password
     '';
     # Users & Databases
