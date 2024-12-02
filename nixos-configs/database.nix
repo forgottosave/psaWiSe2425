@@ -47,7 +47,8 @@
     # SysUser -> DBUser map
     authentication = pkgs.lib.mkOverride 10 ''
       #type database    DBuser    host            auth-method optional_ident_map
-      local all         all                       peer        map=superuser_map
+      #local all         all                       peer        map=superuser_map
+      local all         postgres                  password
       local localusrdb  localusr                  password
       local all         ronlyusr                  password
       host  remotusrdb  remotusr  192.168.3.0/24  password
@@ -56,6 +57,7 @@
     '';
     # Users & Databases
     initialScript = pkgs.writeText "backend-initScript" ''
+      ALTER USER postgres WITH PASSWORD '%%postgrespwd%%';
       CREATE ROLE localusr WITH LOGIN PASSWORD '%%localusrpwd%%';
       CREATE ROLE remotusr WITH LOGIN PASSWORD '%%remotusrpwd%%';
       CREATE ROLE ronlyusr WITH LOGIN PASSWORD '%%ronlyusrpwd%%';
