@@ -36,6 +36,19 @@
 
     proxy.noProxy = "vm1.psa-team03.cit.tum.de,vm2.psa-team03.cit.tum.de,router.psa-team01.cit.tum.de";
 
+    nat = {
+      enable = true;
+      internalInterfaces = [ "enp0s8" ];
+      externalInterface = "enp0s8";
+      forwardPorts = [
+        {
+          sourcePort = 8123;
+          proto = "tcp";
+          destination = "192.168.3.5:8123";
+        }
+      ];
+    };
+
     firewall.extraCommands = '' 
       #iptables -P INPUT ACCEPT
       #iptables -P OUTPUT ACCEPT
