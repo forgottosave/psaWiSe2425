@@ -59,6 +59,11 @@
       CREATE ROLE localusr WITH LOGIN PASSWORD '%%localusrpwd%%';
       CREATE ROLE remotusr WITH LOGIN PASSWORD '%%remotusrpwd%%';
       CREATE ROLE ronlyusr WITH LOGIN PASSWORD '%%ronlyusrpwd%%';
+      ALTER DEFAULT PRIVILEGES GRANT SELECT ON TABLES TO ronlyusr;
+      GRANT SELECT ON ALL TABLE IN SCHEMA public TO ronlyusr;
+      GRANT SELECT ON ALL TABLE IN SCHEMA information_schema TO ronlyusr;
+      GRANT SELECT ON ALL TABLE IN SCHEMA pg_catalog TO ronlyusr;
+      GRANT SELECT ON ALL TABLE IN SCHEMA pg_toast TO ronlyusr;
       CREATE DATABASE localusrdb;
       CREATE DATABASE remotusrdb;
       ALTER DATABASE localusrdb OWNER TO localusr;
