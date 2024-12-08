@@ -36,18 +36,7 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    # default suggestions: vim wget
-    git
-    # network tools
-    nmap
-    tcpdump
-    traceroute
-    tcptraceroute
-    bind
-    dhcpdump
-    dhcping
-    postgresql_17
-    docker-compose
+    %%system_packages%%
   ];
   programs.mtr.enable = true;
 
