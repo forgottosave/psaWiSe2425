@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-## 0. configuration ##################################
+## 0. configuration #######################################
 
 THIS_DIR=$(dirname "$0")
 ## Defaults
@@ -53,7 +53,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 
-## 1. synchronize with git repository ################
+## 1. synchronize with git repository #####################
 
 if [ "$SYNC_GIT" = true ] ; then
     echo 'synchronizing the git repository...'
@@ -62,7 +62,7 @@ if [ "$SYNC_GIT" = true ] ; then
 fi
 
 
-## 2. read vm specific configuration #################
+## 2. read vm specific configuration ######################
 
 echo "setting configuration for VM ${VM_NUMBER}..."
 declare -a include_files
@@ -71,7 +71,7 @@ declare -A sed_placeholders
 source "${THIS_DIR}/vm-configs/vm-${VM_NUMBER}.sh"
 
 
-## 3. synchronize .nix configs #######################
+## 3. synchronize .nix configs ############################
 
 echo 'synchronizing the configs:'
 for file in ${include_files[@]}; do
@@ -83,7 +83,7 @@ for file in ${include_files[@]}; do
 done
 
 
-## 4. edit vm specific placeholders ##################
+## 4. edit vm specific placeholders #######################
 
 for file in ${include_files[@]}; do
     path="${PATH_CONFIG_DEST}${file}"
@@ -96,16 +96,17 @@ for file in ${include_files[@]}; do
 done
 
 
-## (EXERCISE SHEET SPECIFIC REQUIREMENTS) ##############
+## 5. Move test scrips to /root ###########################
 
-# Week 02
-cp ${THIS_DIR}/test_PSA_02.sh /root/
-# Week 03
-cp ${THIS_DIR}/test_PSA_03.sh /root/
-cp -a ${THIS_DIR}/../nixos-configs/bind-configs/. /etc/nixos/dns/
+cp ${THIS_DIR}/test_PSA_* /root/
 
 
-## 5. reload config ##################################
+## 6. Do week specific extra stuff ########################
+
+cp -a ${THIS_DIR}/../nixos-configs/bind-configs/. /etc/nixos/dns/ # Week 03
+
+
+## 7. reload config #######################################
 
 if [ "$NIXOS_REBUILD" = true ] ; then
     # WARNING: removes firewall, as long as the problem isn't fixed
