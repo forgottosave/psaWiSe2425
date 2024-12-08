@@ -66,6 +66,8 @@ fi
 
 echo "setting configuration for VM ${VM_NUMBER}..."
 declare -a include_files
+declare -a nix_import
+declare -A sed_placeholders
 source "${THIS_DIR}/vm-configs/vm-${VM_NUMBER}.sh"
 
 
@@ -85,11 +87,9 @@ done
 
 imports='
         ./hardware-configuration.nix'
-for file in ${include_files[@]}; do
-    if ! [ "$file" = "configuration.nix" ] && ! [ "$file" = "flake.nix" ] && ! [ "$file" = "dhcp-config.nix" ] && ! [ "$file" = "dhcp4-config.json" ]; then
-        imports+="
-        ./$file"
-    fi
+for file in ${nix_import[@]}; do
+    imports+="
+    ./$file"
 done
 gawk -i inplace -v r="$imports" '{gsub(/%%imports%%/,r)}1' "${PATH_CONFIG_DEST}configuration.nix"
 

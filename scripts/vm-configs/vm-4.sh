@@ -1,17 +1,21 @@
 #!/usr/bin/env bash
 
-# General configuration
-vm=$VM_NUMBER
+# Include Files
 include_files=(
     configuration.nix
     vm-network-config.nix
     database.nix
-    flake.nix)
+    flake.nix
+)
+
+# `configuration.nix` Import Files
+nix_import=(
+    vm-network-config.nix
+    database.nix
+)
 
 # SED placeholders
-declare -A sed_placeholders
-
-sed_placeholders[vm]="$vm"
+sed_placeholders[vm]="$VM_NUMBER"
 
 sed_placeholders[root_access]='
     "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC1bL8aC20ERDdJE2NqzIBvs8zXmCbFZ7fh5qXyqGNF7XfdfbsPBfQBSeJoncVfTJRFNYF4E+1Me918QMIpqa9XR4nJYOdOzff1JLYp1Z1X28Dx3//aOir8ziPCvGZShFDXoxLp6MNFIiEpI/IEW9OqxLhKj6YWVEDwK1ons7+pXnPM6Nd9lPd2UeqWWRpuuf9sa2AimQ1ZBJlnp7xHFTxvxdWMkTu6aH0j+aTT1w1+UDN2laS4nsmAJOO2KjeZq6xpbdmj9cjuxBJtM3Dsoq4ZJGdzez7XYhvCTQoQFl/5G0+4FBZeAgL/4ov12flGijZIIaXvmMBkLZRYg3E2m1Rp PraktikumSystemadministration"
@@ -19,11 +23,9 @@ sed_placeholders[root_access]='
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBwkCLE+pDy8HvHy98MwsNH/sxPYmBRXuREOd2jTMXPV timon.ensel@tum.de"
 '
 
-
 # WARNGING:
 # The passwords are obviously not placed in this repositoy.
 # Insert all passwords into the according files in /root/db-user-pwds manually.
-
 # database passwords are stored in a file only accessable by root
 # get those passwords and insert them into the database setup process
 postgrespwd=`cat /root/db-user-pwds/postgres.pwd`
