@@ -13,6 +13,7 @@
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.kernelParams = ["ipv6.disable=1"]; # Disable ipv6
 
   # https://nixos.wiki/wiki/SSH_public_key_authentication
   services.sshd.enable = true;
