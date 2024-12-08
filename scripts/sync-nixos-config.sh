@@ -85,14 +85,6 @@ done
 
 ## 4. edit vm specific placeholders ##################
 
-imports='
-        ./hardware-configuration.nix'
-for file in ${nix_import[@]}; do
-    imports+="
-    ./$file"
-done
-gawk -i inplace -v r="$imports" '{gsub(/%%imports%%/,r)}1' "${PATH_CONFIG_DEST}configuration.nix"
-
 for file in ${include_files[@]}; do
     path="${PATH_CONFIG_DEST}${file}"
     echo "edit placeholders in $path..."
