@@ -72,6 +72,7 @@
       iptables -A OUTPUT -d 151.101.130.217 -j ACCEPT
       iptables -A OUTPUT -d 151.101.66.217 -j ACCEPT
       iptables -A OUTPUT -d 151.101.194.217 -j ACCEPT
+      iptables -A OUTPUT -d 146.75.118.217 -j ACCEPT
       # praktikum
       iptables -A OUTPUT -d 192.168.1.0/24 -j ACCEPT
       iptables -A OUTPUT -d 192.168.2.0/24 -j ACCEPT 
