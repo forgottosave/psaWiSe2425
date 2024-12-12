@@ -26,6 +26,7 @@ sed_placeholders[system_packages]='
     dhcpdump
     dhcping
     docker-compose
+    mariadb
 '
 
 sed_placeholders[root_access]='
