@@ -95,32 +95,32 @@ recorder:
 
 #### 2.2) Konfiguaration der User
 
-Zusätzlich müssen wir noch für alle Praktikums Teilnehmer:inen ein User Account erstellen.
+Zusätzlich müssen wir noch für alle Praktikums Teilnehmer:inen ein User Account erstellen:
 
 settings -> People -> add Person -> <name> und "allow login" -> set passwd -> create
 
+##### Passwörter
 
-passwörter:
-admins:
-- ge78zig | 9E56XY
-- ge96xok | w8yN11Vr6Wjn
-- sysAdmin | 6gXFy11JdcSO
-
-- ge95vir | 8qM08hZWZXkG
-- ge43fim | 8qM08hZWZXkG
-- ge78nes | 8qM08hZWZXkG
-- ge96hoj | 8qM08hZWZXkG
-- ge87yen | 8qM08hZWZXkG
-- ge47sof | 8qM08hZWZXkG
-- ge47kut | 8qM08hZWZXkG
-- ge87liq | 8qM08hZWZXkG
-- ge59pib | 8qM08hZWZXkG
-- ge65peq | 8qM08hZWZXkG
-- ge63gut | 8qM08hZWZXkG
-- ge64baw | 8qM08hZWZXkG
-- ge84zoj | 8qM08hZWZXkG
-- ge94bob | 8qM08hZWZXkG
-- ge87huk | 8qM08hZWZXkG
-- ge64wug | 8qM08hZWZXkG
-- ge65hog | 8qM08hZWZXkG
-- ge38hoy | 8qM08hZWZXkG
+- admins:
+  - ge78zig | 9E56XY
+  - ge96xok | w8yN11Vr6Wjn
+  - sysAdmin | 6gXFy11JdcSO
+- normal users:
+  - ge95vir | 8qM08hZWZXkG
+  - ge43fim | 8qM08hZWZXkG
+  - ge78nes | 8qM08hZWZXkG
+  - ge96hoj | 8qM08hZWZXkG
+  - ge87yen | 8qM08hZWZXkG
+  - ge47sof | 8qM08hZWZXkG
+  - ge47kut | 8qM08hZWZXkG
+  - ge87liq | 8qM08hZWZXkG
+  - ge59pib | 8qM08hZWZXkG
+  - ge65peq | 8qM08hZWZXkG
+  - ge63gut | 8qM08hZWZXkG
+  - ge64baw | 8qM08hZWZXkG
+  - ge84zoj | 8qM08hZWZXkG
+  - ge94bob | 8qM08hZWZXkG
+  - ge87huk | 8qM08hZWZXkG
+  - ge64wug | 8qM08hZWZXkG
+  - ge65hog | 8qM08hZWZXkG
+  - ge38hoy | 8qM08hZWZXkG
