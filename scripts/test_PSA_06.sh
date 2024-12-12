@@ -39,7 +39,8 @@ function print_summary {
 # hosting VM: check all
 # non-hosting VM: only check access to Home Assistant
 VM_NUMBER=$(hostname)
-if [[ $VM_NUMBER -eq 5 ]]; then
+VM_NUMBER=${VM_NUMBER: -1}
+if [ $VM_NUMBER -eq 5 ]; then
     # hosting VM:
     ## TEST #########################################
     ## check docker installed
