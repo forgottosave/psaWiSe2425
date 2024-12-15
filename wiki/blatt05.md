@@ -161,6 +161,8 @@ Quellen:
 
 #### Erste Lösung: Dump
 
+Nativ unterstützt NixOS 2 Arten von postgresql backups, eine davon ist durch naive dumps der Datenbank. In `location` definieren wir den Pfad zum backup-Verzeichniss.
+
 ```nixos
 services.postgresqlBackup = {
     enable = true;
@@ -170,15 +172,34 @@ services.postgresqlBackup = {
 };
 ```
 
-#### Verbesserung: Write-Ahead-Log
+Nachdem das Backup allerdings auch für viel größere Datenbanken ohne große Einschränkungen skalierbar sein muss, ist einen kompletten dump zu erstellen keine ausreichende Lösung. Mittels eines Write-Ahead-Logs können lange Pausen eines dumps umgangen werden. Diese Lösung ist im folgenden Abschnitt beschrieben:
+
+#### Verbesserung: Write-Ahead-Log (WAL)
+
+Für die WAL Lösung setzen wir eine weitere Datenbank auf (auf VM 2), identisch zur ersten Datenbank. Nun haben wir 2 Datenbanken, wir nennen sie in dieser Anleitung `Master DB` und `Backup DB`.
 
 1. Master DB
+    Wir benötigen zunächst einen neuen Nutzer mit `replikation` Rechten. Wir tragen diesen in der config ein und fügen (ähnlich wie mit den anderen Nutzern) diesen direkt auch in der authentication ein, um den remote-Zugriff zu ermöglichen:
+
+    ```nixos
+    # database.nix
+    authentication = pkgs.lib.mkOverride 10 ''
+        ..
+        host  all,replication replic    192.168.3.0/24  password
+    '';
+    initialScript = pkgs.writeText "backend-initScript" ''
+        ...
+        CREATE ROLE replic WITH REPLICATION WITH LOGIN PASSWORD '%%replicpwd%%';
+    '';
+    ```
+
+    Aufgrund eines bugs wird der Nutzer leider nicht ganz richtig erstellt, weshalb wir diesen nach dem Neustart erneut manuell hinzufügen müssen:
 
     ```bash
     sudo -u postgres createuser -U postgres replic -P -c 5 --replication
     ```
 
-    default wal_level is already replica -> nothing to change
+    Zusätzlich zu diesem Nutzer wird Archiving und das WAL aktiviert:
 
     ```bash
     sudo -u postgres psql postgres
@@ -187,22 +208,22 @@ services.postgresqlBackup = {
     ALTER SYSTEM SET archive_command to 'test ! -f /var/lib/postgresql/pg_log_archive/main/%f && cp %p /var/lib/postgresql/pg_log_archive/main/%f';
     ```
 
+    Der Ordner für das Archive muss bei der Ausführung des `archive_command` bereits exisiteren und `postgres` gehören, weshalb dieser jetzt noch erstellt werden muss:
+
     ```bash
     mkdir /var/lib/postgresql/pg_log_archive/main
     chown postgres:postgres -R /var/lib/postgresql/pg_log_archive/main/
     ```
 
-    we have to restart the postgres service for these changes to apply
+    Um die Änderungen anzuwenden, muss zuletzt der `postgresql.service` neu gestartet werden:
 
     ```bash
     systemctl restart postgresql.service
     ```
 
-2. Slave DB
-
-    ```bash
-    ./script/sync-nixos-config.sh
-    ```
+2. Backup DB
+    Mit `./script/sync-nixos-config.sh` laden wir die neue Datenbank.
+    Nun muss der Backup-Mechanismus eingerichtet werden. Wir definieren hierfür diese Backup DB als standby-server und definieren die primäre Datenbank (Master DB) samt Zugang.
 
     ```bash
     sudo -u postgres postgres
@@ -211,23 +232,32 @@ services.postgresqlBackup = {
     ALTER SYSTEM SET data_sync_retry to 'on';
     ```
 
+    Wieder wird `postgresql.service` neu gestartet, um Änderungen anzuwenden:
+
     ```bash
     systemctl restart postgresql.service
     ```
+
+    Als zweiten Schritt setzen wir noch die Datenbank auf den Stand der Master DB und richten die Backup-Funktion ein. Hierfür löschen (bzw. verschieben) wir bisherige Teile der DB...
 
     ```bash
     mv /var/lib/postgresql/17 /var/lib/postgresql/17_old
     ```
 
+    ...und wenden `pg_basebackup` an.
+
     ```bash
     sudo -u postgres pg_basebackup -h 192.168.3.4 -D /var/lib/postgresql/17 -U replic -v -P --wal-method=stream -R
     ```
+
+    Nach einem weiteren Neustart von `postgresql.service` ist das WAL fertig eingerichtet:
 
     ```bash
     systemctl restart postgresql.service
     ```
 
-3. Test backup
+3. Test WAL
+    Um das WAL zu testen, können wir testweise eine Tabelle und ein paar Einträge auf der Master DB anlegen. Hier beispielsweise mit dem Nutzer `localusr` und seiner Datenbank:
 
     ```bash
     # master-db
@@ -237,15 +267,24 @@ services.postgresqlBackup = {
     INSERT INTO cpt_team (email, date, message) VALUES ( 'myfingworking@gmail.com', current_date, 'Now we are replicating AND IT WORKS.');
     ```
 
+    Auf der Backup DB können wir mit `\dt` nun die neue Tabelle einsehen, sowie mit `SELECT * FROM cpt_team;` die erstellten Einträge ansehen.
+
     ```bash
-    # slave-db
+    # backup-db
     psql -U localusr localusrdb
     \dt
     SELECT * FROM cpt_team;
     ```
 
+4. Backup Skript
+    Zusätzlich können wir den oben Erwähnten `dump` nutzen, um Backups von bestimmten Zeitpunkten zu haben. Wenn diese auf der Backup DB ausgeführt werden wird die Datenbank Funktionalität / Erreichbarkeit der Master DB nicht eingeschränkt.
+    Nachdem die Aufgabenstellung ein Skipt mit `crontab` fordert, können wir die von NixOS bereitgestellte Backup-Funktion von oben nicht nutzen, sondern erstellen ein separates Skript.
+
+    #TODO
+
 Quellen:
 
+- [ibrahimhkoyuncu.medium.com ](https://ibrahimhkoyuncu.medium.com/postgresql-high-availability-read-replica-methodology-streaming-replication-and-replica-75f9067326e5)postgresql-wal-archiving-pg-receivewal/)
 - [nixos.org postgres options](https://search.nixos.org/options?channel=24.11&show=services.postgresqlBackup.pgdumpOptions&from=0&size=50&sort=relevance&type=packages&query=services.postgresql)
 - [postgresql.org backup-dump](https://www.postgresql.org/docs/current/backup-dump.html)
 - [postgresql.org WAL](https://www.postgresql.org/docs/current/runtime-config-wal.html#RUNTIME-CONFIG-WAL-SUMMARIZATION)
