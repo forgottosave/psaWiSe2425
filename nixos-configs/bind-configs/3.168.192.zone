@@ -13,3 +13,5 @@ $TTL    1h
 1       PTR       vm1.psa-team03.cit.tum.de.
 2       PTR       vm2.psa-team03.cit.tum.de.
 4       PTR       database.psa-team03.cit.tum.de.
+5       PTR       homeassistant.psa-team03.cit.tum.de.
+6       PTR       vm6.psa-team03.cit.tum.de.
