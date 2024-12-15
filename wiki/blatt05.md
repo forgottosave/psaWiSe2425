@@ -159,21 +159,90 @@ Quellen:
 
 ### 2) Backup
 
-#TODO
+#### Erste Lösung: Dump
 
-1. **Erste Lösung: Dump**
+```nixos
+services.postgresqlBackup = {
+    enable = true;
+    startAt = "*-*-* 01:15:00";
+    location = "/var/backup/postgresql";
+    compression = "gzip";
+};
+```
 
-    ```nixos
-    services.postgresqlBackup = {
-        enable = true;
-        startAt = "*-*-* 01:15:00";
-        location = "/var/backup/postgresql";
-        compression = "gzip";
-    };
+#### Verbesserung: Write-Ahead-Log
+
+1. Master DB
+
+    ```bash
+    sudo -u postgres createuser -U postgres replic -P -c 5 --replication
     ```
 
-2. **Verbesserung: Write-Ahead-Log**
-    #TODO
+    default wal_level is already replica -> nothing to change
+
+    ```bash
+    sudo -u postgres psql postgres
+    ALTER SYSTEM SET archive_mode to 'ON';
+    ALTER SYSTEM SET archive_mode to 'cp %p /scratch/postgres/backup/archive/archive%f';
+    ALTER SYSTEM SET archive_command to 'test ! -f /var/lib/postgresql/pg_log_archive/main/%f && cp %p /var/lib/postgresql/pg_log_archive/main/%f';
+    ```
+
+    ```bash
+    mkdir /var/lib/postgresql/pg_log_archive/main
+    chown postgres:postgres -R /var/lib/postgresql/pg_log_archive/main/
+    ```
+
+    we have to restart the postgres service for these changes to apply
+
+    ```bash
+    systemctl restart postgresql.service
+    ```
+
+2. Slave DB
+
+    ```bash
+    ./script/sync-nixos-config.sh
+    ```
+
+    ```bash
+    sudo -u postgres postgres
+    ALTER SYSTEM SET hot_standby to 'on';
+    ALTER SYSTEM SET primary_conninfo to 'host=192.168.3.4 port=5432 user=replic password=<password>';
+    ALTER SYSTEM SET data_sync_retry to 'on';
+    ```
+
+    ```bash
+    systemctl restart postgresql.service
+    ```
+
+    ```bash
+    mv /var/lib/postgresql/17 /var/lib/postgresql/17_old
+    ```
+
+    ```bash
+    sudo -u postgres pg_basebackup -h 192.168.3.4 -D /var/lib/postgresql/17 -U replic -v -P --wal-method=stream -R
+    ```
+
+    ```bash
+    systemctl restart postgresql.service
+    ```
+
+3. Test backup
+
+    ```bash
+    # master-db
+    psql -U localusr localusrdb
+    CREATE TABLE cpt_team (email text, vistor_id serial, date timestamp, message text);
+    INSERT INTO cpt_team (email, date, message) VALUES ( 'myoda@gmail.com', current_date, 'Now we are replicating.');
+    INSERT INTO cpt_team (email, date, message) VALUES ( 'myfingworking@gmail.com', current_date, 'Now we are replicating AND IT WORKS.');
+    ```
+
+    ```bash
+    # slave-db
+    psql -U localusr localusrdb
+    \dt
+    SELECT * FROM cpt_team;
+    ```
 
 Quellen:
 
