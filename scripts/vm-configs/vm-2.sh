@@ -5,6 +5,7 @@ include_files=(
     configuration.nix
     user-config.nix
     vm-network-config.nix
+    database-backup.nix
     flake.nix
 )
 
