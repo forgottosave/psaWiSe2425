@@ -2,7 +2,6 @@
 {
   networking = {
     useDHCP = false;
-    nat.enable = false;
     firewall.enable = true;
 
     interfaces.enp0s8 = {
