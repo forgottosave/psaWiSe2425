@@ -4,6 +4,7 @@
 include_files=(
     configuration.nix
     vm-network-config.nix
+    user-config.nix
     database.nix
     flake.nix
 )
@@ -15,6 +16,7 @@ sed_placeholders[vm]="$VM_NUMBER"
 
 sed_placeholders[imports]='
     ./hardware-configuration.nix
+    ./user-config.nix
     ./vm-network-config.nix
     ./database.nix
 '

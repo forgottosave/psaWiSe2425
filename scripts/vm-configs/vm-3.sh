@@ -4,6 +4,7 @@
 include_files=(
     configuration.nix
     router-network.nix
+    user-config.nix
     dns-config.nix
     dhcp-config.nix
     flake.nix
@@ -17,6 +18,7 @@ sed_placeholders[vm]="$VM_NUMBER"
 
 sed_placeholders[imports]='
     ./hardware-configuration.nix
+    ./user-config.nix
     ./router-network.nix
     ./dns-config.nix
 '
