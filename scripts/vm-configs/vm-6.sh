@@ -27,6 +27,7 @@ sed_placeholders[system_packages]='
     tcpdump
     traceroute
     dhcpdump
+    openssl
 '
 
 sed_placeholders[root_access]='
