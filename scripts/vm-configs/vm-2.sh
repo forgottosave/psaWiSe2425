@@ -17,6 +17,7 @@ sed_placeholders[imports]='
     ./hardware-configuration.nix
     ./user-config.nix
     ./vm-network-config.nix
+    ./database-backup.nix
 '
 
 sed_placeholders[system_packages]='
@@ -28,6 +29,7 @@ sed_placeholders[system_packages]='
     bind
     dhcpdump
     dhcping
+    postgresql_17
 '
 
 sed_placeholders[root_access]='

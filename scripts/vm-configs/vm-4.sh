@@ -29,7 +29,6 @@ sed_placeholders[system_packages]='
     dhcpdump
     dhcping
     postgresql_17
-    docker-compose
 '
 
 sed_placeholders[root_access]='
