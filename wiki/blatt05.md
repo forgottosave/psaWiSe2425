@@ -287,14 +287,18 @@ Für die WAL Lösung setzen wir eine weitere Datenbank auf (auf VM 2), identisch
     pg_dumpall -U "$user" --verbose > "$backup" 2> "$log"
     ```
 
-    Using `crontab -e` we can call this script once every day. `15 01 * * *` will call the script every day at 01:15. Using `MAILTO` we can send the output of the crontab directly per mail.
+    NixOS unterstütz crontabs nativ. Somit können wir sehr einfach jeden Tag das eben erstelle Skript ausführen. Mit `15 01 * * *` können wir das jeden Tag einmal um 01:15 geschehen lassen.
 
-    ```bash
-    MAILTO='timon.ensel@tum.de'
-    15 01 * * * /root/backup_postgres.sh
+    ```nixos
+    services.cron = {
+        enable = true;
+        systemCronJobs = [
+          "15 01 * * * ./root/backup_postgres.sh"
+        ];
+    };
     ```
 
-    using `crontab -l` we can verify, that this cronjob really is running.
+    Mit `crontab -l` können wir verifizieren, dass der Cronjob wirklich läuft.
 
 Quellen:
 
