@@ -9,6 +9,8 @@ include_files=(
 )
 
 # SED placeholders
+declare -A sed_placeholders
+
 sed_placeholders[vm]="$VM_NUMBER"
 
 sed_placeholders[imports]='
