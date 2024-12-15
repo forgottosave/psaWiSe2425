@@ -1,13 +1,13 @@
 { config, lib, pkgs, ... }:
 {
-    services.nginx.enable = true;
-    services.nginx.virtualHosts."myhost.org" = {
-        addSSL = true;
-        enableACME = true;
-        root = "/var/www/myhost.org";
+  services.nginx = {
+    enable = true;
+    virtualHosts = {
+      "vm06.psa-team03.cit.tum.de" = {
+        listen = [ 80 ];
+        root = "/var/www/html";
+        enableACME = false; # Kein Let's Encrypt, da selbstsigniertes Zertifikat
+      };
     };
-    security.acme = {
-        acceptTerms = true;
-        defaults.email = "foo@bar.com";
-    };
+  };
 }
