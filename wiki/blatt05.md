@@ -280,14 +280,21 @@ Für die WAL Lösung setzen wir eine weitere Datenbank auf (auf VM 2), identisch
     Zusätzlich können wir den oben Erwähnten `dump` nutzen, um Backups von bestimmten Zeitpunkten zu haben. Wenn diese auf der Backup DB ausgeführt werden wird die Datenbank Funktionalität / Erreichbarkeit der Master DB nicht eingeschränkt.
     Nachdem die Aufgabenstellung ein Skipt mit `crontab` fordert, können wir die von NixOS bereitgestellte Backup-Funktion von oben nicht nutzen, sondern erstellen ein separates Skript.
 
-    Nachdem wir `host` (localhost), `user` (unseren oben erstellten read-only Nutzer ronlyusr), sowie die Pfade zum backup- und zum log-file definieren, können wir mit `pg_dumpall` ein einfaches Backup erstellen, ähnlich zum `services.postgresqlBackup`:
+    Nachdem wir `user` (postgres), sowie die Pfade zum backup- und zum log-file definieren, können wir mit `pg_dumpall` ein einfaches Backup erstellen, ähnlich zum `services.postgresqlBackup`:
 
     ```bash
     # backup_postgres.sh
-    pg_dumpall -h "$host" -U "$user" --verbose > "$backup" 2> "$log"
+    pg_dumpall -U "$user" --verbose > "$backup" 2> "$log"
     ```
 
-    #TODO chrontab
+    Using `crontab -e` we can call this script once every day. `15 01 * * *` will call the script every day at 01:15. Using `MAILTO` we can send the output of the crontab directly per mail.
+
+    ```bash
+    MAILTO='timon.ensel@tum.de'
+    15 01 * * * /root/backup_postgres.sh
+    ```
+
+    using `crontab -l` we can verify, that this cronjob really is running.
 
 Quellen:
 
@@ -295,6 +302,7 @@ Quellen:
 - [nixos.org postgres options](https://search.nixos.org/options?channel=24.11&show=services.postgresqlBackup.pgdumpOptions&from=0&size=50&sort=relevance&type=packages&query=services.postgresql)
 - [postgresql.org backup-dump](https://www.postgresql.org/docs/current/backup-dump.html)
 - [postgresql.org WAL](https://www.postgresql.org/docs/current/runtime-config-wal.html#RUNTIME-CONFIG-WAL-SUMMARIZATION)
+- [phoenixnap.com setup cron job](https://phoenixnap.com/kb/set-up-cron-job-linux)
 
 ### 3) Testing
 
