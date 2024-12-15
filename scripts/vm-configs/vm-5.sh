@@ -14,8 +14,9 @@ declare -A sed_placeholders
 sed_placeholders[vm]="$VM_NUMBER"
 
 sed_placeholders[imports]='
-    vm-network-config.nix
-    homeassistant.nix
+    ./hardware-configuration.nix
+    ./vm-network-config.nix
+    ./homeassistant.nix
 '
 
 sed_placeholders[system_packages]='

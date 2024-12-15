@@ -14,8 +14,9 @@ declare -A sed_placeholders
 sed_placeholders[vm]="$VM_NUMBER"
 
 sed_placeholders[imports]='
-    user-config.nix
-    vm-network-config.nix
+    ./hardware-configuration.nix
+    ./user-config.nix
+    ./vm-network-config.nix
 '
 
 sed_placeholders[system_packages]='
