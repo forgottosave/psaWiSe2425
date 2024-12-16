@@ -330,7 +330,121 @@ Quellen:
 ### 3) Testing
 
 Das grundlegende Test-Setup bleibt identisch zu den vorherigen Wochen (siehe Blatt03).
+Das Skipt kann sowohl auf der *Master DB*, als auch der *Backup DB* VM ausgeführt werden und ändert die zu laufenden Tests automatisch für die jeweilige VM.
 
-1. #TODO
+1. *Master DB VM*
+    Zunächst prüfen wir, ob alle geforderten Datanbanken verfügbar sind.
+    Alle Tests werden ähnlich ablaufen:
+    1. mit `psql -U ... -c "..." | grep "..." &> /dev/null` prüfen, ob der jeweilige Befehl erfolgreich ausgeführt werden kann.
+    2. mit `if [ $? -eq 0 ]; then` Ergebniss prüfen.
+    3. bei manchen Tests kann dies über eine Reihe an Inputs erfolgen. Mit `for ... in ${...[@]}; do ...` kann hierbei über eine Liste an Inputs iteriert werden.
 
-2. #TODO
+    ```bash
+    # test_PSA_05.sh
+    start_test "check if databases exist"
+    databases=(
+        postgres
+        remotusrdb
+        localusrdb
+    )
+    for db in ${databases[@]}; do
+        psql -U postgres -c "\l" | grep "${db}" &> /dev/null
+        if [ $? -eq 0 ]; then
+            print_success "$db exists"
+        else
+            print_failed "$db not found"
+        fi
+    done
+    ```
+
+    Ähnlich können wir testen, ob alle geforderten Nutzer verfügbar sind:
+
+    ```bash
+    # test_PSA_05.sh
+    start_test "check if users exist"
+    users=(
+        postgres
+        remotusr
+        localusr
+        ronlyusr
+    )
+    for usr in ${users[@]}; do
+        psql -U postgres -c "\du" | grep "${usr}" &> /dev/null
+        if [ $? -eq 0 ]; then
+            print_success "$usr exists"
+        else
+            print_failed "$usr not found"
+        fi
+    done
+    ```
+
+    Zuletzt können wir überprüfen, ob das WAL funktioniert. Hierfür benötigt es mehrere Schritte, jeder Schritt wird hierbei als Test ausgegeben, um mögliche Fehler einfacher zu finden:
+    Mit dem Nutzer `postgres` haben wir Zugriff auf alle Datenbanken. Mit diesem können wir einfach eine Test-Tabelle für den Nutzer `remotusr` erstellen, diesen als `OWNER` eintragen und einen simplen Eintrag erstellen:
+
+    ```bash
+    # test_PSA_05.sh
+    # create table in remotusrdb
+    sql_cmd="CREATE TABLE cpt_team (email text, vistor_id serial, date timestamp, message text);"
+    expect="CREATE TABLE"
+    psql -U postgres -c "$sql_cmd" remotusrdb | grep "${expect}" &> /dev/null
+    if [ $? -eq 0 ]; then
+        print_success "created table in remotusrdb"
+    else
+        print_failed "couldn't create table in remotusrdb"
+    fi
+    # change owner of this table
+    sql_cmd="ALTER TABLE cpt_team OWNER TO remotusr;"
+    expect="ALTER TABLE"
+    psql -U postgres -c "$sql_cmd" remotusrdb | grep "${expect}" &> /dev/null
+    if [ $? -eq 0 ]; then
+        print_success "make remotusr owner of new table"
+    else
+        print_failed "couldn't make remotusr owner of new table"
+    fi
+    # create entry in remotusrdb table
+    sql_cmd="INSERT INTO cpt_team (email, date, message) VALUES ( 'myoda@gmail.com', current_date, 'Now we are replicating.');"
+    expect="INSERT 0 1"
+    psql -U postgres -c "$sql_cmd" remotusrdb | grep "${expect}" &> /dev/null
+    if [ $? -eq 0 ]; then
+        print_success "created entry in remotusrdb table"
+    else
+        print_failed "couldn't create entry in remotusrdb table"
+    fi
+    ```
+
+    Danach können wir uns remote auf die backup database einloggen. Der Nutzer `remotusr` hat remote Zugriff. Hier prüfen wir, ob die eben lokal erstellten Einträge auch auf der *Backup DB VM* vorhanden sind:
+
+    ```bash
+    # test_PSA_05.sh
+    backup_addr="192.168.3.2"
+    sql_cmd="SELECT * FROM cpt_team;"
+    expect="Now we are replicating."
+    psql -h "$backup_addr" -p 5432 -U remotusr -W -c "$sql_cmd" remotusrdb | grep "${expect}" &> /dev/null
+    if [ $? -eq 0 ]; then
+        print_success "table & entry exists at backup database ($backup_addr)"
+    else
+        print_failed "table or entry not found in backup database ($backup_addr)"
+    fi
+    ```
+
+    Mit einem kleinen cleanup des Tests sind die Tests für diese VM fertig:
+
+    ```bash
+    sql_cmd="DROP TABLE cpt_team;"
+    expect="DROP TABLE"
+    psql -U postgres -c "$sql_cmd" remotusrdb | grep "${expect}" &> /dev/null
+    ```
+
+2. *Backup DB VM*
+    Auf der Backup VM werden wir nurnoch das Backup-Skript `backup_postgres.sh` überprüfen.
+    Hierfür merken wir uns die aktuelle Zeit `time=$(date +"%Y%m%d-%H%M%S")` und führen dann das Skript aus. Wir können überprüfen, ob das Skript den richtigen Rückgabewert hat, ein neues Backup existiert und ob ein zugehöriges log existiert:
+
+    ```bash
+    ./backup_postgres.sh
+    if [ $? -eq 0 ]; then
+        ...
+    if [ -f "/root/backup_postgres/backup_${time}.dump" ]; then
+        ...
+    if [ -f "/root/backup_postgres/backup_${time}.log" ]; then
+        ...
+    ```
