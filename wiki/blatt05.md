@@ -1,6 +1,6 @@
 # Aufgabenblatt 05
 
-In diesem Blatt geht es darum eine Datenbank einzurichten. Wir hosten sie auf der neuen VM 4 (`198.162.3.4`).
+In diesem Blatt geht es darum eine Datenbank einzurichten. Wir hosten sie auf der neuen VM 4 (`198.162.3.4`). Das Backup wird auf einer separaten VM (VM 2, `192.168.3.2`) gehostet.
 
 ## Teilaufgaben
 
@@ -157,9 +157,9 @@ Quellen:
 - [nixos-manual upgrading](https://nlewo.github.io/nixos-manual-sphinx/installation/upgrading.xml.html)
 - [nixos.org postgres options](https://search.nixos.org/options?channel=24.11&show=services.postgresqlBackup.pgdumpOptions&from=0&size=50&sort=relevance&type=packages&query=services.postgresql)
 
-### 2) Backup
+## 2) Backup
 
-#### Erste Lösung: Dump
+### Erste Lösung: Dump
 
 Nativ unterstützt NixOS 2 Arten von postgresql backups, eine davon ist durch naive dumps der Datenbank. In `location` definieren wir den Pfad zum backup-Verzeichniss.
 
@@ -174,7 +174,7 @@ services.postgresqlBackup = {
 
 Nachdem das Backup allerdings auch für viel größere Datenbanken ohne große Einschränkungen skalierbar sein muss, ist einen kompletten dump zu erstellen keine ausreichende Lösung. Mittels eines Write-Ahead-Logs können lange Pausen eines dumps umgangen werden. Diese Lösung ist im folgenden Abschnitt beschrieben:
 
-#### Verbesserung: Write-Ahead-Log (WAL)
+### Verbesserung: Write-Ahead-Log (WAL)
 
 Für die WAL Lösung setzen wir eine weitere Datenbank auf (auf VM 2), identisch zur ersten Datenbank. Nun haben wir 2 Datenbanken, wir nennen sie in dieser Anleitung *Master DB* und *Backup DB*.
 
@@ -327,7 +327,7 @@ Quellen:
 - [phoenixnap.com setup cron job](https://phoenixnap.com/kb/set-up-cron-job-linux)
 - [nixos.org cron](https://nixos.wiki/wiki/Cron)
 
-### 3) Testing
+## 3) Testing
 
 Das grundlegende Test-Setup bleibt identisch zu den vorherigen Wochen (siehe Blatt03).
 Das Skipt kann sowohl auf der *Master DB*, als auch der *Backup DB* VM ausgeführt werden und ändert die zu laufenden Tests automatisch für die jeweilige VM.
