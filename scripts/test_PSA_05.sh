@@ -1,20 +1,5 @@
 #!/usr/bin/env bash
 
-## SCRIPT INFO ##################################
-VM_NUMBER=$(hostname)
-VM_NUMBER=${VM_NUMBER: -1}
-echo "
-Execute this test script on VM 2 (backup) & VM 4 (main database)..
-Warning: VM 4 might expect a password input for remotusr.
-This VM: VM ${VM_NUMBER}
-"
-
-## CHECK ROOT ###################################
-if [ $(id -u) -ne 0 ]; then
-    echo Please run this script as root or using sudo!
-    exit 1
-fi
-
 ## TEST SETUP ###################################
 
 # text styling
@@ -46,6 +31,21 @@ function print_summary {
     success_count=0
     failed_count=0
 }
+
+## SCRIPT INFO ##################################
+VM_NUMBER=$(hostname)
+VM_NUMBER=${VM_NUMBER: -1}
+echo "
+Execute this test script on VM 2 (backup) & VM 4 (main database)..
+This VM: VM ${VM_NUMBER}
+
+Warning: VM 4 might expect a password input for remotusr."
+
+## CHECK ROOT ###################################
+if [ $(id -u) -ne 0 ]; then
+    echo Please run this script as root or using sudo!
+    exit 1
+fi
 
 ## Test depending on VM
 if [ $VM_NUMBER -eq 4 ]; then
