@@ -110,7 +110,7 @@ if [ $VM_NUMBER -eq 4 ]; then
     backup_addr="192.168.3.2"
     sql_cmd="SELECT * FROM cpt_team;"
     expect="Now we are replicating."
-    psql -h "$backup_addr" -p 5432 -U remotusr -W -c "$sql_cmd" remotusrdb | grep "${expect}"
+    psql -h "$backup_addr" -p 5432 -U remotusr -W -c "$sql_cmd" remotusrdb | grep "${expect}" &> /dev/null
     if [ $? -eq 0 ]; then
         print_success "table & entry exists at backup database ($backup_addr)"
     else
