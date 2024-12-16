@@ -97,6 +97,15 @@ if [ $VM_NUMBER -eq 4 ]; then
     else
         print_failed "couldn't create table in remotusrdb"
     fi
+    # create table in remotusrdb
+    sql_cmd="ALTER TABLE cpt_team OWNER TO remotusr;"
+    expect="ALTER TABLE"
+    psql -U postgres -c "$sql_cmd" remotusrdb | grep "${expect}" &> /dev/null
+    if [ $? -eq 0 ]; then
+        print_success "make remotusr owner of new table"
+    else
+        print_failed "couldn't make remotusr owner of new table"
+    fi
     # create entry in remotusrdb table
     sql_cmd="INSERT INTO cpt_team (email, date, message) VALUES ( 'myoda@gmail.com', current_date, 'Now we are replicating.');"
     expect="INSERT 0 1"
