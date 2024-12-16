@@ -76,7 +76,7 @@ if [ $VM_NUMBER -eq 4 ]; then
         localusr
         ronlyusr
     )
-    for usr in ${databases[@]}; do
+    for usr in ${users[@]}; do
         psql -U postgres -c "\du" | grep "${usr}" &> /dev/null
         if [ $? -eq 0 ]; then
             print_success "$usr exists"
