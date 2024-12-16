@@ -287,15 +287,18 @@ Für die WAL Lösung setzen wir eine weitere Datenbank auf (auf VM 2), identisch
     pg_dumpall -U "$user" --verbose > "$backup" 2> "$log"
     ```
 
-    NixOS unterstütz crontabs nativ. Somit können wir sehr einfach jeden Tag das eben erstelle Skript ausführen. Mit `15 01 * * *` können wir das jeden Tag einmal um 01:15 geschehen lassen.
+    NixOS unterstütz crontabs nativ. Somit können wir sehr einfach crontab aktivieren und dann mit `crontab -e` einen neuen cronjob anlegen, der jeden Tag das eben erstelle Skript ausführt. Mit `15 01 * * *` können wir das jeden Tag einmal um 01:15 geschehen lassen. Mit `MAILTO` könnte man zusätzlich eine Mail mit dem output verschicken.
 
     ```nixos
+    # database-backup.nix
     services.cron = {
         enable = true;
-        systemCronJobs = [
-          "15 01 * * * ./root/backup_postgres.sh"
-        ];
     };
+    ```
+
+    ```crontab
+    # crontab -e
+    15 01 * * * ./root/backup_postgres.sh
     ```
 
     Mit `crontab -l` können wir verifizieren, dass der Cronjob wirklich läuft.
@@ -307,6 +310,7 @@ Quellen:
 - [postgresql.org backup-dump](https://www.postgresql.org/docs/current/backup-dump.html)
 - [postgresql.org WAL](https://www.postgresql.org/docs/current/runtime-config-wal.html#RUNTIME-CONFIG-WAL-SUMMARIZATION)
 - [phoenixnap.com setup cron job](https://phoenixnap.com/kb/set-up-cron-job-linux)
+- [nixos.org cron](https://nixos.wiki/wiki/Cron)
 
 ### 3) Testing
 

@@ -27,9 +27,6 @@
   # cronjob for database backup
   services.cron = {
     enable = true;
-    systemCronJobs = [
-      "15 01 * * * ./root/backup_postgres.sh"
-    ];
   };
   # DATABASE SETUP
   services.postgresql = {
