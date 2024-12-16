@@ -101,26 +101,81 @@ settings -> People -> add Person -> <name> und "allow login" -> set passwd -> cr
 
 ##### Passwörter
 
-- admins:
-  - ge78zig | 9E56XY
-  - ge96xok | w8yN11Vr6Wjn
-  - sysAdmin | 6gXFy11JdcSO
-- normal users:
-  - ge95vir | 8qM08hZWZXkG
-  - ge43fim | 8qM08hZWZXkG
-  - ge78nes | 8qM08hZWZXkG
-  - ge96hoj | 8qM08hZWZXkG
-  - ge87yen | 8qM08hZWZXkG
-  - ge47sof | 8qM08hZWZXkG
-  - ge47kut | 8qM08hZWZXkG
-  - ge87liq | 8qM08hZWZXkG
-  - ge59pib | 8qM08hZWZXkG
-  - ge65peq | 8qM08hZWZXkG
-  - ge63gut | 8qM08hZWZXkG
-  - ge64baw | 8qM08hZWZXkG
-  - ge84zoj | 8qM08hZWZXkG
-  - ge94bob | 8qM08hZWZXkG
-  - ge87huk | 8qM08hZWZXkG
-  - ge64wug | 8qM08hZWZXkG
-  - ge65hog | 8qM08hZWZXkG
-  - ge38hoy | 8qM08hZWZXkG
+- Administratoren:
+  
+  | Nutzer   | Passwort     |
+  | -------  | ------------ |
+  | ge78zig  | 9E56XY       |
+  | ge96xok  | w8yN11Vr6Wjn |
+  | sysAdmin | 6gXFy11JdcSO |
+
+- Reguläre Nutzer:
+
+  | Nutzer  | Passwort     |
+  | ------- | ------------ |
+  | ge95vir | 8qM08hZWZXkG |
+  | ge43fim | 8qM08hZWZXkG |
+  | ge78nes | 8qM08hZWZXkG |
+  | ge96hoj | 8qM08hZWZXkG |
+  | ge87yen | 8qM08hZWZXkG |
+  | ge47sof | 8qM08hZWZXkG |
+  | ge47kut | 8qM08hZWZXkG |
+  | ge87liq | 8qM08hZWZXkG |
+  | ge59pib | 8qM08hZWZXkG |
+  | ge65peq | 8qM08hZWZXkG |
+  | ge63gut | 8qM08hZWZXkG |
+  | ge64baw | 8qM08hZWZXkG |
+  | ge84zoj | 8qM08hZWZXkG |
+  | ge94bob | 8qM08hZWZXkG |
+  | ge87huk | 8qM08hZWZXkG |
+  | ge64wug | 8qM08hZWZXkG |
+  | ge65hog | 8qM08hZWZXkG |
+  | ge38hoy | 8qM08hZWZXkG |
+
+### 3) Testen
+
+Das grundlegende Test-Setup bleibt identisch zu den vorherigen Wochen (siehe Blatt03).
+Das Skipt kann sowohl auf der Host-VM, als auch auf jeder andern VM mit Verbingung zur Host-VM ausgeführt werden und ändert die zu laufenden Tests automatisch für die jeweilige VM.
+
+1. *Host VM*
+  Auf der Host-VM können wir prüfen, ob docker installiert ist...
+
+  ```bash
+  # test_PSA_06.sh
+  start_test "check docker installed"
+  if command -v docker 2>&1 >/dev/null; then
+    print_success "docker installed"
+  else
+    print_failed "docker could not be found"
+  fi
+  ```
+
+  ...die Docker Konfiguration existiert (then else Körper bleibt bis auf die Nachrichten bei allen weiteren Tests gleich und wird deshalb nicht weiter aufgeführt)...
+
+  ```bash
+  # test_PSA_06.sh
+  start_test "check docker config exists"
+  if [ -f /root/compose.yml ]; then
+  ...
+  ```
+
+  ...und ob docker läuft:
+
+  ```bash
+    # test_PSA_06.sh
+  start_test "check docker running"
+  container_name="homeassistant"
+  if [ "$( docker container inspect -f '{{.State.Status}}' $container_name )" = "running" ]; then
+  ...
+  ```
+
+2. *Host & Andere VMs*
+  Mit `curl` können wir unabhängig von der VM testen, ob Home Assistant erreichbar ist:
+
+  ```bash
+  # test_PSA_06.sh
+  start_test "check home assistant reachable (curl)"
+  status=$(curl -X GET -o - -I http://131.159.74.56:60351/ | head -n 1)
+  if [[ $status =~ "200" ]]; then
+  ...
+  ```
