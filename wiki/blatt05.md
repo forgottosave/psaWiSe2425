@@ -17,6 +17,8 @@ In diesem Blatt geht es darum eine Datenbank einzurichten. Wir hosten sie auf de
     nixos-rebuild switch --upgrade
     ```
 
+    *Hinweis: Falls der postgresql.service nach dem rebuild failt, Schritte [hier](https://github.com/NixOS/nixpkgs/issues/74357) befolgen und danach die Datenbank wiederherstellen*
+
     Wir fügen zudem die PostgreSQL tools in der `configuration.nix` hinzu.
 
     ```shell
