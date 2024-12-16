@@ -176,9 +176,24 @@ Nachdem das Backup allerdings auch für viel größere Datenbanken ohne große E
 
 #### Verbesserung: Write-Ahead-Log (WAL)
 
-Für die WAL Lösung setzen wir eine weitere Datenbank auf (auf VM 2), identisch zur ersten Datenbank. Nun haben wir 2 Datenbanken, wir nennen sie in dieser Anleitung `Master DB` und `Backup DB`.
+Für die WAL Lösung setzen wir eine weitere Datenbank auf (auf VM 2), identisch zur ersten Datenbank. Nun haben wir 2 Datenbanken, wir nennen sie in dieser Anleitung *Master DB* und *Backup DB*.
 
-1. Master DB
+```ascii
+┌─────────────┐         ┌───────────────┐
+│  Master DB  │         │   Backup DB   │
+│ 192.168.3.4 │         │  192.168.3.2  │
+│             │         │               │
+│   ┌────┐    │         │┌────┐ ┌──────┐│
+│   │ DB │    │   WAL   ││ DB │ │Backup││
+│   │  ──┼────┼─────────┼┼─►  │ │      ││
+│   │    │    │         ││  ──┼─┼─►    ││
+│   └────┘    │         │└────┘ └──────┘│
+└─────────────┘         └───────────────┘
+```
+
+Zwischen beiden VMs findet das WAL von der DB in die *Backup DB* statt. Von der *Backup DB* können dann zusätzlich ganze Zwischenzustände in ein Backup gespeichert werden, da hier die Datenbank Verfügbarkeit der *Master DB* nicht beeinträchtigt wird.
+
+1. *Master DB*
     Wir benötigen zunächst einen neuen Nutzer mit `replikation` Rechten. Wir tragen diesen in der config ein und fügen (ähnlich wie mit den anderen Nutzern) diesen direkt auch in der authentication ein, um den remote-Zugriff zu ermöglichen:
 
     ```nixos
@@ -221,9 +236,9 @@ Für die WAL Lösung setzen wir eine weitere Datenbank auf (auf VM 2), identisch
     systemctl restart postgresql.service
     ```
 
-2. Backup DB
+2. *Backup DB*
     Mit `./script/sync-nixos-config.sh` laden wir die neue Datenbank.
-    Nun muss der Backup-Mechanismus eingerichtet werden. Wir definieren hierfür diese Backup DB als standby-server und definieren die primäre Datenbank (Master DB) samt Zugang.
+    Nun muss der Backup-Mechanismus eingerichtet werden. Wir definieren hierfür diese *Backup DB* als standby-server und definieren die primäre Datenbank (*Master DB*) samt Zugang.
 
     ```bash
     sudo -u postgres postgres
@@ -238,7 +253,7 @@ Für die WAL Lösung setzen wir eine weitere Datenbank auf (auf VM 2), identisch
     systemctl restart postgresql.service
     ```
 
-    Als zweiten Schritt setzen wir noch die Datenbank auf den Stand der Master DB und richten die Backup-Funktion ein. Hierfür löschen (bzw. verschieben) wir bisherige Teile der DB...
+    Als zweiten Schritt setzen wir noch die Datenbank auf den Stand der *Master DB* und richten die Backup-Funktion ein. Hierfür löschen (bzw. verschieben) wir bisherige Teile der DB...
 
     ```bash
     mv /var/lib/postgresql/17 /var/lib/postgresql/17_old
@@ -257,7 +272,7 @@ Für die WAL Lösung setzen wir eine weitere Datenbank auf (auf VM 2), identisch
     ```
 
 3. Test WAL
-    Um das WAL zu testen, können wir testweise eine Tabelle und ein paar Einträge auf der Master DB anlegen. Hier beispielsweise mit dem Nutzer `localusr` und seiner Datenbank:
+    Um das WAL zu testen, können wir testweise eine Tabelle und ein paar Einträge auf der *Master DB* anlegen. Hier beispielsweise mit dem Nutzer `localusr` und seiner Datenbank:
 
     ```bash
     # master-db
@@ -267,7 +282,7 @@ Für die WAL Lösung setzen wir eine weitere Datenbank auf (auf VM 2), identisch
     INSERT INTO cpt_team (email, date, message) VALUES ( 'myfingworking@gmail.com', current_date, 'Now we are replicating AND IT WORKS.');
     ```
 
-    Auf der Backup DB können wir mit `\dt` nun die neue Tabelle einsehen, sowie mit `SELECT * FROM cpt_team;` die erstellten Einträge ansehen.
+    Auf der *Backup DB* können wir mit `\dt` nun die neue Tabelle einsehen, sowie mit `SELECT * FROM cpt_team;` die erstellten Einträge ansehen.
 
     ```bash
     # backup-db
@@ -277,7 +292,7 @@ Für die WAL Lösung setzen wir eine weitere Datenbank auf (auf VM 2), identisch
     ```
 
 4. Backup Skript
-    Zusätzlich können wir den oben Erwähnten `dump` nutzen, um Backups von bestimmten Zeitpunkten zu haben. Wenn diese auf der Backup DB ausgeführt werden wird die Datenbank Funktionalität / Erreichbarkeit der Master DB nicht eingeschränkt.
+    Zusätzlich können wir den oben Erwähnten `dump` nutzen, um Backups von bestimmten Zeitpunkten zu haben. Wenn diese auf der *Backup DB* ausgeführt werden wird die Datenbank Funktionalität / Erreichbarkeit der *Master DB* nicht eingeschränkt.
     Nachdem die Aufgabenstellung ein Skipt mit `crontab` fordert, können wir die von NixOS bereitgestellte Backup-Funktion von oben nicht nutzen, sondern erstellen ein separates Skript.
 
     Nachdem wir `user` (postgres), sowie die Pfade zum backup- und zum log-file definieren, können wir mit `pg_dumpall` ein einfaches Backup erstellen, ähnlich zum `services.postgresqlBackup`:
