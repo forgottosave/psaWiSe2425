@@ -81,8 +81,6 @@ if [[ $status =~ "200" ]]; then
 else
     print_failed "curl $addr"
 fi
-print_summary
-exit 0
 
 ## summary ######################################
 print_summary

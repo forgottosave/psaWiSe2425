@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-time=$(date +"%Y%m%d")
+time=$(date +"%Y%m%d-%H%M%S")
 
 # set information
 user="postgres"
