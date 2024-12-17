@@ -77,7 +77,36 @@ Um homeassistant auch erreichen zu können müssen wir noch in VirtualBox eine P
 VBoxManage modifyvm "vmpsateam03-05" --nat-pf1 "ssh,tcp,,60351,,8123"
 ```
 
-Nun sollte Homeassistant unter `http://http://131.159.74.56:60351` erreichbar sein.
+Nun sollte Homeassistant unter `http://131.159.74.56:60351` erreichbar sein.
+
+#### 1.4) Einrichten des SSL Zertifikats & https
+
+Da man bei Verbingung per `psa.in.tum.de:60351/` immer auf `https` umgeleitet wird, müssen wir ein SSL-Zertifikat einrichten, um dies zu ermöglichen.
+Hierfür müssen wir `openssl` in die NixOS Konfiguration einfügen um dann ein Zertifikat zu generieren. Dieses legen wir unter `/root/homeassistant_config` ab, sodass HomeAssistant Zugriff darauf hat.
+
+```shell
+cd /root/homeassistant_config;
+openssl req -sha256 -addext "subjectAltName = IP:192.168.3.5" -newkey rsa:4096 -nodes -keyout privkey.pem -x509 -days 730 -out fullchain.pem
+# und danach alle Prompts für Country Code, Mail, ... ausfüllen
+```
+
+Dieses Zertifikat können wir in die `/root/homeassistant_config/configuration.yaml` für HomeAssistant eintragen:
+
+```yaml
+...
+# add https certificate
+http:
+  ssl_certificate: /config/fullchain.pem
+  ssl_key: /config/privkey.pem
+```
+
+Nach einem Neustart von HomeAssistant (Docker)...
+
+```shell
+docker container restart homeassistant
+```
+
+...ist HomeAssistant wie gefordert unter `https://psa.in.tum.de:60351/` erreichbar.
 
 ### 2) Einrichten von Homeassistant
 
