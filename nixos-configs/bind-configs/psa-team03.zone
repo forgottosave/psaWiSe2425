@@ -11,8 +11,22 @@ $TTL    1h
 @       NS      ns1.psa-team04.cit.tum.de
 ns1     A       192.168.3.3
 
-vm1          A       192.168.3.1
-vm2          A       192.168.3.2
-database     A       192.168.3.4
-homeassistant A      192.168.3.5
-vm6          A       192.168.3.6
+; VM 1
+vm1             A       192.168.3.1
+
+; VM 2
+vm2             A       192.168.3.2
+mirror.database A       192.168.3.2
+
+; VM 4
+vm4             A       192.168.3.4
+database        A       192.168.3.4
+
+; VM 5
+vm5             A       192.168.3.5
+homeassistant   HTTPS   192.168.3.5
+homeassistant   A       192.168.3.5
+
+; VM 6
+vm6             HTTPS   192.168.3.6
+vm6             A       192.168.3.6
