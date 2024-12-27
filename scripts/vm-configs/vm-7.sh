@@ -17,6 +17,7 @@ sed_placeholders[imports]='
     ./hardware-configuration.nix
     ./vm-network-config.nix
     ./user-config.nix
+    ./fileserver.nix
 '
 
 sed_placeholders[system_packages]='
@@ -25,6 +26,7 @@ sed_placeholders[system_packages]='
     tcpdump
     traceroute
     dhcpdump
+    mdadm
 '
 
 sed_placeholders[root_access]='
