@@ -50,6 +50,29 @@
           ./configuration.nix
         ];
       };
+      vmpsateam03-07 = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux"; 
+        modules = [
+          ./configuration.nix
+        ];
+      };
+      vmpsateam03-08 = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux"; 
+        modules = [
+          ./configuration.nix
+        ];
+      };
+      vmpsateam03-09 = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux"; 
+        modules = [
+          ./configuration.nix
+        ];
+      };
+      vmpsateam03-10 = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux"; 
+        modules = [
+          ./configuration.nix
+        ];
     };
   };
 }
