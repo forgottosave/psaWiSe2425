@@ -55,22 +55,22 @@
                         "hostname": "webserver"
                     },
                     {
-                        "hw-address": "08:00:27:ff:56:57",
+                        "hw-address": "08:00:27:87:44:7d",
                         "ip-address": "192.168.3.7",
                         "hostname": "fileserver"
                     },
                     {
-                        "hw-address": "08:00:27:70:aa:46",
+                        "hw-address": "08:00:27:cb:db:45",
                         "ip-address": "192.168.3.8",
                         "hostname": "ldap"
                     },
                     {
-                        "hw-address": "08:00:27:79:98:1d",
+                        "hw-address": "08:00:27:54:8e:3c",
                         "ip-address": "192.168.3.9",
                         "hostname": "mail"
                     },
                     {
-                        "hw-address": "08:00:27:ff:df:19",
+                        "hw-address": "08:00:27:3d:98:19",
                         "ip-address": "192.168.3.10",
                         "hostname": "monitoring"
                     }
