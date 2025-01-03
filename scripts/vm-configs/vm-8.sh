@@ -21,6 +21,7 @@ sed_placeholders[imports]='
 
 sed_placeholders[system_packages]='
     git
+    mdadm
     nmap
     tcpdump
     traceroute

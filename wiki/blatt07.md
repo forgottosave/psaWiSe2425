@@ -20,9 +20,27 @@ Für die benötigte Ausfallsicherheit reicht RAID 5 aus und hat zudem eine vergl
 
 3. Mit der Installation von NixOS fortfahren (siehe [Blatt 01](blatt01.md)).
 
+4. RAID 5 einrichten mit `mdadm`
+   Wir fügen `mdadm` zunächst zur VM hinzu:
+
+   ```shell
+   # vm-8.sh
+   sed_placeholders[system_packages]='
+    ...
+    mdadm
+   '
+   ```
+
+   Mit `lsblk` sehen wir unsere 7 Festplatten `sdb-h`.
+
+   ```shell
+
+   ```
+
 Quellen:
 
-- [raid calculator](https://www.gigacalculator.com/calculators/raid-calculator.php)
+- [RAID calculator](https://www.gigacalculator.com/calculators/raid-calculator.php)
+- [RAID with mdadm](https://www.golinuxcloud.com/configure-software-linear-raid-linux/#Partitioning_with_fdisk)
 
 ### 2) Datenmigration
 
