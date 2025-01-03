@@ -15,7 +15,7 @@ sed_placeholders[vm]="$VM_NUMBER"
 
 sed_placeholders[imports]='
     ./hardware-configuration.nix
-    ./vm-network-config.nix
+    #./vm-network-config.nix TODO fix (results in network timeout)
     ./user-config.nix
 '
 
