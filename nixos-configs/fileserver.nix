@@ -1,19 +1,14 @@
 { config, lib, pkgs, ... }:
 {
-  services.nginx = {
+  boot.swraid = {
     enable = true;
-    virtualHosts = {
-      "vm06.psa-team03.cit.tum.de" = {
-        listen = [
-          { addr = "0.0.0.0"; port = 80; ssl = false; }
-          { addr = "0.0.0.0"; port = 443; ssl = true; }
-        ];
-        root = "/var/www/html";
-        enableACME = false; # Kein Let's Encrypt, da selbstsigniertes Zertifikat
-        forceSSL = true;
-        sslCertificate = "/etc/nginx/ssl/selfsigned.crt";
-        sslCertificateKey = "/etc/nginx/ssl/selfsigned.key";
-      };
-    };
+    mdadmConf = ''
+      ARRAY /dev/md127 metadata=1.2 UUID=d6e68de0:d5c8423f:715c48b0:f61316f8
+    '';
+  };
+
+  fileSystems."/export" = {
+    device = "/dev/md0";
+    fsType = "ext4";
   };
 }

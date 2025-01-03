@@ -6,6 +6,7 @@ include_files=(
     vm-network-config.nix
     user-config.nix
     flake.nix
+    fileserver.nix
 )
 
 # SED placeholders
@@ -17,6 +18,7 @@ sed_placeholders[imports]='
     ./hardware-configuration.nix
     #./vm-network-config.nix TODO fix (results in network timeout)
     ./user-config.nix
+    ./fileserver.nix
 '
 
 sed_placeholders[system_packages]='

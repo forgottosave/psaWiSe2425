@@ -21,7 +21,7 @@ Für die benötigte Ausfallsicherheit reicht RAID 5 aus und hat zudem eine vergl
 3. Mit der Installation von NixOS fortfahren (siehe [Blatt 01](blatt01.md)).
 
 4. RAID 5 einrichten mit `mdadm`
-   Wir fügen `mdadm` zunächst zur VM hinzu:
+   Aufgrund des guten Supports haben wir uns für `mdadm` entschieden. Eine angestrebte Alternative, `zraid` auf `ZFS`, können wir leider aufgrund einer zu neuen Kernel Version (siehe [nixos.wiki](https://nixos.wiki/wiki/ZFS#ZFS_support_for_newer_kernel_versions)) nicht nutzen.  Wir fügen `mdadm` zunächst zur VM hinzu:
 
    ```shell
    # vm-8.sh
@@ -34,7 +34,50 @@ Für die benötigte Ausfallsicherheit reicht RAID 5 aus und hat zudem eine vergl
    Mit `lsblk` sehen wir unsere 7 Festplatten `sdb-h`.
 
    ```shell
+   [root@vmpsateam03-08:~]# lsblk
+   NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS
+   sda      8:0    0   32G  0 disk 
+   ├─sda1   8:1    0   64M  0 part 
+   ├─sda2   8:2    0  512M  0 part /boot
+   ├─sda3   8:3    0    1G  0 part [SWAP]
+   └─sda4   8:4    0 30.4G  0 part /nix/store
+                                   /
+   sdb      8:16   0    2G  0 disk 
+   sdc      8:32   0    2G  0 disk 
+   sdd      8:48   0    2G  0 disk 
+   sde      8:64   0    2G  0 disk 
+   sdf      8:80   0    2G  0 disk 
+   sdg      8:96   0    2G  0 disk 
+   sdh      8:112  0    2G  0 disk 
+   sr0     11:0    1    1G  0 rom
+   ```
 
+   Mit `mdadm` können wir diese einfach zu einem RAID Verbund zusammenfassen Wir spezifizieren das Raid-Level und alle zugehörigen Festplatten:
+
+   ```shell
+   mdadm --create /dev/md/md_1 --level=raid5 --raid-devices=7 /dev/sdb /dev/sdc /dev/sdd /dev/sde /dev/sdf /dev/sdg /dev/sdh
+   ```
+
+   Um zu überprüfen, ob alles funktioniert hat, kann der RAID-Verbund gequerried werden:
+
+   ```shell
+   [root@vmpsateam03-08:~]# mdadm -Q /dev/md127
+   /dev/md127: 11.98GiB raid5 7 devices, 0 spares. Use mdadm --detail for more detail.
+   ```
+
+   Nun lässt sich ein Filesystem darauf anlegen und mounten:
+
+   ```shell
+   mkfs.ext4 /dev/md127 && mkdir /raided_fs && mount /dev/md127 /raided_fs
+   ```
+
+   `df -h` zeigt und nun das Filesystem, das wie erwartet 12 GB zur Verfügung stellt:
+
+   ```shell
+   [root@vmpsateam03-08:~]# df -h
+   Filesystem      Size  Used Avail Use% Mounted on
+   ...
+   /dev/md127       12G  2.1M   12G   1% /raided_fs
    ```
 
 Quellen:
