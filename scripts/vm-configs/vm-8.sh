@@ -18,7 +18,7 @@ sed_placeholders[imports]='
     ./hardware-configuration.nix
     #./vm-network-config.nix TODO fix (results in network timeout)
     ./user-config.nix
-    ./fileserver.nix
+    #./fileserver.nix TODO fix
 '
 
 sed_placeholders[system_packages]='

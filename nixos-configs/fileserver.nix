@@ -8,7 +8,7 @@
   };
 
   fileSystems."/export" = {
-    device = "/dev/md0";
+    device = "/dev/md127";
     fsType = "ext4";
   };
 }
