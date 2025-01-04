@@ -158,90 +158,110 @@
   fileSystems."/home/ge95vir" = {
     device = "192.168.3.8:/home/ge95vir";
     fsType = "nfs";
+    options = [ "x-systemd.automount" "noauto" "x-systemd.idle-timeout=600" ];
   };
   fileSystems."/home/ge43fim" = {
     device = "192.168.3.8:/home/ge43fim";
     fsType = "nfs";
+    options = [ "x-systemd.automount" "noauto" "x-systemd.idle-timeout=600" ];
   };
   # Team 02
   fileSystems."/home/ge78nes" = {
     device = "192.168.3.8:/home/ge78nes";
     fsType = "nfs";
+    options = [ "x-systemd.automount" "noauto" "x-systemd.idle-timeout=600" ];
   };
   fileSystems."/home/ge96hoj" = {
     device = "192.168.3.8:/home/ge96hoj";
     fsType = "nfs";
+    options = [ "x-systemd.automount" "noauto" "x-systemd.idle-timeout=600" ];
   };
   # Team 03
   fileSystems."/home/ge78zig" = {
     device = "192.168.3.8:/home/ge78zig";
     fsType = "nfs";
+    options = [ "x-systemd.automount" "noauto" "x-systemd.idle-timeout=600" ];
   };
   fileSystems."/home/ge96xok" = {
     device = "192.168.3.8:/home/ge96xok";
     fsType = "nfs";
+    options = [ "x-systemd.automount" "noauto" "x-systemd.idle-timeout=600" ];
   };
   # Team 04
   fileSystems."/home/ge87yen" = {
     device = "192.168.3.8:/home/ge87yen";
     fsType = "nfs";
+    options = [ "x-systemd.automount" "noauto" "x-systemd.idle-timeout=600" ];
   };
   fileSystems."/home/ge47sof" = {
     device = "192.168.3.8:/home/ge47sof";
     fsType = "nfs";
+    options = [ "x-systemd.automount" "noauto" "x-systemd.idle-timeout=600" ];
   };
   # Team 05
   fileSystems."/home/ge47kut" = {
     device = "192.168.3.8:/home/ge47kut";
     fsType = "nfs";
+    options = [ "x-systemd.automount" "noauto" "x-systemd.idle-timeout=600" ];
   };
   fileSystems."/home/ge87liq" = {
     device = "192.168.3.8:/home/ge87liq";
     fsType = "nfs";
+    options = [ "x-systemd.automount" "noauto" "x-systemd.idle-timeout=600" ];
   };
   # Team 06
   fileSystems."/home/ge59pib" = {
     device = "192.168.3.8:/home/ge59pib";
     fsType = "nfs";
+    options = [ "x-systemd.automount" "noauto" "x-systemd.idle-timeout=600" ];
   };
   fileSystems."/home/ge65peq" = {
     device = "192.168.3.8:/home/ge65peq";
     fsType = "nfs";
+    options = [ "x-systemd.automount" "noauto" "x-systemd.idle-timeout=600" ];
   };
   # Team 07
   fileSystems."/home/ge63gut" = {
     device = "192.168.3.8:/home/ge63gut";
     fsType = "nfs";
+    options = [ "x-systemd.automount" "noauto" "x-systemd.idle-timeout=600" ];
   };
   fileSystems."/home/ge64baw" = {
     device = "192.168.3.8:/home/ge64baw";
     fsType = "nfs";
+    options = [ "x-systemd.automount" "noauto" "x-systemd.idle-timeout=600" ];
   };
   # Team 08
   fileSystems."/home/ge84zoj" = {
     device = "192.168.3.8:/home/ge84zoj";
     fsType = "nfs";
+    options = [ "x-systemd.automount" "noauto" "x-systemd.idle-timeout=600" ];
   };
   fileSystems."/home/ge94bob" = {
     device = "192.168.3.8:/home/ge94bob";
     fsType = "nfs";
+    options = [ "x-systemd.automount" "noauto" "x-systemd.idle-timeout=600" ];
   };
   # Team 09
   fileSystems."/home/ge87huk" = {
     device = "192.168.3.8:/home/ge87huk";
     fsType = "nfs";
+    options = [ "x-systemd.automount" "noauto" "x-systemd.idle-timeout=600" ];
   };
   fileSystems."/home/ge64wug" = {
     device = "192.168.3.8:/home/ge64wug";
     fsType = "nfs";
+    options = [ "x-systemd.automount" "noauto" "x-systemd.idle-timeout=600" ];
   };
   # Team 10
   fileSystems."/home/ge65hog" = {
     device = "192.168.3.8:/home/ge65hog";
     fsType = "nfs";
+    options = [ "x-systemd.automount" "noauto" "x-systemd.idle-timeout=600" ];
   };
   fileSystems."/home/ge38hoy" = {
     device = "192.168.3.8:/home/ge38hoy";
     fsType = "nfs";
+    options = [ "x-systemd.automount" "noauto" "x-systemd.idle-timeout=600" ];
   };
 }
