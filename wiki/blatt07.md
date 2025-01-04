@@ -90,49 +90,64 @@ Quellen:
 
 Als nächstes folgt die manuelle Datenmigration aller VMs auf **VM 8**. Unter `/export` (unserem RAID Festplattenverbund) legen wir alle Home-Verzeichnisse, sowie die Main-Datenbank ab. Die Backup-Datenbank lassen wir auf der anderen VM, da in einem realistischen Usecase nicht beide Instanzen auf dem selben System liegen sollten. In einem echten Szenario würden wir dieser dementsprechend auch einen größeren Fileserver aufsetzen.
 
-```text
-┌────────────────────────┐                      
-│          VM 01         │                      
-│       192.168.3.1      │                      
-│------------------------│                      
-│ /home                  ├───┐                  
-│                        │   │                  
-└────────────────────────┘   │                  
-           o o o             │                  
-┌────────────────────────┐   │                  
-│          VM 08         │   │                  
-│       192.168.3.8      │   │                  
-│------------------------│   │                  
-│ /home                  ├───┤   ┌─────────────┐
-│                        │   │   │    VM 08    │
-└────────────────────────┘   │   │ 192.168.3.8 │
-                             │   │-------------│
-                             ├──►│   /export   │
-                             │   │             │
-┌────────────────────────┐   │   │             │
-│          VM 02         │   │   └─────────────┘
-│       192.168.3.2      │   │                  
-│------------------------│   │                  
-│ /home                  ├───┤                  
-│ /root/backup           ├───┤                  
-│ /var/lib/postgresql/17/├───┤                  
-│                        │   │                  
-└────────────────────────┘   │                  
-┌────────────────────────┐   │                  
-│          VM 04         │   │                  
-│       192.168.3.4      │   │                  
-│------------------------│   │                  
-│ /home                  ├───┤                  
-│ /var/lib/postgresql/17/├───┘                  
-│                        │                      
-└────────────────────────┘                      
-```
-
 Das Migrieren der Daten erfolgt wie folgt:
 
 #### 2.1) `rsync`
 
-#TODO
+Mit `rsync` können wir einfach alle Verzeichnisse synchronizieren (wir nutzen hierfür als "Zwschenstopp" einen lokalen Rechner, da dieser bereits alle ssh Zugriffe besitzt). Um sie auf die VM 8 zu bekommen, können wir dann wieder rsync nutzen.
+
+```ascii
+┌────────────────────────┐                                               
+│          VM 01         │                                               
+│       192.168.3.1      │                                               
+│------------------------│                                               
+│ /home                  ├──┐                                            
+│                        │  │                                            
+└────────────────────────┘  │                                            
+           o o o            │                                            
+┌────────────────────────┐  │                                            
+│          VM 08         │  │                                            
+│       192.168.3.8      │  │                                            
+│------------------------│  │                                            
+│ /home                  ├──┤       ┌─────────────┐       ┌─────────────┐
+│                        │  │       │local machine│       │    VM 08    │
+└────────────────────────┘  │       │             │       │ 192.168.3.8 │
+                            │ rsync │-------------│ rsync │-------------│
+                            ├──────►│ /some/dir   ├──────►│   /export   │
+                            │       │             │       │             │
+┌────────────────────────┐  │       │             │       │             │
+│          VM 04         │  │       └─────────────┘       └─────────────┘
+│       192.168.3.4      │  │                                            
+│------------------------│  │                                            
+│ /home                  ├──┤                                            
+│ /var/lib/postgresql/17 ├──┘                                            
+│                        │                                               
+└────────────────────────┘                                                
+```
+
+1. "Mergen" aller Daten auf den lokalen Rechner
+  Mit einem einfachen Script können wir uns alle Homeverzeichnisse der VMs holen. Hierbei gehen wir einfach alle Ports von 60301 - 60308 durch, um alle VMs abzudecken.
+
+  ```shell
+  for i in {1..8}; do
+    printf "\n|| Synchronizing VM 0${i}...\n\n"
+    rsync -avz -e "ssh -p 6030${i}" --progress root@psa.in.tum.de:/home .
+  done
+  ```
+
+  Lediglich das Datenbank-Verzeichnis von **VM 4** fehlt noch:
+
+  ```shell
+  rsync -avz -e "ssh -p 60304" --progress root@psa.in.tum.de:/var/lib/postgresql .
+  ```
+
+2. Kopieren auf **VM 8**
+
+  ```shell
+  rsync -avz -e "ssh -p 60308" --progress . root@psa.in.tum.de:/export
+  ```
+
+  Nun liegen alle benötigten Daten auf dem RAID-Verbund auf VM 8.
 
 #### 2.2) Rechtevergabe
 
