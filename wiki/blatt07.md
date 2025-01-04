@@ -163,7 +163,16 @@ done
 
 Für die Datenbank-Nutzer müssen wir zunächst die entsprechenden Nutzer anlegen, da diese auf **VM 8** nicht existieren:
 
-#TODO
+```nix
+# fileserver.nix
+users.groups.postgres.gid = 71;
+users.users.postgres = {
+  isSystemUser = true;
+  home = "/home/postgres";
+  uid = 71; # according to VM 4 postgres user id
+  group = "postgres"; 
+};
+```
 
 Quellen:
 
@@ -173,7 +182,18 @@ Quellen:
 
 Anschließend müssen die jeweiligen Home-Verzeichnisse, sowie die Datenbanken von der **VM 8** aus gemountet werden. Hierfür muss zuerst File-Sharing aktiviert werden.
 
-#TODO (kann nur nach Datenmigration erfolgen...)
+```nix
+# fileserver.nix
+services.nfs.server = {
+  enable = true;
+  createMountPoints = true;
+  exports = ''
+    /export                 192.168.0.0/16(rw,fsid=0,no_subtree_check)
+    /export/home            192.168.0.0/16(rw,sync)
+    /export/postgresql      192.168.3.4(rw,sync)
+  '';
+};
+```
 
 ### 4) Mounten von File-Systemen
 
