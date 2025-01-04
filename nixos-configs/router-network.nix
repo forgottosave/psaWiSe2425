@@ -165,17 +165,17 @@
       iptables -A OUTPUT -p tcp --sport 8123 -j ACCEPT
 
       # Allow: NFS
-      iptables -A RH-Firewall-1-INPUT -s 192.168.3.0/16 -m state --state NEW -p udp --dport 111 -j ACCEPT
-      iptables -A RH-Firewall-1-INPUT -s 192.168.3.0/16 -m state --state NEW -p tcp --dport 111 -j ACCEPT
-      iptables -A RH-Firewall-1-INPUT -s 192.168.3.0/16 -m state --state NEW -p tcp --dport 2049 -j ACCEPT
-      iptables -A RH-Firewall-1-INPUT -s 192.168.3.0/16 -m state --state NEW -p tcp --dport 32803 -j ACCEPT
-      iptables -A RH-Firewall-1-INPUT -s 192.168.3.0/16 -m state --state NEW -p udp --dport 32769 -j ACCEPT
-      iptables -A RH-Firewall-1-INPUT -s 192.168.3.0/16 -m state --state NEW -p tcp --dport 892 -j ACCEPT
-      iptables -A RH-Firewall-1-INPUT -s 192.168.3.0/16 -m state --state NEW -p udp --dport 892 -j ACCEPT
-      iptables -A RH-Firewall-1-INPUT -s 192.168.3.0/16 -m state --state NEW -p tcp --dport 875 -j ACCEPT
-      iptables -A RH-Firewall-1-INPUT -s 192.168.3.0/16 -m state --state NEW -p udp --dport 875 -j ACCEPT
-      iptables -A RH-Firewall-1-INPUT -s 192.168.3.0/16 -m state --state NEW -p tcp --dport 662 -j ACCEPT
-      iptables -A RH-Firewall-1-INPUT -s 192.168.3.0/16 -m state --state NEW -p udp --dport 662 -j ACCEPT
+      iptables -A INPUT -s 192.168.3.0/16 -m state --state NEW -p udp --dport 111 -j ACCEPT
+      iptables -A INPUT -s 192.168.3.0/16 -m state --state NEW -p tcp --dport 111 -j ACCEPT
+      iptables -A INPUT -s 192.168.3.0/16 -m state --state NEW -p tcp --dport 2049 -j ACCEPT
+      iptables -A INPUT -s 192.168.3.0/16 -m state --state NEW -p tcp --dport 32803 -j ACCEPT
+      iptables -A INPUT -s 192.168.3.0/16 -m state --state NEW -p udp --dport 32769 -j ACCEPT
+      iptables -A INPUT -s 192.168.3.0/16 -m state --state NEW -p tcp --dport 892 -j ACCEPT
+      iptables -A INPUT -s 192.168.3.0/16 -m state --state NEW -p udp --dport 892 -j ACCEPT
+      iptables -A INPUT -s 192.168.3.0/16 -m state --state NEW -p tcp --dport 875 -j ACCEPT
+      iptables -A INPUT -s 192.168.3.0/16 -m state --state NEW -p udp --dport 875 -j ACCEPT
+      iptables -A INPUT -s 192.168.3.0/16 -m state --state NEW -p tcp --dport 662 -j ACCEPT
+      iptables -A INPUT -s 192.168.3.0/16 -m state --state NEW -p udp --dport 662 -j ACCEPT
     '';
   };
 

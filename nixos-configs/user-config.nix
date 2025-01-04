@@ -151,5 +151,11 @@
     uid = 1101;  
     group = "students";  
     openssh.authorizedKeys.keys = [ "sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIK4f12ldfJGJhMUbAYOz5E3aXc+F6SScLb2n2KdVfqu4AAAAC3NzaDp0ZXJtaXVz" ];  
-  };  
+  };
+
+  # Mount filesystems from NFS
+  fileSystems."/home/ge96xok" = {
+    device = "192.168.3.8:/export/home/ge96xok";
+    fsType = "nfs";
+  };
 }
