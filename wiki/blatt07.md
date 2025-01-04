@@ -140,7 +140,7 @@ Mit `rsync` können wir einfach alle Verzeichnisse synchronizieren (wir nutzen h
   ```shell
   rsync -avz -e "ssh -p 60304" --progress root@psa.in.tum.de:/var/lib/postgresql .
   ```
-  
+
 2. Kopieren auf **VM 8**
   
   ```shell
@@ -150,6 +150,18 @@ Mit `rsync` können wir einfach alle Verzeichnisse synchronizieren (wir nutzen h
   Nun liegen alle benötigten Daten auf dem RAID-Verbund auf VM 8.
 
 #### 2.2) Rechtevergabe
+
+Damit alle Nutzer auf ihre Dateien zugreifen können wie gewohnt, müssen wir noch die Rechte wieder anpassen.
+Für alle Home-Verzeichnisse geschieht das wie folgt:
+
+```shell
+cd /export/home
+for dir in *; do
+  chown -R "$dir:students" "$dir"
+done
+```
+
+Für die Datenbank-Nutzer müssen wir zunächst die entsprechenden Nutzer anlegen, da diese auf **VM 8** nicht existieren:
 
 #TODO
 
