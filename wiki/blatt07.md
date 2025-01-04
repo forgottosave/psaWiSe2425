@@ -135,9 +135,10 @@ Mit `rsync` können wir einfach alle Verzeichnisse synchronizieren (wir nutzen h
   done
   ```
   
-  Lediglich das Datenbank-Verzeichnis von **VM 4** fehlt noch:
+  Lediglich der Webserver DocumenRoot auf **VM 6** und das Datenbank-Verzeichnis von **VM 4** fehlen noch:
   
   ```shell
+  rsync -avz -e "ssh -p 60306" --progress root@psa.in.tum.de:/ TODO TODO TODO TODO TODO TODO TODO
   rsync -avz -e "ssh -p 60304" --progress root@psa.in.tum.de:/var/lib/postgresql .
   ```
 
@@ -161,7 +162,7 @@ for dir in *; do
 done
 ```
 
-Für die Datenbank-Nutzer müssen wir zunächst die entsprechenden Nutzer anlegen, da diese auf **VM 8** nicht existieren:
+Für den Datenbank-Nutzer müssen wir zunächst den entsprechenden Nutzer anlegen, da dieser auf der **VM 8** nicht existieren:
 
 ```nix
 # fileserver.nix
@@ -178,7 +179,7 @@ Quellen:
 
 - [rsync](https://thelinuxcode.com/rsync-examples-rsync-options-and-how-to-copy-files-over-ssh/)
 
-### 3) Dienste (NFS, SMB/CIFS)
+### 3) NFS
 
 Anschließend müssen die jeweiligen Home-Verzeichnisse, sowie die Datenbanken von der **VM 8** aus gemountet werden. Hierfür muss zuerst File-Sharing aktiviert werden.
 
@@ -219,7 +220,27 @@ Quellen:
 
 ### 4) Mounten von File-Systemen
 
-### 5) Testen
+Die User Home-Verzeichnisse auf allen anderen VMs werden nun von dem NFS gemountet:
+
+```nix
+# user-config.nix
+# wird für jeden User wiederholt
+fileSystems."/home/ge96xok" = {
+  device = "192.168.3.8:/home/ge96xok";
+  fsType = "nfs";
+  options = [ "x-systemd.automount" "noauto" "x-systemd.idle-timeout=600" ];
+};
+```
+
+Auch das Datenbank-Verzeichnis wird von dem NFS gemountet:
+
+```nix
+#TODO
+```
+
+### 5) Samba
+
+### 6) Testen
 
 Das grundlegende Test-Setup bleibt identisch zu den vorherigen Wochen (siehe Blatt03).
 Das Skipt kann sowohl auf der Host-VM, als auch auf jeder andern VM mit Verbingung zur Host-VM ausgeführt werden und ändert die zu laufenden Tests automatisch für die jeweilige VM.

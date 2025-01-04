@@ -24,6 +24,13 @@
 
 { config, lib, pkgs, ... }:
 {
+  # Mount database from NFS
+  fileSystems."/var/lib/postgresql" = {
+    device = "192.168.3.8:/postgresql";
+    fsType = "nfs";
+    options = [ "x-systemd.automount" "noauto" "x-systemd.idle-timeout=600" ];
+  };
+
   # DATABASE SETUP
   services.postgresql = {
     enable = true;
