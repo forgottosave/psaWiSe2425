@@ -240,6 +240,41 @@ Auch das Datenbank-Verzeichnis wird von dem NFS gemountet:
 
 ### 5) Samba
 
+```nix
+# samba.nix
+services.samba = {
+  enable = true;
+  securityType = "user";
+  openFirewall = true;
+  settings = {
+    global = {
+      "workgroup" = "WORKGROUP";
+      "server string" = "SambaFilesharingTeam03";
+      "netbios name" = "SambaFilesharingTeam03";
+      "security" = "user";
+      #"use sendfile" = "yes";
+      #"max protocol" = "smb2";
+      # note: localhost is the ipv6 localhost ::1
+      #"hosts deny" = "0.0.0.0/0";
+      "hosts allow" = "192.168.0.0/16 127.0.0.1 localhost";
+      "guest ok" = "no";
+      "guest account" = "nobody";
+      "map to guest" = "bad user";
+      "read only" = "no";
+      "inherit owner" = "yes";
+    };
+    "public" = {
+      "path" = "/export/home";
+      "browseable" = "yes";
+    };
+  };
+};
+```
+
+Quellen:
+
+- [NixOS Samba](https://nixos.wiki/wiki/Samba)
+
 ### 6) Testen
 
 Das grundlegende Test-Setup bleibt identisch zu den vorherigen Wochen (siehe Blatt03).
