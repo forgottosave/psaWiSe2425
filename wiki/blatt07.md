@@ -127,26 +127,26 @@ Mit `rsync` können wir einfach alle Verzeichnisse synchronizieren (wir nutzen h
 
 1. "Mergen" aller Daten auf den lokalen Rechner
   Mit einem einfachen Script können wir uns alle Homeverzeichnisse der VMs holen. Hierbei gehen wir einfach alle Ports von 60301 - 60308 durch, um alle VMs abzudecken.
-
+  
   ```shell
   for i in {1..8}; do
     printf "\n|| Synchronizing VM 0${i}...\n\n"
     rsync -avz -e "ssh -p 6030${i}" --progress root@psa.in.tum.de:/home .
   done
   ```
-
+  
   Lediglich das Datenbank-Verzeichnis von **VM 4** fehlt noch:
-
+  
   ```shell
   rsync -avz -e "ssh -p 60304" --progress root@psa.in.tum.de:/var/lib/postgresql .
   ```
-
+  
 2. Kopieren auf **VM 8**
-
+  
   ```shell
   rsync -avz -e "ssh -p 60308" --progress . root@psa.in.tum.de:/export
   ```
-
+  
   Nun liegen alle benötigten Daten auf dem RAID-Verbund auf VM 8.
 
 #### 2.2) Rechtevergabe
