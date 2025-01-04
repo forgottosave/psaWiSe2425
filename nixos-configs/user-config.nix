@@ -154,8 +154,8 @@
   };
 
   # Mount filesystems from NFS
-  fileSystems."/home/ge96xok" = {
-    device = "192.168.3.8:/export/home/ge96xok";
-    fsType = "nfs";
-  };
+  #fileSystems."/home/ge96xok" = {
+  #  device = "192.168.3.8:/export/home/ge96xok";
+  #  fsType = "nfs";
+  #};
 }
