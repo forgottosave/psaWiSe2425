@@ -232,7 +232,13 @@ fileSystems."/home/ge96xok" = {
 };
 ```
 
-Auch das Datenbank-Verzeichnis wird von dem NFS gemountet:
+Auch das Datenbank-Verzeichnis wird von dem NFS gemountet...
+
+```nix
+#TODO
+```
+
+...und der Webserver Root:
 
 ```nix
 #TODO
