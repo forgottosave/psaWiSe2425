@@ -57,12 +57,12 @@
                     {
                         "hw-address": "08:00:27:87:44:7d",
                         "ip-address": "192.168.3.7",
-                        "hostname": "fileserver"
+                        "hostname": "ldap"
                     },
                     {
-                        "hw-address": "08:00:27:cb:db:45",
+                        "hw-address": "08:00:27:33:e9:5b",
                         "ip-address": "192.168.3.8",
-                        "hostname": "ldap"
+                        "hostname": "fileserver"
                     },
                     {
                         "hw-address": "08:00:27:54:8e:3c",
