@@ -42,24 +42,49 @@ VM_NUMBER=$(hostname)
 VM_NUMBER=${VM_NUMBER: -1}
 if [ $VM_NUMBER -eq 8 ]; then
     # Fileserver VM:
+    
     ## TEST #########################################
-    ## check TODO
-    start_test "TODO"
-    print_failed "TODO"
-
-    ## TEST #########################################
-    ## check TODO
-    start_test "TODO"
-    print_failed "TODO"
-
-else
-    # jede andere VM
+    ## check if NFS is running
+    start_test "check if NFS is running"
+    ps aux | grep nfsd
+    if [ $? -eq 0 ]; then
+        print_success "nfsd is running"
+    else
+        print_failed "no nfsd process found"
+    fi
 
 fi
 
 ## TEST #########################################
-## check TODO
-start_test "TODO"
+## check if NFS port is reachable
+start_test "check if NFS port is reachable"
+nc -z 192.168.3.8 2049
+if [ $? -eq 0 ]; then
+    print_success "port 2049 is reachable"
+else
+    print_failed "port 2049 not reachable"
+fi
+
+## TEST #########################################
+## check if remote NFS directories can be mounted
+start_test "check if remote NFS (home-)directories can be mounted"
+TEST_DIR="tmp_test_xyz"
+
+for REMOTE_DIR in /home/*; do
+    mkdir "$TEST_DIR"
+    mount -t nfs "192.168.3.8:$REMOTE_DIR" "$TEST_DIR"
+    if [ $? -eq 0 ]; then
+        print_success "$REMOTE_DIR could be mounted"
+        umount "$TEST_DIR"
+    else
+        print_failed "failed to mount $REMOTE_DIR"
+    fi
+    rm -r "$TEST_DIR"
+done
+
+## TEST #########################################
+## check Samba
+start_test "check Samba access (TODO)"
 print_failed "TODO"
 
 ## summary ######################################
