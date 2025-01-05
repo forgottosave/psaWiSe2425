@@ -251,6 +251,8 @@ Als letztes wird noch der Webserver Root vom NFS gemountet:
 
 ### 5) Samba
 
+Als letzten Schritt vor dem Testen richten wir noch wie gefordert **Samba-Filesharing** ein. Unter NixOS ist das wieder eine einfach Konfiguration, die wir der VM 8 hinzufügen können:
+
 ```nix
 # samba.nix
 services.samba = {
