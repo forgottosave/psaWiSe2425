@@ -126,29 +126,29 @@ Mit `rsync` können wir einfach alle Verzeichnisse synchronizieren (wir nutzen h
 ```
 
 1. "Mergen" aller Daten auf den lokalen Rechner
-  Mit einem einfachen Script können wir uns alle Homeverzeichnisse der VMs holen. Hierbei gehen wir einfach alle Ports von 60301 - 60308 durch, um alle VMs abzudecken.
-  
-  ```shell
-  for i in {1..8}; do
-    printf "\n|| Synchronizing VM 0${i}...\n\n"
-    rsync -avz -e "ssh -p 6030${i}" --progress root@psa.in.tum.de:/home .
-  done
-  ```
-  
-  Lediglich der Webserver DocumenRoot auf **VM 6** und das Datenbank-Verzeichnis von **VM 4** fehlen noch:
-  
-  ```shell
-  rsync -avz -e "ssh -p 60306" --progress root@psa.in.tum.de:/ TODO TODO TODO TODO TODO TODO TODO
-  rsync -avz -e "ssh -p 60304" --progress root@psa.in.tum.de:/var/lib/postgresql .
-  ```
+   Mit einem einfachen Script können wir uns alle Homeverzeichnisse der VMs holen. Hierbei gehen wir einfach alle Ports von 60301 - 60308 durch, um alle VMs abzudecken.
+
+   ```shell
+   for i in {1..8}; do
+     printf "\n|| Synchronizing VM 0${i}...\n\n"
+     rsync -avz -e "ssh -p 6030${i}" --progress root@psa.in.tum.de:/home .
+   done
+   ```
+
+   Lediglich der Webserver DocumenRoot auf **VM 6** und das Datenbank-Verzeichnis von **VM 4** fehlen noch:
+
+   ```shell
+   rsync -avz -e "ssh -p 60306" --progress root@psa.in.tum.de:/ TODO TODO TODO TODO TODO TODO TODO
+   rsync -avz -e "ssh -p 60304" --progress root@psa.in.tum.de:/var/lib/postgresql .
+   ```
 
 2. Kopieren auf **VM 8**
   
-  ```shell
-  rsync -avz -e "ssh -p 60308" --progress . root@psa.in.tum.de:/export
-  ```
-  
-  Nun liegen alle benötigten Daten auf dem RAID-Verbund auf VM 8.
+   ```shell
+   rsync -avz -e "ssh -p 60308" --progress . root@psa.in.tum.de:/export
+   ```
+
+   Nun liegen alle benötigten Daten auf dem RAID-Verbund auf VM 8.
 
 #### 2.2) Rechtevergabe
 
@@ -290,7 +290,43 @@ Quellen:
 
 ### 6) Testen
 
-Das grundlegende Test-Setup bleibt identisch zu den vorherigen Wochen (siehe Blatt03).
-Das Skipt kann sowohl auf der Host-VM, als auch auf jeder andern VM mit Verbingung zur Host-VM ausgeführt werden und ändert die zu laufenden Tests automatisch für die jeweilige VM.
+- Das Testskript ist `test_PSA_07.sh`.
+- Das grundlegende Test-Setup bleibt identisch zu den vorherigen Wochen (siehe [Blatt03](./blatt02.md)).
+- Das Skipt kann sowohl auf der Fileserver-VM, als auch auf jeder andern VM ausgeführt werden und ändert die zu laufenden Tests automatisch für die jeweilige VM.
 
-#TODO
+Auf allen VMs können wir folgende Punkte testen:
+
+1. Ist der NFS Port auf der Fileserver VM erreichbar?
+
+   ```shell
+   nc -z 192.168.3.8 2049
+   ```
+
+2. Können wir die Verzeichnisse auch wirklich mounten?
+  
+   ```shell
+   mkdir "$TEST_DIR"
+   mount -t nfs "192.168.3.8:$REMOTE_DIR" "$TEST_DIR"
+   umount "$TEST_DIR"
+   rm -r "$TEST_DIR"
+   ```
+
+3. Kann die Samba Verbindung genutzt werden?
+
+   ```shell
+   TODO
+   ```
+
+Zudem können wir zusätzliche Tests auf der Fileserver VM ausführen, wie:
+
+1. Läuft der NFS Prozess?
+
+   ```shell
+   ps aux | grep nfsd
+   ```
+
+2. Läuft der Samba Prozess?
+
+   ```shell
+   TODO
+   ```
