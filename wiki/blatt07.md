@@ -196,7 +196,7 @@ services.nfs.server = {
 };
 ```
 
-und in der Firewall enablen:
+und in der Firewall erlabt werden:
 
 ```shell
 # vm-network-config.nix & router-network.nix
@@ -232,13 +232,18 @@ fileSystems."/home/ge96xok" = {
 };
 ```
 
-Auch das Datenbank-Verzeichnis wird von dem NFS gemountet...
+Auch das Datenbank-Verzeichnis wird von dem NFS gemountet. Die default-location ist `/var/lib/postgresql/17/`. Wir behalten diesen Pfad bei, mounten ab `postgresql` jedoch vom NFS:
 
 ```nix
-#TODO
+# Mount database from NFS
+fileSystems."/var/lib/postgresql" = {
+  device = "192.168.3.8:/postgresql";
+  fsType = "nfs";
+  options = [ "x-systemd.automount" "noauto" "x-systemd.idle-timeout=600" ];
+};
 ```
 
-...und der Webserver Root:
+Als letztes wird noch der Webserver Root vom NFS gemountet:
 
 ```nix
 #TODO
