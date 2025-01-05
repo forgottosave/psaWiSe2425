@@ -284,6 +284,16 @@ services.samba = {
 };
 ```
 
+Auch hier passen wir nochmal explizit die Firewall an:
+
+```shell
+# vm-network-config.nix & router-network.nix
+iptables -A INPUT -s 192.168.3.0/16 -m state --state NEW -p udp --dport 137 -j ACCEPT
+iptables -A INPUT -s 192.168.3.0/16 -m state --state NEW -p udp --dport 138 -j ACCEPT
+iptables -A INPUT -s 192.168.3.0/16 -m state --state NEW -p tcp --dport 139 -j ACCEPT
+iptables -A INPUT -s 192.168.3.0/16 -m state --state NEW -p tcp --dport 445 -j ACCEPT
+```
+
 Quellen:
 
 - [NixOS Samba](https://nixos.wiki/wiki/Samba)

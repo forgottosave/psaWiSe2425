@@ -109,6 +109,12 @@
       iptables -A INPUT -s 192.168.3.0/16 -m state --state NEW -p udp --dport 875 -j ACCEPT
       iptables -A INPUT -s 192.168.3.0/16 -m state --state NEW -p tcp --dport 662 -j ACCEPT
       iptables -A INPUT -s 192.168.3.0/16 -m state --state NEW -p udp --dport 662 -j ACCEPT
+
+      # Allow: Samba
+      iptables -A INPUT -s 192.168.3.0/16 -m state --state NEW -p udp --dport 137 -j ACCEPT
+      iptables -A INPUT -s 192.168.3.0/16 -m state --state NEW -p udp --dport 138 -j ACCEPT
+      iptables -A INPUT -s 192.168.3.0/16 -m state --state NEW -p tcp --dport 139 -j ACCEPT
+      iptables -A INPUT -s 192.168.3.0/16 -m state --state NEW -p tcp --dport 445 -j ACCEPT
     '';
   };  
 
