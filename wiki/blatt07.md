@@ -297,10 +297,11 @@ iptables -A INPUT -s 192.168.3.0/16 -m state --state NEW -p tcp --dport 445 -j A
 Quellen:
 
 - [NixOS Samba](https://nixos.wiki/wiki/Samba)
+- [Samba iptables Einstellungen](https://www.cyberciti.biz/faq/configure-iptables-to-allow-deny-access-to-samba/)
 
 ### 6) Testen
 
-- Das Testskript ist `test_PSA_07.sh`.
+- Das Testskript ist [`test_PSA_07.sh`](../scripts/test_PSA_07.sh).
 - Das grundlegende Test-Setup bleibt identisch zu den vorherigen Wochen (siehe [Blatt03](./blatt02.md)).
 - Das Skipt kann sowohl auf der Fileserver-VM, als auch auf jeder andern VM ausgeführt werden und ändert die zu laufenden Tests automatisch für die jeweilige VM.
 
