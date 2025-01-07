@@ -50,7 +50,7 @@
                         "hostname": "homeassistant"
                     },
                     {
-                        "hw-address": "08:00:27:8e:7a:e7",
+                        "hw-address": "08:00:27:b5:94:cd",
                         "ip-address": "192.168.3.6",
                         "hostname": "webserver"
                     },
