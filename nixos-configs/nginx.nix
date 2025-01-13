@@ -19,17 +19,7 @@ in
   systemd.services = {
     # Normalerweise darf Nginx nicht auf Home Ordner lesend zugreifen.
     nginx.serviceConfig.ProtectHome = "read-only";
-  }
-  //
-  # fcgiwrap systemd service packages zum path hinzufügen
-  forEachUsername (u:
-    {
-      name = "fcgiwrap-${u}";
-      value = {
-        path = scriptPkgs;
-      };
-    }
-  );
+  };
 
   services.nginx = {
     enable = true;
