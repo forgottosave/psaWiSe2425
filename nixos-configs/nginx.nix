@@ -9,7 +9,7 @@ let
   };
 
   # Execute function for each user(name), returning attrSet
-  forEachUsername = f: builtins.listToAttrs (map f config.psa.users.psa);
+  forEachUsername = f: builtins.listToAttrs (map f config.users.psa);
   forEachUser = f: forEachUsername (u:
     f (builtins.getAttr u config.users.users)
   );
