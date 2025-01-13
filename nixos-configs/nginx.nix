@@ -1,19 +1,29 @@
+# ngin.nix
 { config, lib, pkgs, ... }:
+let 
+  # allgemeine SSL Attribute
+  sslAttr = {
+    forceSSL = true;
+    sslCertificateKey = "/etc/ssl/nginx/nginx.key";
+    sslCertificate = "/etc/ssl/nginx/nginx.crt";
+  };
+in
 {
   services.nginx = {
     enable = true;
+    recommendedOptimisation = true;
     virtualHosts = {
-      "vm06.psa-team03.cit.tum.de" = {
-        listen = [
-          { addr = "0.0.0.0"; port = 80; ssl = false; }
-          { addr = "0.0.0.0"; port = 443; ssl = true; }
-        ];
-        root = "/var/www/html";
-        enableACME = false; # Kein Let's Encrypt, da selbstsigniertes Zertifikat
-        forceSSL = true;
-        sslCertificate = "/etc/nginx/ssl/selfsigned.crt";
-        sslCertificateKey = "/etc/nginx/ssl/selfsigned.key";
-      };
+      "web1.psa-team03.cit.tum.de" = {
+        root = ./sites/web1;
+      } // sslAttr;
+
+      "web2.psa-team03.cit.tum.de" = {
+        root = ./sites/web2;
+      } // sslAttr;
+
+      "web3.psa-team03.cit.tum.de" = {
+        root = ./sites/web3;
+      } // sslAttr;
     };
   };
 }
