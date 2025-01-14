@@ -104,6 +104,7 @@ cp ${THIS_DIR}/test_PSA_* /root/
 ## 6. Do week specific extra stuff ########################
 
 cp -a ${THIS_DIR}/../nixos-configs/bind-configs/. /etc/nixos/dns/ # Week 03
+cp -a ${THIS_DIR}/../nixos-configs/sites/. /etc/nixos/sites/ # Week 03
 
 
 ## 7. reload config #######################################
