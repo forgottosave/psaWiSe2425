@@ -15,9 +15,6 @@ let
     "ge65hog" "ge38hoy"
   ];
 
-  # Extract all usernames from users.users
-  #usernames = builtins.attrNames config.users.users;
-
   # Function to process each username
   forEachUsername = f: builtins.listToAttrs (map f usernames);
 
@@ -28,6 +25,9 @@ let
 
 in
 {
+  # IP Adresse hinzufügen
+  systemd.network.networks."psa-internal".address = [ "192.168.3.66" ];
+
   systemd.services = {
     # Normalerweise darf Nginx nicht auf Home Ordner lesend zugreifen.
     nginx.serviceConfig.ProtectHome = "read-only";
@@ -64,6 +64,24 @@ in
         root = ./sites/web3;
       } // sslAttr;
     };
+
+    # Logging
+    commonHttpConfig =
+    ''
+      map $remote_addr $remote_addr_anon {
+        ~(?P<ip>\d+\.\d+\.\d+)\.    $ip.0;
+        default                     0.0.0.0;
+      }
+
+      log_format combined_anon '$remote_addr_anon - $remote_user [$time_local] '
+                          '"$request" $status $body_bytes_sent '
+                          '"$http_referer" "$http_user_agent"';
+
+      # Log Locations spezifizieren
+      # Access Log nimmt unser spezielles Log Format
+      access_log /var/log/nginx/access.log combined_anon;
+      error_log /var/log/nginx/error.log;
+    '';
   };
 
   # Für jeden User wird eine fcgiwrap Service Instanz erzeugt

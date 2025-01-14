@@ -28,5 +28,7 @@ homeassistant   HTTPS   192.168.3.5
 homeassistant   A       192.168.3.5
 
 ; VM 6
-vm6             HTTPS   192.168.3.6
 vm6             A       192.168.3.6
+web1            CNAME   vm6
+web2            A       192.168.3.66
+web3
