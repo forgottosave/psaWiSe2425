@@ -8,11 +8,23 @@ let
     sslCertificate = "/etc/ssl/nginx/nginx.crt";
   };
 
-  # Execute function for each user(name), returning attrSet
-  forEachUsername = f: builtins.listToAttrs (map f config.users.psa);
-  forEachUser = f: forEachUsername (u:
-    f (builtins.getAttr u config.users.users)
-  );
+  usernames = [
+    "ge95vir" "ge43fim" "ge78nes" "ge96hoj" "ge78zig" "ge96xok"
+    "ge87yen" "ge47sof" "ge47kut" "ge87liq" "ge59pib" "ge65peq"
+    "ge63gut" "ge64baw" "ge84zoj" "ge94bob" "ge87huk" "ge64wug"
+    "ge65hog" "ge38hoy"
+  ];
+
+  # Extract all usernames from users.users
+  #usernames = builtins.attrNames config.users.users;
+
+  # Function to process each username
+  forEachUsername = f: builtins.listToAttrs (map f usernames);
+
+  # Function to process each user attribute set
+  forEachUser = f: builtins.listToAttrs (map (username:
+    f (builtins.getAttr username config.users.users)
+  ) usernames);
 
 in
 {
