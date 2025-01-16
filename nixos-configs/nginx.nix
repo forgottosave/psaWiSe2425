@@ -102,14 +102,6 @@ in
     }
   );
 
-  # Für jeden User erlauben wir o+x Permissions auf dem Home Directory
-  users.users = forEachUsername (u:
-    {
-      name = u;
-      value = { homeMode = "701"; };
-    }
-  );
-
   # Activation Script um automatisch .html-data und .cgi-bin Ordner für jeden User zu erstellen
   system.activationScripts = forEachUser (user:
     {
@@ -122,7 +114,7 @@ in
 
             if [ ! -d "$html_data_dir" ]; then
               mkdir -p "$html_data_dir"
-              echo "👋 Hello statically from ${user.name}" > "$html_data_dir/index.html"
+              echo "Hello statically from ${user.name}" > "$html_data_dir/index.html"
               chown -R ${user.name}:${user.group} "$html_data_dir"
             fi
 
@@ -132,7 +124,7 @@ in
             #!/usr/bin/env bash
             echo "Content-type: text/html"
             echo ""
-            echo "👋 Hello dynamically from $(whoami)"
+            echo "Hello dynamically from $(whoami)"
             EOF
               chmod +x "$cgi_bin_dir/index.sh"
               chown -R ${user.name}:${user.group} "$cgi_bin_dir"
