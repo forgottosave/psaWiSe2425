@@ -5,6 +5,7 @@ include_files=(
     configuration.nix
     user-config.nix
     vm-network-config.nix
+    prometheus/os-exporter.nix
 )
 
 # SED placeholders
@@ -16,6 +17,7 @@ sed_placeholders[imports]='
     ./hardware-configuration.nix
     ./user-config.nix
     ./vm-network-config.nix
+    ./prometheus/os-exporter.nix
 '
 
 sed_placeholders[system_packages]='
