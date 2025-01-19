@@ -146,6 +146,16 @@ docker compose up -d
 
 ### 2. Überwachung der Dienste
 
+erlauben in firewall sowohl in router als auch in vm... (ggf noch zu viel erlaubt)
+
+```shell
+      # Allow: prometheus exporter
+      iptables -A INPUT -p tcp --dport 9100 -j ACCEPT
+      iptables -A INPUT -p tcp --dport 9090 -j ACCEPT
+      iptables -A OUTPUT -p tcp --dport 9100 -j ACCEPT 
+      iptables -A OUTPUT -p tcp --dport 9090 -j ACCEPT
+```
+
 #### 2.1) Betriebssystem
 
 ```yml
