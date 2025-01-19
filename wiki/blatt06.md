@@ -74,7 +74,7 @@ docker compose up -d
 Um homeassistant auch erreichen zu können müssen wir noch in VirtualBox eine Portweiterleitung einrichten:
 
 ```shell
-VBoxManage modifyvm "vmpsateam03-05" --nat-pf1 "ssh,tcp,,60351,,8123"
+VBoxManage modifyvm "vmpsateam03-05" --nat-pf1 "homeassistant,tcp,,60351,,8123"
 ```
 
 Nun sollte Homeassistant unter `http://131.159.74.56:60351` erreichbar sein.
