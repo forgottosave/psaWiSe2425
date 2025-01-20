@@ -225,6 +225,29 @@ This will show all your Prometheus targets, their name, and whether they are up 
 
 #### 2.5) Webserver
 
+#### 2.7) Webanwendung
+
+cadvisor zu homeassistant compose file:
+
+```yml
+  cadvisor:
+    container_name: cadvisor
+    image: google/cadvisor:latest
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    devices:
+      - /dev/kmsg
+```
+
+grafana: https://grafana.com/grafana/dashboards/10619-docker-host-container-overview/
+
 
 #### 2.7) Datenbank
 

@@ -21,6 +21,11 @@
             "dhcp-socket-type": "raw"
         },
 
+        "Control-socket": {
+            "socket-type": "unix",
+            "socket-name": "/run/kea/kea-dhcp4.socket"
+        },
+
         "subnet4": [
             {
                 "id": 1,
@@ -127,9 +132,5 @@
             }
         ]
 
-    },
-    "Control-socket": {
-        "socket-type": "unix",
-        "socket-name": "/run/kea/kea-dhcp4.socket"
     }
 }
