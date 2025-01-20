@@ -293,7 +293,27 @@ Beide `exporter` können nun in Prometheus zusätzlich eingetragen werden:
       - targets: ['192.168.3.2:9100']
 ```
 
-#TODO team02-database
+Diese Daten können wir einfach in Grafana mit [dieser Konfiguration](https://grafana.com/grafana/dashboards/9628-postgresql-database/) visuell darstellen.
+
+Bei Team 2 werden wir nur die Erreichbarkeit prüfen. Genaue Metriken zu sammeln ergibt hier wenig Sinn, da diese auf einer Systemüberwachung von Team 2 gesammelt werden.
+Für die Erreichbarkeits-Überwachung richten wir einen `exporter` ein, der einfach ein simples script ausführen kann:
+
+```nixos
+services.prometheus.exporters.script = {
+  enable = true;
+  port = 9100;
+  settings.scripts = [
+    { name = "db-check"; script = "nc -zv 192.168.4.5 3306"; }
+  ];
+};
+```
+
+mit `curl http://localhost:9100/probe?name=db-check` können wir testen, ob das Skript funktioniert und erhalten wie erwartet:
+
+```shell
+script_duration_seconds{script="db-check"} 0.012866
+script_success{script="db-check"} 0
+```
 
 Quellen:
 
