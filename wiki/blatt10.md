@@ -317,7 +317,10 @@ script_success{script="db-check"} 0
 
 Quellen:
 
+- [NixOs Postgresql Prometheus Exporter](https://github.com/prometheus-community/postgres_exporter)
 - [NixOs Postgresql Prometheus Exporter Optionen](https://search.nixos.org/options?channel=24.11&show=services.prometheus.exporters.postgres.dataSourceName&from=0&size=50&sort=relevance&type=packages&query=services.prometheus.exporters.postgres)
+- [NixOs Script Prometheus Exporter](https://github.com/adhocteam/script_exporter#sample-configuration)
+- [NixOs Script Prometheus Exporter Optionen](https://search.nixos.org/options?channel=24.11&show=services.prometheus.exporters.script.settings.scripts.*.script&from=0&size=50&sort=relevance&type=packages&query=services.prometheus.exporters.script)
 - [Grafana Prometheus Postgresql Dashboard](https://grafana.com/grafana/dashboards/9628-postgresql-database/)
 
 #### 2.7) Webanwendung
