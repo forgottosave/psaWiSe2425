@@ -26,6 +26,7 @@ sed_placeholders[system_packages]='
     nmap
     tcpdump
     traceroute
+    docker-compose
     dhcpdump
 '
 
