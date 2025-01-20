@@ -32,6 +32,7 @@ Aufgaben:
 mkdir -p /root/docker/alert-manager
 mkdir -p /root/docker/grafana
 mkdir -p /root/docker/prometheus
+mkdir -p /root/docker/blackbox
 
 # Create the files
 touch /root/docker/docker-compose.yaml
@@ -39,6 +40,7 @@ touch /root/docker/alert-manager/alertmanager.yml
 touch /root/docker/grafana/grafana.ini
 touch /root/docker/prometheus/alert-rules.yml
 touch /root/docker/prometheus/prometheus.yml
+touch /root/docker/blackbox/blackbox.yml
 ```
 
 ```yml
@@ -79,11 +81,15 @@ services:
       - /root/docker/alert-manager:/config
     command: --config.file=/config/alertmanager.yml --log.level=debug
 
-  web_server:
-    image: httpd:2.4
+  blackbox:
+    image: prom/blackbox-exporter:latest
     ports:
-      - '80:80'
-    restart: always
+     - 9115:9115
+    volumes:
+     - /root/docker/blackbox:/etc/blackbox
+    command:
+     - --config.file=/etc/blackbox/blackbox.yml
+    
 
 volumes:
   grafana-storage: {}
@@ -260,6 +266,73 @@ firewall
 grafana https://grafana.com/grafana/dashboards/12688-kea-dhcp/
 
 #### 2.5) Webserver
+
+blackbox config:
+
+```yml
+# blackbox.yml
+modules:
+  http_2xx:
+    prober: http
+    timeout: 5s
+    http:
+  http_post_2xx:
+    prober: http
+    timeout: 5s
+    http:
+      method: POST
+      basic_auth:
+        username: "username"
+        password: "mysecret"
+      body_size_limit: 1MB
+  tcp_connect:
+    prober: tcp
+    timeout: 5s
+  pop3s_banner:
+    prober: tcp
+    tcp:
+      query_response:
+      - expect: "^+OK"
+      tls: true
+      tls_config:
+        insecure_skip_verify: false
+  icmp_test:
+    prober: icmp
+    timeout: 5s
+    icmp:
+      preferred_ip_protocol: ip4
+  dns_test:
+    prober: dns
+    timeout: 5s
+    dns:
+      query_name: example.com
+      preferred_ip_protocol: ip4
+      ip_protocol_fallback: false
+      validate_answer_rrs:
+        fail_if_matches_regexp: [test]
+```
+
+neuer prometheus job:
+
+```yml
+# prometheus.yml
+- job_name: 'blackbox'
+    metrics_path: /probe
+    params:
+      module: [http_2xx]  # Look for a HTTP 200 response.
+    static_configs:
+      - targets:
+        - http://prometheus.io    # Target to probe with http.
+        - https://prometheus.io   # Target to probe with https.
+        #- http://example.com:8080 # Target to probe with http on port 8080.
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: 127.0.0.1:9115  # The blackbox exporter's real hostname:port.
+```
 
 #### 2.6) Datenbank
 
