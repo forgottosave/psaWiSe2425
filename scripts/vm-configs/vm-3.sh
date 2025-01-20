@@ -9,6 +9,7 @@ include_files=(
     dhcp-config.nix
     flake.nix
     dhcp4-config.json
+    router-exporter.nix
 )
 
 # SED placeholders
@@ -21,6 +22,7 @@ sed_placeholders[imports]='
     ./user-config.nix
     ./router-network.nix
     ./dns-config.nix
+    ./router-exporter.nix
 '
 
 sed_placeholders[system_packages]='
