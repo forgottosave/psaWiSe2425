@@ -222,3 +222,56 @@ This will show all your Prometheus targets, their name, and whether they are up 
 
 #### 2.4) DHCP
 
+
+#### 2.5) Webserver
+
+
+#### 2.7) Datenbank
+
+Wir haben insgesamt 3 Datenbanken zu überwachen:
+
+1. unsere **"Haupt"-Datenbank** (192.168.3.4), genutzt von Team 4,
+2. die dazugehörige **Backup-Datenbank** (192.168.3.2) und
+3. die Datenbank von **Team 2**, auf welche wir zugreifen.
+
+Auf den ersten beiden Datenbank-VMs lässt sich einfach der Prometheus-Exporter aktivieren:
+
+```nixos
+# database.nix & database-backup.nix
+services.prometheus.exporters.postgres = {
+  enable = true;
+  port = 9100;
+  runAsLocalSuperUser = true;
+};
+```
+
+Beide `exporter` können nun in Prometheus zusätzlich eingetragen werden:
+
+```yml
+# prometheus.yml
+  ...
+  - job_name: 'postgresql'
+    static_configs:
+      - targets: ['192.168.3.4:9100']
+  - job_name: 'postgresql-backup'
+    static_configs:
+      - targets: ['192.168.3.2:9100']
+```
+
+#TODO team02-database
+
+Quellen:
+
+- [NixOs Postgresql Prometheus Exporter Optionen](https://search.nixos.org/options?channel=24.11&show=services.prometheus.exporters.postgres.dataSourceName&from=0&size=50&sort=relevance&type=packages&query=services.prometheus.exporters.postgres)
+- [Grafana Prometheus Postgresql Dashboard](https://grafana.com/grafana/dashboards/9628-postgresql-database/)
+
+#### 2.8) Webanwendung
+
+
+#### 2.9) Fileserver
+
+
+#### 2.10) LDAP
+
+
+#### 2.11) Mail
