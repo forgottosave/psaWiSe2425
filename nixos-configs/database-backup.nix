@@ -28,6 +28,7 @@
   services.cron = {
     enable = true;
   };
+  
   # DATABASE SETUP
   services.postgresql = {
     enable = true;
@@ -76,6 +77,7 @@
       ALTER DATABASE team02db OWNER TO team02;
     '';
   };
+
   ## BACKUP SETUP
   services.postgresqlBackup = {
     enable = true;
@@ -83,15 +85,11 @@
     location = "/var/backup/postgresql";
     compression = "gzip";
   };
-  ## Should maybe be changed to more efficient backup using WAL...
-  #services.postgresqlWalReceiver = {
-  #  receivers = {
-  #    main = {
-  #      postgresqlPackage = pkgs.postgresql_17;
-  #      directory = /mnt/pg_wal/main/;
-  #      slot = "main_wal_receiver";
-  #      connection = "postgresql://user@somehost";
-  #    };
-  #  };
-  #};
+  
+  ## PROMETHEUS EXPORT
+  services.prometheus.exporters.postgres = {
+    enable = true;
+    port = 9100;
+    runAsLocalSuperUser = true;
+  };
 }
