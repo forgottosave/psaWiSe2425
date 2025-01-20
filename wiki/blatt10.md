@@ -245,7 +245,29 @@ This will show all your Prometheus targets, their name, and whether they are up 
 
 #### 2.3) DNS
 
-CoreDNS nativen prometheus exporter -> testen ob erreichbar über `curl http://localhost:9153/metrics`
+CoreDNS nativen prometheus exporter diesen nur aktivieren durch hinzufügen von `prometheus :9153` in `dns-config.nix`:
+
+```nix
+{ ... }:
+{
+  services.coredns = {
+    enable = true;
+    config = ''
+        (default) {
+            bind enp0s8
+            root /etc/nixos/dns
+            log
+        }
+        
+        . {
+            forward . 131.159.254.1 131.159.254.2
+            prometheus :9153 # Include metrics for this zone if desired
+            import default
+        }
+...
+```
+
+ -> testen ob erreichbar über `curl http://localhost:9153/metrics`
 
 dann nur noch zu prometheus hinzufügen:
 
@@ -256,6 +278,7 @@ dann nur noch zu prometheus hinzufügen:
             - "192.168.3.3:9153"
 ```
 
+grafana: https://grafana.com/grafana/dashboards/14981-coredns/
 
 #### 2.4) DHCP
 
