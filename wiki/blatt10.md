@@ -8,7 +8,7 @@ Aufgaben:
 1. installieren von Prometheus und Grafana
 2. Überwachung der Dienste:
     1. Betriebssystem -> ping, cpu load, Prozesse
-    2. Netzwerk -> ping eigene Team VMs, ping andere Team VMs
+    2. Netzwerk -> router up, ping eigene Team VMs, ping andere Team VMs
     3. DNS -> verfügbarkeit, prüfe ob Domain test domains auflöst, anzahl Anfragen
     4. DHCP -> verfügbarkeit, anzahl anfragen
     5. Webserver -> verfügbarkeit (http & https), ladezeit, anzahl anfragen
@@ -61,7 +61,15 @@ services:
       - '3000:3000'
     depends_on:
       - prometheus
-    restart: always
+    restart: unless-stopped
+    environment:
+#     - GF_SERVER_ROOT_URL=http://my.grafana.server/
+     - HTTP_PROXY=http://proxy.cit.tum.de:8080/
+     - HTTPS_PROXY=http://proxy.cit.tum.de:8080/
+     - NO_PROXY=localhost,127.0.0.1
+     - GF_INSTALL_PLUGINS=grafana-clock-panel
+    volumes:
+     - grafana-storage:/var/lib/grafana
 
   alertmanager:
     image: prom/alertmanager
@@ -76,6 +84,9 @@ services:
     ports:
       - '80:80'
     restart: always
+
+volumes:
+  grafana-storage: {}
 ```
 
 
@@ -143,6 +154,11 @@ iptables -F
 docker compose up -d
 ```
 
+grafana setup:
+login and set new passwd
+
+Once you have logged in, click on the “Connections” icon in the left-hand menu, then click on “Data Sources”. Click on the “Add data source” button and select “Prometheus” as the data source type. Configure the URL to http://prometheus:9090 and click on the "Save & Test" button
+
 
 ### 2. Überwachung der Dienste
 
@@ -157,6 +173,8 @@ erlauben in firewall sowohl in router als auch in vm... (ggf noch zu viel erlaub
 ```
 
 #### 2.1) Betriebssystem
+
+anpassen von der prometheus.yml:
 
 ```yml
 # prometheus.yml
@@ -175,4 +193,32 @@ scrape_configs:
     static_configs:
       - targets: ['192.168.3.2:9100']
 ```
+
+und dann noch den node exporter zu den vms hinzufügen:
+
+
+
+#### 2.2) Netzwerk
+
+in grafana :
+
+
+The Prometheus Stat you are looking for it just 'up'.
+
+If up is 0, that means the target is unreachable, if it is 1 that means it is responding.
+
+To create a panel in Grafana that shows this, you can use a "Stat" panel.
+Set the Query to something like: up
+The legend to: {{instance}}
+And make a value mapping so that:
+1 -> UP and the color is Green
+0 -> DOWN and the color is RED
+(Value Mapping can be set in the panel settings, all the way at the bottom.)
+
+This will show all your Prometheus targets, their name, and whether they are up or down.
+
+#### 2.3) DNS
+
+
+#### 2.4) DHCP
 
