@@ -119,8 +119,10 @@
       # Allow: prometheus exporter
       iptables -A INPUT -p tcp --dport 9100 -j ACCEPT
       iptables -A INPUT -p tcp --dport 9090 -j ACCEPT
+      iptables -A INPUT -p tcp --dport 9101 -j ACCEPT
       iptables -A OUTPUT -p tcp --dport 9100 -j ACCEPT 
       iptables -A OUTPUT -p tcp --dport 9090 -j ACCEPT
+      iptables -A OUTPUT -p tcp --dport 9101 -j ACCEPT
     '';
   };  
 

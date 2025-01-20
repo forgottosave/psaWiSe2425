@@ -14,8 +14,7 @@
   };
   services.prometheus.exporters.kea = {
     enable = true;
-    targets = [config.services.kea.dhcp4.settings.control-socket.socket-name];
+    targets = ["/run/kea/kea-dhcp4.socket"];
     port = 9101;
-    #listenAddress = "127.0.0.1";
   };
 }

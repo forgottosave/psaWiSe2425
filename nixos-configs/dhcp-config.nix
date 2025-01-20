@@ -12,10 +12,5 @@ in
   services.kea.dhcp4 = {
     enable = true;
     configFile = ./dhcp4-config.json;
-    # interface for prometheus exporter
-    control-socket = {
-      socket-type = "unix";
-      socket-name = "/var/run/kea/kea-dhcp4.sock";
-    };
   };
 }
