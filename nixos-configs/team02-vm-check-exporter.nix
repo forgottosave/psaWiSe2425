@@ -1,7 +1,7 @@
 { config, lib, pkgs, ... }:
 {
   ## PROMETHEUS EXPORT
-  #  Warning: Make sure that psql is installed on the VM, as it is not checked here!
+  #  Warning: Make sure that nc is installed on the VM, as it is not checked here!
   services.prometheus.exporters.script = {
     enable = true;
     port = 9100;

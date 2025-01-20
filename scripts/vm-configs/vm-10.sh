@@ -5,6 +5,7 @@ include_files=(
     configuration.nix
     vm-network-config.nix
     user-config.nix
+    team02-vm-check-exporter.nix
     flake.nix
 )
 
@@ -17,6 +18,7 @@ sed_placeholders[imports]='
     ./hardware-configuration.nix
     ./vm-network-config.nix
     ./user-config.nix
+    ./team02-vm-check-exporter.nix
 '
 
 sed_placeholders[system_packages]='
