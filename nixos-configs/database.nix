@@ -69,5 +69,5 @@
     enable = true;
     port = 9100;
     runAsLocalSuperUser = true;
-  }
+  };
 }
