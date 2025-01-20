@@ -12,6 +12,7 @@
         
         . {
             forward . 131.159.254.1 131.159.254.2
+            prometheus :9153 # Include metrics for this zone if desired
             import default
         }
         

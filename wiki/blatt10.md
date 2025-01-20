@@ -245,7 +245,16 @@ This will show all your Prometheus targets, their name, and whether they are up 
 
 #### 2.3) DNS
 
-# TODO
+CoreDNS nativen prometheus exporter -> testen ob erreichbar über `curl http://localhost:9153/metrics`
+
+dann nur noch zu prometheus hinzufügen:
+
+```yml
+  - job_name: "coredns"
+      static_configs:
+        - targets:
+            - "192.168.3.3:9153"
+```
 
 
 #### 2.4) DHCP
@@ -422,6 +431,7 @@ Quellen:
 
 #### 2.7) Webanwendung
 
+# funktioniert, fertig?
 cadvisor zu homeassistant compose file:
 
 ```yml
@@ -442,7 +452,7 @@ cadvisor zu homeassistant compose file:
     privileged: true
 ```
 
-grafana: https://grafana.com/grafana/dashboards/10619-docker-host-container-overview/
+grafana: https://grafana.com/grafana/dashboards/19792-cadvisor-dashboard/
 
 #### 2.8) Fileserver
 
