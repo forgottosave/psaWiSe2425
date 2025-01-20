@@ -68,8 +68,8 @@ services:
 #     - GF_SERVER_ROOT_URL=http://my.grafana.server/
      - HTTP_PROXY=http://proxy.cit.tum.de:8080/
      - HTTPS_PROXY=http://proxy.cit.tum.de:8080/
-     - NO_PROXY=localhost,127.0.0.1
-     - GF_INSTALL_PLUGINS=grafana-clock-panel
+     - NO_PROXY=localhost,127.0.0.1,prometheus
+#     - GF_INSTALL_PLUGINS=grafana-clock-panel
     volumes:
      - grafana-storage:/var/lib/grafana
 
@@ -89,7 +89,13 @@ services:
      - /root/docker/blackbox:/etc/blackbox
     command:
      - --config.file=/etc/blackbox/blackbox.yml
-    
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+    environment:
+     - HTTP_PROXY=http://proxy.cit.tum.de:8080/
+     - HTTPS_PROXY=http://proxy.cit.tum.de:8080/
+     - NO_PROXY=localhost,127.0.0.1,blackbox
 
 volumes:
   grafana-storage: {}
@@ -163,7 +169,7 @@ docker compose up -d
 grafana setup:
 login and set new passwd
 
-Once you have logged in, click on the “Connections” icon in the left-hand menu, then click on “Data Sources”. Click on the “Add data source” button and select “Prometheus” as the data source type. Configure the URL to http://prometheus:9090 and click on the "Save & Test" button
+Once you have logged in, click on the “Connections” icon in the left-hand menu, then click on “Data Sources”. Click on the “Add data source” button and select “Prometheus” as the data source type. Configure the URL to http://prometheus:9090 (muss prometheus:... sein) and click on the "Save & Test" button
 
 ### 2. Überwachung der Dienste
 
@@ -276,6 +282,7 @@ modules:
     prober: http
     timeout: 5s
     http:
+      preferred_ip_protocol: ip4
   http_post_2xx:
     prober: http
     timeout: 5s
@@ -288,14 +295,6 @@ modules:
   tcp_connect:
     prober: tcp
     timeout: 5s
-  pop3s_banner:
-    prober: tcp
-    tcp:
-      query_response:
-      - expect: "^+OK"
-      tls: true
-      tls_config:
-        insecure_skip_verify: false
   icmp_test:
     prober: icmp
     timeout: 5s
@@ -331,7 +330,7 @@ neuer prometheus job:
       - source_labels: [__param_target]
         target_label: instance
       - target_label: __address__
-        replacement: 127.0.0.1:9115  # The blackbox exporter's real hostname:port.
+        replacement: blackbox:9115  # muss blackbox: ... sein
 ```
 
 #### 2.6) Datenbank
