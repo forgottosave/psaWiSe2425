@@ -159,7 +159,6 @@ login and set new passwd
 
 Once you have logged in, click on the “Connections” icon in the left-hand menu, then click on “Data Sources”. Click on the “Add data source” button and select “Prometheus” as the data source type. Configure the URL to http://prometheus:9090 and click on the "Save & Test" button
 
-
 ### 2. Überwachung der Dienste
 
 erlauben in firewall sowohl in router als auch in vm... (ggf noch zu viel erlaubt)
@@ -196,8 +195,6 @@ scrape_configs:
 
 und dann noch den node exporter zu den vms hinzufügen:
 
-
-
 #### 2.2) Netzwerk
 
 in grafana :
@@ -222,34 +219,49 @@ This will show all your Prometheus targets, their name, and whether they are up 
 
 #### 2.4) DHCP
 
+added controll oscket to dhcpd.conf:
+
+```shell
+
+        "control-socket": {
+            "socket-type": "unix",
+            "socket-name": "/run/kea/kea-dhcp4.socket"
+        },
+
+```
+
+created extra router-exporter.nix:
+
+```nix
+{ config, lib, pkgs, ... }:
+{
+  services.prometheus.exporters.node = {
+    enable = true;
+    port = 9100;
+    enabledCollectors = [
+      "logind"
+      "systemd"
+    ];
+    disabledCollectors = [
+      "textfile"
+    ];
+    openFirewall = true;
+  };
+  services.prometheus.exporters.kea = {
+    enable = true;
+    targets = ["/run/kea/kea-dhcp4.socket"];
+    port = 9101;
+  };
+}
+```
+
+firewall
+
+grafana https://grafana.com/grafana/dashboards/12688-kea-dhcp/
 
 #### 2.5) Webserver
 
-#### 2.7) Webanwendung
-
-cadvisor zu homeassistant compose file:
-
-```yml
-  cadvisor:
-    container_name: cadvisor
-    image: google/cadvisor:latest
-    volumes:
-      - /:/rootfs:ro
-      - /var/run:/var/run:rw
-      - /sys:/sys:ro
-      - /var/lib/docker/:/var/lib/docker:ro
-      - /dev/disk/:/dev/disk:ro
-    ports:
-      - "8080:8080"
-    restart: unless-stopped
-    devices:
-      - /dev/kmsg
-```
-
-grafana: https://grafana.com/grafana/dashboards/10619-docker-host-container-overview/
-
-
-#### 2.7) Datenbank
+#### 2.6) Datenbank
 
 Wir haben insgesamt 3 Datenbanken zu überwachen:
 
@@ -288,13 +300,33 @@ Quellen:
 - [NixOs Postgresql Prometheus Exporter Optionen](https://search.nixos.org/options?channel=24.11&show=services.prometheus.exporters.postgres.dataSourceName&from=0&size=50&sort=relevance&type=packages&query=services.prometheus.exporters.postgres)
 - [Grafana Prometheus Postgresql Dashboard](https://grafana.com/grafana/dashboards/9628-postgresql-database/)
 
-#### 2.8) Webanwendung
+#### 2.7) Webanwendung
+
+cadvisor zu homeassistant compose file:
+
+```yml
+  cadvisor:
+    container_name: cadvisor
+    image: google/cadvisor:latest
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    devices:
+      - /dev/kmsg
+```
+
+grafana: https://grafana.com/grafana/dashboards/10619-docker-host-container-overview/
+
+#### 2.8) Fileserver
 
 
-#### 2.9) Fileserver
+#### 2.9) LDAP
 
 
-#### 2.10) LDAP
-
-
-#### 2.11) Mail
+#### 2.10) Mail
