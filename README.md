@@ -22,6 +22,9 @@ The documentation of all projects can be found in `wiki/`.
 - [x] [`Blatt 05`](https://github.com/forgottosave/psaWiSe2425/blob/main/wiki/blatt05.md)
 - [ ] [`Blatt 06`](https://github.com/forgottosave/psaWiSe2425/blob/main/wiki/blatt06.md)
 - [ ] [`Blatt 07`](https://github.com/forgottosave/psaWiSe2425/blob/main/wiki/blatt07.md)
+- [ ] [`Blatt 08`](https://github.com/forgottosave/psaWiSe2425/blob/main/wiki/blatt08.md)
+- [ ] [`Blatt 09`](https://github.com/forgottosave/psaWiSe2425/blob/main/wiki/blatt09.md)
+- [ ] [`Blatt 10`](https://github.com/forgottosave/psaWiSe2425/blob/main/wiki/blatt10.md)
 
 ## Team
 
