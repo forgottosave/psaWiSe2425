@@ -21,7 +21,7 @@
             "dhcp-socket-type": "raw"
         },
 
-        "Control-socket": {
+        "control-socket": {
             "socket-type": "unix",
             "socket-name": "/run/kea/kea-dhcp4.socket"
         },
