@@ -25,7 +25,32 @@ Aufgaben:
 
 ### 1. Installation
 
-#### Docker
+#### 1.1) Konfiguaration von Nixos
+
+Zum deployen von Prometheus und Grafana haben wir uns entschieden Docker zu verwenden. Dafür haben wir zunächst das `docker-compose` pkg zur `configuration.nix` hinzugefügt und dann eine neue nixos-config `monitoring-config.nix` erstellt und in der `configuration.nix` importiert.
+
+```nix
+# monitoring-config.nix
+{ config, lib, pkgs, ... }:
+{
+    virtualisation.docker.enable = true;
+    users.extraGroups.docker.members = [ "root" ];
+}
+```
+
+Hiermit sind nur noch Änderungen an der Firewall notwendig, um die Verbindung zu Dockerhub zu erlauben und die Ports für Prometheus und Grafana freizugeben:
+
+```nix
+#TODO
+      iptables -A INPUT -p tcp --dport 9100 -j ACCEPT
+      iptables -A INPUT -p tcp --dport 9090 -j ACCEPT
+      iptables -A OUTPUT -p tcp --dport 9100 -j ACCEPT 
+      iptables -A OUTPUT -p tcp --dport 9090 -j ACCEPT
+```
+
+#### 1.2) Konfiguaration von Docker
+
+Zunächst brauchen wir die folgenden Dateien und Verzeichnisse in denen nacher die Config-Datein der einzelnen Dienste liegen:
 
 ```shell
 # Create the directory structure
@@ -34,7 +59,7 @@ mkdir -p /root/docker/grafana
 mkdir -p /root/docker/prometheus
 mkdir -p /root/docker/blackbox
 
-# Create the files
+# Create the config files
 touch /root/docker/docker-compose.yaml
 touch /root/docker/alert-manager/alertmanager.yml
 touch /root/docker/grafana/grafana.ini
@@ -43,9 +68,12 @@ touch /root/docker/prometheus/prometheus.yml
 touch /root/docker/blackbox/blackbox.yml
 ```
 
+Nun können wir die Docker-Compose Datei erstellen:
+
 ```yml
 # docker-compose.yml
 services:
+  # Prometheus zur Metriken-Sammlung
   prometheus:
     image: prom/prometheus
     ports:
@@ -55,8 +83,9 @@ services:
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--web.enable-lifecycle'
-    restart: always
+    restart: unless-stopped
 
+  # Grafana zur Visualisierung
   grafana:
     image: grafana/grafana
     ports:
@@ -65,14 +94,13 @@ services:
       - prometheus
     restart: unless-stopped
     environment:
-#     - GF_SERVER_ROOT_URL=http://my.grafana.server/
      - HTTP_PROXY=http://proxy.cit.tum.de:8080/
      - HTTPS_PROXY=http://proxy.cit.tum.de:8080/
      - NO_PROXY=localhost,127.0.0.1,prometheus
-#     - GF_INSTALL_PLUGINS=grafana-clock-panel
     volumes:
      - grafana-storage:/var/lib/grafana
 
+  # Alertmanager zur Alarmierung bei Fehlern
   alertmanager:
     image: prom/alertmanager
     ports:
@@ -81,6 +109,7 @@ services:
       - /root/docker/alert-manager:/config
     command: --config.file=/config/alertmanager.yml --log.level=debug
 
+  # Blackbox Exporter zur Überwachung von Webseiten
   blackbox:
     image: prom/blackbox-exporter:latest
     ports:
@@ -101,6 +130,11 @@ volumes:
   grafana-storage: {}
 ```
 
+Durch die obige compose Datei wird ein Prometheus-Server, ein Grafana-Server, ein Alertmanager und ein Blackbox-Exporter gestartet. Die Konfigurationsdateien für die einzelnen Dienste werden in den entsprechenden Verzeichnissen gemountet und für Dienste die Internetzugriff benötigen, wird der Proxy konfiguriert.
+
+#### 1.3) Konfiguaration von Prometheus
+
+Prometheus sammelt Metriken von den verschiedenen Diensten und speichert diese in einer Datenbank. Die Konfiguration erfolgt über die `prometheus.yml` Datei. Hier werden abgesehen von ein par globalen einstellungen, die verschiedenen Dienste definiert, die Prometheus überwachen soll:
 
 ```yml
 # prometheus.yml
@@ -108,10 +142,12 @@ global:
   scrape_interval: 15s
   evaluation_interval: 15s
 scrape_configs:
+  # Prometheus selbst als Beispiel
   - job_name: 'prometheus'
     scrape_interval: 5s
     static_configs:
       - targets: ['localhost:9090']
+      
 #rule_files:
 #  - 'alert-rules.yml'
 #alerting:
@@ -121,43 +157,10 @@ scrape_configs:
 #        - targets: ['host.docker.internal:9093']
 ```
 
-```yml
-# alert-rules.yml
-groups:
-  - name: tutorial-rules
-    rules:
-      # Triggers a critical alert if a server is down for more than 1 minute.
-      - alert: ServerDown
-        expr: up < 1
-        for: 1m
-        labels:
-          severity: critical
-        annotations:
-          summary: "Server {{ $labels.instance }} down"
-          description: "{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 1 minute."
-```
-
-```yml
-# alertmanager.yml
-route:
-  receiver: tutorial-alert-manager
-  repeat_interval: 1m
-receivers:
-  - name: 'tutorial-alert-manager'
-    telegram_configs:
-      - bot_token: tutorial_token
-        api_url: https://api.telegram.org
-        chat_id: -12345678
-        parse_mode: ''
-    email_configs:
-      - to: 'tutorial.inbox@gmail.com'
-        from: 'tutorial.outbox@gmail.com'
-        smarthost: 'smtp.gmail.com:587'
-        auth_username: 'username'
-        auth_password: 'password'
-```
+Hiermit sind alle zum jetzigen Zeitpunkt relevanten Konfigurationen abgeschlossen und docker kann gestartet werden:
 
 ```shell
+# current firewall rule (allow all)
 iptables -P INPUT ACCEPT
 iptables -P OUTPUT ACCEPT
 iptables -P FORWARD ACCEPT
@@ -166,52 +169,66 @@ iptables -F
 docker compose up -d
 ```
 
-grafana setup:
-login and set new passwd
+#### 1.4) Konfiguaration von Grafana
 
-Once you have logged in, click on the “Connections” icon in the left-hand menu, then click on “Data Sources”. Click on the “Add data source” button and select “Prometheus” as the data source type. Configure the URL to http://prometheus:9090 (muss prometheus:... sein) and click on the "Save & Test" button
+Wenn Grafana zum erstenmal gestartet wird, muss ein neues Passwort gesetzt werden. Zunächst muss man sich mit dem Standard-Login `admin` und Passwort `admin` anmelden und wird dann nach einen neuen Passwort gefragt.
+
+Jetzt muss nur noch Prometheus als Datenquelle hinzugefügt werden und dann ist auch Grafane einsatzbereit. Hierzu wählt man im linken Menü uter dem Reiter "Connections” "Data Sources" aus. Dort dann auf "Add data source" klicken und "Prometheus" als Datenquelle auswählen. Die URL sollte auf http://prometheus:9090 gesetzt werden und dann auf "Save & Test" klicken. (Wichtig: der Hostname muss `prometheus` sein)
+
+
+
+
+
+
 
 ### 2. Überwachung der Dienste
 
-erlauben in firewall sowohl in router als auch in vm... (ggf noch zu viel erlaubt)
-
-```shell
-      # Allow: prometheus exporter
-      iptables -A INPUT -p tcp --dport 9100 -j ACCEPT
-      iptables -A INPUT -p tcp --dport 9090 -j ACCEPT
-      iptables -A OUTPUT -p tcp --dport 9100 -j ACCEPT 
-      iptables -A OUTPUT -p tcp --dport 9090 -j ACCEPT
-```
-
 #### 2.1) Betriebssystem
 
-anpassen von der prometheus.yml:
+Zunächst sollen die beidem vm1 und vm2 überwacht werden. Dafür müssen wir auf den beiden VMs den node-exporter installieren. Dieser sammelt Metriken über das Betriebssystem und stellt sie Prometheus zur Verfügung.
+
+```nix
+# os-expoerter.nix
+{ config, lib, pkgs, ... }:
+{
+  services.prometheus.exporters.node = {
+    enable = true;
+    port = 9100;
+    enabledCollectors = [
+      "logind"
+      "systemd"
+    ];
+    disabledCollectors = [
+      "textfile"
+    ];
+    openFirewall = true;
+  };
+}
+```
+
+Nach einen rebuild der VMs können wir den node-exporter in Prometheus eintragen damit die Exporter auch von Prometheus abgefragt werden:
 
 ```yml
 # prometheus.yml
-global:
-  scrape_interval: 15s
-  evaluation_interval: 15s
+...
 scrape_configs:
-  - job_name: 'prometheus'
-    scrape_interval: 5s
+  ...
+  - job_name: 'os-status'
     static_configs:
-      - targets: ['localhost:9090']
-  - job_name: 'os-vm1'
-    static_configs:
-      - targets: ['192.168.3.1:9100']
-  - job_name: 'os-vm2'
-    static_configs:
-      - targets: ['192.168.3.2:9100']
+      - targets: ['192.168.3.1:9100', '192.168.3.2:9100']
 ```
 
-und dann noch den node exporter zu den vms hinzufügen:
+Darauf muss `prometheus` neu gestartet mittels `docker compose restart prometheus` neugestarted werden.
+Worauf unter `http://131.159.74.56:60312/targets` die beiden VMs als `UP` angezeigt werden sollten.
+
+Nun können wir in Grafana die Metriken visualisieren. Dafür erstellen wir ein neues Dashboard und fügen ein Panel hinzu. Eine tolle Sache an Grafana ist hier das es bereits viele fertige Dashboards gibt, wie das `https://grafana.com/grafana/dashboards/1860-node-exporter-full/` Dashboard welches alle Metriken des node-exporters visualisiert.
+
+Um dieses Dashboard zu verwenden, müssen wir es in Grafana importieren. Dafür gehen wir auf `Dashboard` -> `New` -> `Import` und geben die ID des Dashboards ein. In diesem Fall `1860`. Nun muss nur noch `Prometheus` als Datenquelle ausgewählt werden und das Dashboard ist einsatzbereit.
 
 #### 2.2) Netzwerk
 
+# TODO
 in grafana :
-
-
 The Prometheus Stat you are looking for it just 'up'.
 
 If up is 0, that means the target is unreachable, if it is 1 that means it is responding.
@@ -228,8 +245,12 @@ This will show all your Prometheus targets, their name, and whether they are up 
 
 #### 2.3) DNS
 
+# TODO
+
 
 #### 2.4) DHCP
+
+# Fertig? 
 
 added controll oscket to dhcpd.conf:
 
@@ -273,6 +294,7 @@ grafana https://grafana.com/grafana/dashboards/12688-kea-dhcp/
 
 #### 2.5) Webserver
 
+# FIXME 
 blackbox config:
 
 ```yml
@@ -315,7 +337,7 @@ neuer prometheus job:
 
 ```yml
 # prometheus.yml
-- job_name: 'blackbox'
+- job_name: 'webserver'
     metrics_path: /probe
     params:
       module: [http_2xx]  # Look for a HTTP 200 response.
@@ -330,8 +352,11 @@ neuer prometheus job:
       - source_labels: [__param_target]
         target_label: instance
       - target_label: __address__
-        replacement: blackbox:9115  # muss blackbox: ... sein
+        replacement: blackbox:9115  # muss blackbox:9115 sein
 ```
+
+grafana: https://grafana.com/grafana/dashboards/13659-blackbox-exporter-http-prober/
+
 
 #### 2.6) Datenbank
 
@@ -402,7 +427,7 @@ cadvisor zu homeassistant compose file:
 ```yml
   cadvisor:
     container_name: cadvisor
-    image: google/cadvisor:latest
+    image: gcr.io/cadvisor/cadvisor
     volumes:
       - /:/rootfs:ro
       - /var/run:/var/run:rw
@@ -414,6 +439,7 @@ cadvisor zu homeassistant compose file:
     restart: unless-stopped
     devices:
       - /dev/kmsg
+    privileged: true
 ```
 
 grafana: https://grafana.com/grafana/dashboards/10619-docker-host-container-overview/
@@ -425,3 +451,46 @@ grafana: https://grafana.com/grafana/dashboards/10619-docker-host-container-over
 
 
 #### 2.10) Mail
+
+
+### 3. Status-Übersicht
+
+
+### 4. Alarmierung
+
+
+```yml
+# alert-rules.yml
+groups:
+  - name: tutorial-rules
+    rules:
+      # Triggers a critical alert if a server is down for more than 1 minute.
+      - alert: ServerDown
+        expr: up < 1
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Server {{ $labels.instance }} down"
+          description: "{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 1 minute."
+```
+
+```yml
+# alertmanager.yml
+route:
+  receiver: tutorial-alert-manager
+  repeat_interval: 1m
+receivers:
+  - name: 'tutorial-alert-manager'
+    telegram_configs:
+      - bot_token: tutorial_token
+        api_url: https://api.telegram.org
+        chat_id: -12345678
+        parse_mode: ''
+    email_configs:
+      - to: 'tutorial.inbox@gmail.com'
+        from: 'tutorial.outbox@gmail.com'
+        smarthost: 'smtp.gmail.com:587'
+        auth_username: 'username'
+        auth_password: 'password'
+```
