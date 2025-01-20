@@ -1,37 +1,13 @@
-#{ inputs, ... }:
-#let
-#  # Overlay to use PostgreSQL 17 from the unstable channel
-#  overlay-pg-unstable = final: prev: {
-#    postgresql = inputs.unstable.legacyPackages."x86_64-linux".postgresql_17;
-#  };
-#in
-#{
-#  # Add the PostgreSQL overlay
-#  nixpkgs.overlays = [ overlay-pg-unstable ];
-#
-#  # Enable the PostgreSQL service
-#  services.postgresql = {
-#    enable = true;
-#    #package = pkgs.postgresql; # Use the PostgreSQL package from the overlay
-#    dataDir = "/var/lib/postgresql"; # Default data directory for PostgreSQL
-#    # Initialize with a simple configuration
-#    #initialScript = ''
-#    #  CREATE USER admin WITH PASSWORD 'admin_password';
-#    #  CREATE DATABASE example_db OWNER admin;
-#    #'';
-#  };
-#}
-
 { config, lib, pkgs, ... }:
 {
-  # Mount database from NFS
+  ## MOUNT NFS DATABASE
   fileSystems."/var/lib/postgresql" = {
     device = "192.168.3.8:/postgresql";
     fsType = "nfs";
     options = [ "x-systemd.automount" "noauto" "x-systemd.idle-timeout=600" ];
   };
 
-  # DATABASE SETUP
+  ## DATABASE SETUP
   services.postgresql = {
     enable = true;
     package = pkgs.postgresql_17;
@@ -79,6 +55,7 @@
       ALTER DATABASE team02db OWNER TO team02;
     '';
   };
+  
   ## BACKUP SETUP
   services.postgresqlBackup = {
     enable = true;
@@ -86,15 +63,11 @@
     location = "/var/backup/postgresql";
     compression = "gzip";
   };
-  ## Should maybe be changed to more efficient backup using WAL...
-  #services.postgresqlWalReceiver = {
-  #  receivers = {
-  #    main = {
-  #      postgresqlPackage = pkgs.postgresql_17;
-  #      directory = /mnt/pg_wal/main/;
-  #      slot = "main_wal_receiver";
-  #      connection = "postgresql://user@somehost";
-  #    };
-  #  };
-  #};
+  
+  ## PROMETHEUS EXPORT
+  services.prometheus.exporters.postgres = {
+    enable = true;
+    port = 9100;
+    runAsLocalSuperUser = true;
+  }
 }
