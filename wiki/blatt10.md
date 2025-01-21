@@ -693,7 +693,7 @@ Wir können beispielsweise überprüfen, ob Prometheus selbst funktioniert...
           description: "Postgresql instance is down\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 ```
 
-Nachdem wir sehr viele dieser Alerts nutzen, werden wir nicht auf alle im Detail eingehen. Sie können in [`alert.rules.yml`](alert.rules.yml) eingesehen werden. Wir haben folgende Alert-Gruppen eingerichtet:
+Nachdem wir sehr viele dieser Alerts nutzen (auch viele vorkonfigurierte von [Github](https://samber.github.io/awesome-prometheus-alerts/rules.html)), werden wir nicht auf alle im Detail eingehen. Sie können in [`alert.rules.yml`](alert.rules.yml) eingesehen werden. Wir haben folgende Alert-Gruppen eingerichtet:
 
 - `EmbeddedExporter`: Prometheus Funktionalitäten
 - `NodeExporter`: VM-Überwachung
