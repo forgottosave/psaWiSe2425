@@ -87,7 +87,7 @@ in
     };
 
     # Enable the Prometheus metrics module
-    extraModules = [ pkgs.nginxModules.ngx_http_stub_status ];
+    #extraModules = [ pkgs.nginxModules.ngx_http_stub_status ];
 
     # Logging
     commonHttpConfig =
@@ -161,7 +161,7 @@ in
               chown -R ${user.name}:${user.group} "$cgi_bin_dir"
             fi
           '';
-        deps = [ "users" ];
+        deps = [ "user-activation" ];
       };
     }
   );
