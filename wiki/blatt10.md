@@ -215,7 +215,13 @@ scrape_configs:
   ...
   - job_name: 'os-status'
     static_configs:
-      - targets: ['192.168.3.1:9100', '192.168.3.2:9100']
+      - targets: 
+          - '192.168.3.1:9100' #vm1
+          - '192.168.3.2:9100' #vm2
+          - '192.168.3.3:9100' #router
+          # database, homeassistant up over own exporter
+          - '192.168.3.6:9100' #webserver
+          - '192.168.3.7:9100' #fileserver
 ```
 
 Darauf muss `prometheus` neu gestartet mittels `docker compose restart prometheus` neugestarted werden.
@@ -228,6 +234,10 @@ Um dieses Dashboard zu verwenden, müssen wir es in Grafana importieren. Dafür 
 #### 2.2) Netzwerk
 
 # TODO
+
+alle vms mit nodeexporter -> up/down
+
+
 in grafana :
 The Prometheus Stat you are looking for it just 'up'.
 

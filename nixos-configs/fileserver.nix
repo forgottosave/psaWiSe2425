@@ -33,4 +33,17 @@
       /export/postgresql      192.168.3.4(rw,sync)
     '';
   };
+
+  services.prometheus.exporters.node = {
+    enable = true;
+    port = 9100;
+    enabledCollectors = [
+      "logind"
+      "systemd"
+    ];
+    disabledCollectors = [
+      "textfile"
+    ];
+    openFirewall = true;
+  };
 }
