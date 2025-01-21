@@ -557,7 +557,7 @@ Quellen:
 
 #### 2.7) Webanwendung
 
-# funktioniert, fertig?
+#funktioniert, fertig?
 cadvisor zu homeassistant compose file:
 
 ```yml
@@ -582,56 +582,130 @@ grafana: https://grafana.com/grafana/dashboards/19792-cadvisor-dashboard/
 
 #### 2.8) Fileserver
 
+TODO
 
 #### 2.9) LDAP
 
+TODO
 
 #### 2.10) Mail
 
+TODO
 
 ### 3. Status-Übersicht
 
+TODO
 
 ### 4. Alarmierung
 
+Um schnell wichtige Probleme / Ausfäle zu erkennen, werden zum Schluss noch Alerts eingerichtet. Hierfür benötigen wir 2 Konfigurationen:
 
-```yml
-# alert-rules.yml
-groups:
-  - name: tutorial-rules
-    rules:
-      # Triggers a critical alert if a server is down for more than 1 minute.
-      - alert: ServerDown
-        expr: up < 1
-        for: 1m
-        labels:
-          severity: critical
-        annotations:
-          summary: "Server {{ $labels.instance }} down"
-          description: "{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 1 minute."
-```
+1. `alert.rules.yml` beinhaltet alle Alert-Regeln und wird von Prometheus eingelesen. Sollte ein Alert ausgelöst werden, wird dieser an den `Alert Manager` gesendet.
+2. `alertmanager.yml` beinhaltet die Konfiguration für den Alert Manager. Hier wird definiert, wer bei welcher Art von Alert benachrichtigt wird.
+
+#### 4.1) Alert Manager
+
+Der Prometheus Alert Manager unterstützt viele Arten von Alert-Möglichkeiten, beispielsweise Mail, Slack, oder PagerDuty. Wir haben uns entschieden einen Slack-Bot einzurichten.
+
+Hierfür muss zuerst eine Slack-Webhook eingerichtet werden. Wir haben zum Testen einen neuen Slack Kanal erstellt, auf welchem die Webhook posten kann.
+
+![alt text](slack.png)
+
+Im Anschluss wird in der `alertmanager.yml` die Route gesetzt und ein neuer Slack-`receiver` eingerichtet. Hier können wir die eben erstellte Webhook angeben.
 
 ```yml
 # alertmanager.yml
 route:
-  receiver: tutorial-alert-manager
+  receiver: slack
   repeat_interval: 1m
 receivers:
-  - name: 'tutorial-alert-manager'
-    telegram_configs:
-      - bot_token: tutorial_token
-        api_url: https://api.telegram.org
-        chat_id: -12345678
-        parse_mode: ''
-    email_configs:
-      - to: 'tutorial.inbox@gmail.com'
-        from: 'tutorial.outbox@gmail.com'
-        smarthost: 'smtp.gmail.com:587'
-        auth_username: 'username'
-        auth_password: 'password'
+  - name: slack
+    slack_configs:
+      - channel: "#all-praktikum-system-administration-ws2425"
+        send_resolved: true
+        api_url: "https://hooks.slack.com/services/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"
+        title: Alert
+        text: >-
+          {{ range .Alerts -}}
+          *Alert:* {{ .Annotations.title }}{{ if .Labels.severity }} - `{{ .Labels.severity }}`{{ end }}
+          *Description:* {{ .Annotations.description }}
+          *Details:*
+            {{ range .Labels.SortedPairs }} • *{{ .Name }}:* `{{ .Value }}`
+            {{ end }}
 ```
+
+#### 4.2) Prometheus (Alert Regeln)
+
+Um den Alert Manager mit Prometheus zu verbinden muss dieser in der `prometheus.yml` unter `alerting` eingetragen werden. Auch wird hier der Pfad zu der Datei mit den Alert-Regeln `rule_files` angegeben:
+
+```yml
+# prometheus.yml
+rule_files:
+  - "alert.rules.yml"
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ["alertmanager:9093"]
+```
+
+In der `alert.rules.yml` können nun Alert-Regeln gesetzt werden. Diese Regeln können in Gruppen unterteilt werden. Eine Alert-Konfiguration sieht folgendermaßen aus:
+
+```yml
+# alert.rules.yml
+groups:
+  - name: <Gruppen-Name>
+    rules:
+      - alert: <Alert-Titel>
+        expr: <Bedingung>
+        for: <Dauer>
+        labels:
+          severity: <Level>
+        annotations:
+          summary: <Kurz-Beschreibung>
+          description: <Beschreibung>
+```
+
+Wir können beispielsweise überprüfen, ob Prometheus selbst funktioniert...
+
+```yml
+# alert.rules.yml
+      - alert: PrometheusJobMissing
+        expr: absent(up{job="prometheus"})
+        for: 0m
+        labels:
+          severity: warning
+        annotations:
+          summary: Prometheus job missing (instance {{ $labels.instance }})
+          description: "A Prometheus job has disappeared\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+```
+
+...oder ob die Datenbank gerade läuft.
+
+```yml
+# alert.rules.yml
+      - alert: PostgresqlDown
+        expr: pg_up == 0
+        for: 0m
+        labels:
+          severity: critical
+        annotations:
+          summary: Postgresql down (instance {{ $labels.instance }})
+          description: "Postgresql instance is down\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+```
+
+Nachdem wir sehr viele dieser Alerts nutzen, werden wir nicht auf alle im Detail eingehen. Sie können in [`alert.rules.yml`](alert.rules.yml) eingesehen werden. Wir haben folgende Alert-Gruppen eingerichtet:
+
+- `EmbeddedExporter`: Prometheus Funktionalitäten
+- `NodeExporter`: VM-Überwachung
+- `PostgresExporter`: Datenbanken
+- `TODO`: TODO
+
+Jeder Alert ist bei funktionierendem System `INACTIVE`, bei Fehlerhaften Checks wird dieser auf `FIRING` gesetzt.
+
+![alt text](alert-state.png)
 
 Quellen:
 
 - [Adding Prometheus alerts](https://signoz.io/guides/how-do-i-add-alerts-to-prometheus/)
+- [Adding AlertManager Slack notifications](https://blog.devops.dev/how-to-build-an-alerting-system-with-prometheus-and-alertmanager-cd75a28c2b74)
 - [Collection of useful alerts](https://samber.github.io/awesome-prometheus-alerts/rules.html)
