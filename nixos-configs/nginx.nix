@@ -38,6 +38,7 @@ in
     recommendedOptimisation = true;
     virtualHosts = {
       "web1.psa-team03.cit.tum.de" = {
+        listen = [ "127.0.0.1:80" "127.0.0.1:443 ssl" ]; # Explicitly use IPv4
         root = ./sites/web1;
         # http://.../~<login> -> ~<login>/.html-data
         locations."~ ^/~(\\w+?)(?:/(.*))?$" = {
@@ -56,7 +57,7 @@ in
         };
         locations."/metrics" = {
           extraConfig = ''
-            stub_status;
+            stub_status on;
             allow 127.0.0.1;
             deny all;
           '';
@@ -64,21 +65,23 @@ in
       } // sslAttr;
 
       "web2.psa-team03.cit.tum.de" = {
+        listen = [ "127.0.0.1:80" "127.0.0.1:443 ssl" ]; # Explicitly use IPv4
         root = ./sites/web2;
         locations."/metrics" = {
           extraConfig = ''
-            stub_status;
+            stub_status on;
             allow 127.0.0.1;
-            deny all;
+            deny all on;
           '';
         };
       } // sslAttr;
 
       "web3.psa-team03.cit.tum.de" = {
+        listen = [ "127.0.0.1:80" "127.0.0.1:443 ssl" ]; # Explicitly use IPv4
         root = ./sites/web3;
         locations."/metrics" = {
           extraConfig = ''
-            stub_status;
+            stub_status on;
             allow 127.0.0.1;
             deny all;
           '';
@@ -134,37 +137,37 @@ in
   );
 
   # Activation Script um automatisch .html-data und .cgi-bin Ordner für jeden User zu erstellen
-  system.activationScripts = forEachUser (user:
-    {
-      name = "webserver-user-${user.name}";
-      value = {
-        text =
-          ''
-            html_data_dir="${user.home}/.html-data"
-            cgi_bin_dir="${user.home}/.cgi-bin"
-
-            if [ ! -d "$html_data_dir" ]; then
-              mkdir -p "$html_data_dir"
-              echo "Hello statically from ${user.name}" > "$html_data_dir/index.html"
-              chown -R ${user.name}:${user.group} "$html_data_dir"
-            fi
-
-            if [ ! -d "$cgi_bin_dir" ]; then
-              mkdir -p "$cgi_bin_dir"
-              cat > "$cgi_bin_dir/index.sh" << 'EOF'
-            #!/usr/bin/env bash
-            echo "Content-type: text/html"
-            echo ""
-            echo "Hello dynamically from $(whoami)"
-            EOF
-              chmod +x "$cgi_bin_dir/index.sh"
-              chown -R ${user.name}:${user.group} "$cgi_bin_dir"
-            fi
-          '';
-        deps = [ "user-activation" ];
-      };
-    }
-  );
+#  system.activationScripts = forEachUser (user:
+#    {
+#      name = "webserver-user-${user.name}";
+#      value = {
+#        text =
+#          ''
+#            html_data_dir="${user.home}/.html-data"
+#            cgi_bin_dir="${user.home}/.cgi-bin"
+#
+#            if [ ! -d "$html_data_dir" ]; then
+#              mkdir -p "$html_data_dir"
+#              echo "Hello statically from ${user.name}" > "$html_data_dir/index.html"
+#              chown -R ${user.name}:${user.group} "$html_data_dir"
+#            fi
+#
+#            if [ ! -d "$cgi_bin_dir" ]; then
+#              mkdir -p "$cgi_bin_dir"
+#              cat > "$cgi_bin_dir/index.sh" << 'EOF'
+#            #!/usr/bin/env bash
+#            echo "Content-type: text/html"
+#            echo ""
+#            echo "Hello dynamically from $(whoami)"
+#            EOF
+#              chmod +x "$cgi_bin_dir/index.sh"
+#              chown -R ${user.name}:${user.group} "$cgi_bin_dir"
+#            fi
+#          '';
+#        deps = [ "user-activation" ];
+#      };
+#    }
+#  );
 
   # Log Rotation
   # Default deaktivieren
