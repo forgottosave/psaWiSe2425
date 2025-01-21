@@ -63,6 +63,22 @@ in
       "web3.psa-team03.cit.tum.de" = {
         root = ./sites/web3;
       } // sslAttr;
+
+      # exporter für Prometheus
+      # Enable the Prometheus metrics module
+      extraModules = [ pkgs.nginxModules.ngx_http_stub_status ];
+
+      # Add a location block for metrics in each virtual host
+      extraConfig = ''
+        server {
+          listen 127.0.0.1:8080;
+          location /metrics {
+            stub_status;
+            allow 127.0.0.1;
+            deny all;
+          }
+        }
+      '';
     };
 
     # Logging
@@ -82,6 +98,13 @@ in
       access_log /var/log/nginx/access.log combined_anon;
       error_log /var/log/nginx/error.log;
     '';
+  };
+
+  # Add Prometheus Nginx Exporter
+  services.prometheus.exporters.nginx = {
+    enable = true;
+    web.listenAddress = ":9101"; # Default listen port for Prometheus Nginx Exporter
+    nginx.scrapeURI = "http://127.0.0.1:8080/metrics";
   };
 
   # Für jeden User wird eine fcgiwrap Service Instanz erzeugt

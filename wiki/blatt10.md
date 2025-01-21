@@ -237,6 +237,48 @@ Um dieses Dashboard zu verwenden, müssen wir es in Grafana importieren. Dafür 
 
 alle vms mit nodeexporter -> up/down
 
+##### pinging
+
+neuer prometheus job:
+
+```yml
+# prometheus.yml
+...
+  - job_name: 'network'
+    metrics_path: /probe
+    params:
+      module: [ping]  # Look for a HTTP 200 response.
+    static_configs:
+      - targets:
+        - 192.168.3.1
+        - 192.168.3.2
+        - 192.168.3.3
+        - 192.168.3.4
+        - 192.168.3.5
+        - 192.168.3.6
+        - 192.168.3.7
+        - 192.168.3.8
+        - 192.168.3.9
+        - 192.168.3.10
+        # team routers
+        - 192.168.1.1
+        - 192.168.2.1
+        - 192.168.4.1
+        - 192.168.5.1
+        - 192.168.6.1
+        - 192.168.7.1
+        - 192.168.8.5
+        - 192.168.9.1
+        - 192.168.10.2
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox:9115  # muss blackbox:9115 sein
+```
+
 
 in grafana :
 The Prometheus Stat you are looking for it just 'up'.
@@ -410,7 +452,7 @@ modules:
       transport_protocol: "tcp" # defaults to "udp"
       preferred_ip_protocol: "ip4" # defaults to "ip6"
       query_name: "www.prometheus.io"
-  icmp_example:
+  ping:
     prober: icmp
     timeout: 5s
     icmp:
@@ -422,10 +464,11 @@ neuer prometheus job:
 
 ```yml
 # prometheus.yml
-- job_name: 'webserver'
+...
+  - job_name: 'webserver'
     metrics_path: /probe
     params:
-      module: [http_2xx]  # Look for a HTTP 200 response.
+      module: [http_with_proxy]  # Look for a HTTP 200 response.
     static_configs:
       - targets:
         - http://prometheus.io    # Target to probe with http.
@@ -441,6 +484,13 @@ neuer prometheus job:
 ```
 
 grafana: https://grafana.com/grafana/dashboards/13659-blackbox-exporter-http-prober/
+
+
+```yml
+  - job_name: 'webserver'
+    static_configs:
+      - targets: ['192.168.3.6:9101']
+```
 
 
 #### 2.6) Datenbank
