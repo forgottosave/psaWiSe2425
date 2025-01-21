@@ -103,8 +103,8 @@ in
   # Add Prometheus Nginx Exporter
   services.prometheus.exporters.nginx = {
     enable = true;
-    web.listenAddress = ":9101"; # Default listen port for Prometheus Nginx Exporter
-    nginx.scrapeURI = "http://127.0.0.1:8080/metrics";
+    listenAddress = ":9101"; # Default listen port for Prometheus Nginx Exporter
+    scrapeURI = "http://127.0.0.1:8080/metrics";
   };
 
   # Für jeden User wird eine fcgiwrap Service Instanz erzeugt
