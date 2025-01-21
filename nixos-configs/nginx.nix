@@ -39,8 +39,8 @@ in
     virtualHosts = {
       "web1.psa-team03.cit.tum.de" = {
         listen = [
-          { addr = "192.168.3.6"; port = 80; }
-          { addr = "192.168.3.6";port = 443; ssl = true; }
+          { addr = "0.0.0.0"; port = 80; }
+          { addr = "0.0.0.0";port = 443; ssl = true; }
         ];
         root = ./sites/web1;
         # http://.../~<login> -> ~<login>/.html-data
@@ -69,8 +69,8 @@ in
 
       "web2.psa-team03.cit.tum.de" = {
         listen = [
-          { addr = "192.168.3.6"; port = 80; }
-          { addr = "192.168.3.6";port = 443; ssl = true; }
+          { addr = "0.0.0.0"; port = 80; }
+          { addr = "0.0.0.0";port = 443; ssl = true; }
         ];
         root = ./sites/web2;
         locations."/metrics" = {
@@ -84,8 +84,8 @@ in
 
       "web3.psa-team03.cit.tum.de" = {
         listen = [
-          { addr = "192.168.3.6"; port = 80; }
-          { addr = "192.168.3.6";port = 443; ssl = true; }
+          { addr = "0.0.0.0"; port = 80; }
+          { addr = "0.0.0.0";port = 443; ssl = true; }
         ];
         root = ./sites/web3;
         locations."/metrics" = {
