@@ -77,7 +77,7 @@ in
           extraConfig = ''
             stub_status on;
             allow 127.0.0.1;
-            deny all on;
+            deny all;
           '';
         };
       } // sslAttr;
