@@ -123,7 +123,7 @@ in
   # Add Prometheus Nginx Exporter
   services.prometheus.exporters.nginx = {
     enable = true;
-    listenAddress = ":9101"; # Default listen port for Prometheus Nginx Exporter
+    port = "9101";
     scrapeUri = "http://127.0.0.1:8080/metrics";
   };
 
