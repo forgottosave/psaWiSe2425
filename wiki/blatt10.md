@@ -630,3 +630,8 @@ receivers:
         auth_username: 'username'
         auth_password: 'password'
 ```
+
+Quellen:
+
+- [Adding Prometheus alerts](https://signoz.io/guides/how-do-i-add-alerts-to-prometheus/)
+- [Collection of useful alerts](https://samber.github.io/awesome-prometheus-alerts/rules.html)
