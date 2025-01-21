@@ -54,32 +54,40 @@ in
               fastcgi_pass unix:/run/fcgiwrap-$1.sock;
             '';
         };
+        locations."/metrics" = {
+          extraConfig = ''
+            stub_status;
+            allow 127.0.0.1;
+            deny all;
+          '';
+        };
       } // sslAttr;
 
       "web2.psa-team03.cit.tum.de" = {
         root = ./sites/web2;
+        locations."/metrics" = {
+          extraConfig = ''
+            stub_status;
+            allow 127.0.0.1;
+            deny all;
+          '';
+        };
       } // sslAttr;
 
       "web3.psa-team03.cit.tum.de" = {
         root = ./sites/web3;
+        locations."/metrics" = {
+          extraConfig = ''
+            stub_status;
+            allow 127.0.0.1;
+            deny all;
+          '';
+        };
       } // sslAttr;
     };
 
-    # exporter für Prometheus
     # Enable the Prometheus metrics module
     extraModules = [ pkgs.nginxModules.ngx_http_stub_status ];
-
-    # Add a location block for metrics in each virtual host
-    extraConfig = ''
-      server {
-        listen 127.0.0.1:8080;
-        location /metrics {
-          stub_status;
-          allow 127.0.0.1;
-          deny all;
-        }
-      }
-    '';
 
     # Logging
     commonHttpConfig =
