@@ -38,7 +38,10 @@ in
     recommendedOptimisation = true;
     virtualHosts = {
       "web1.psa-team03.cit.tum.de" = {
-        listen = [ "127.0.0.1:80" "127.0.0.1:443 ssl" ]; # Explicitly use IPv4
+        listen = [
+          { addr = "192.168.3.6"; port = 80; }
+          { addr = "192.168.3.6";port = 443; ssl = true; }
+        ];
         root = ./sites/web1;
         # http://.../~<login> -> ~<login>/.html-data
         locations."~ ^/~(\\w+?)(?:/(.*))?$" = {
@@ -65,7 +68,10 @@ in
       } // sslAttr;
 
       "web2.psa-team03.cit.tum.de" = {
-        listen = [ "127.0.0.1:80" "127.0.0.1:443 ssl" ]; # Explicitly use IPv4
+        listen = [
+          { addr = "192.168.3.6"; port = 80; }
+          { addr = "192.168.3.6";port = 443; ssl = true; }
+        ];
         root = ./sites/web2;
         locations."/metrics" = {
           extraConfig = ''
@@ -77,7 +83,10 @@ in
       } // sslAttr;
 
       "web3.psa-team03.cit.tum.de" = {
-        listen = [ "127.0.0.1:80" "127.0.0.1:443 ssl" ]; # Explicitly use IPv4
+        listen = [
+          { addr = "192.168.3.6"; port = 80; }
+          { addr = "192.168.3.6";port = 443; ssl = true; }
+        ];
         root = ./sites/web3;
         locations."/metrics" = {
           extraConfig = ''
