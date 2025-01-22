@@ -127,6 +127,13 @@ in
     scrapeUri = "http://127.0.0.1:8080/metrics";
   };
 
+  services.prometheus.exporters.blackbox = {
+    enable = true;
+    port = 9102;
+    openFirewall = true;
+    configFile = ./blackbox.yml;
+  };
+
   # Für jeden User wird eine fcgiwrap Service Instanz erzeugt
   services.fcgiwrap.instances = forEachUser (user:
     {

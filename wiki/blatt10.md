@@ -392,41 +392,26 @@ modules:
       valid_http_versions: ["HTTP/1.1", "HTTP/2.0"]
       method: GET
       follow_redirects: true
-  http_2xx_example:
+  http_2xx:
     prober: http
     timeout: 5s
     http:
       valid_http_versions: ["HTTP/1.1", "HTTP/2.0"]
-      valid_status_codes: []  # Defaults to 2xx
+      valid_status_codes: []
       method: GET
       follow_redirects: true
       fail_if_ssl: false
       fail_if_not_ssl: false
-      fail_if_body_matches_regexp:
-        - "Could not connect to database"
-      fail_if_body_not_matches_regexp:
-        - "Download the latest version here"
-      fail_if_header_matches: # Verifies that no cookies are set
-        - header: Set-Cookie
-          allow_missing: true
-          regexp: '.*'
-      fail_if_header_not_matches:
-        - header: Access-Control-Allow-Origin
-          regexp: '(\*|example\.com)'
       tls_config:
         insecure_skip_verify: true
       preferred_ip_protocol: "ip4" # defaults to "ip6"
       ip_protocol_fallback: false  # no fallback to "ip6"
-  http_with_proxy:
-    prober: http
-    http:
-      proxy_url: "http://proxy.cit.tum.de:8080/"
-      skip_resolve_phase_with_proxy: true
   ping:
     prober: icmp
     timeout: 5s
     icmp:
       preferred_ip_protocol: "ip4"
+
 ```
 
 neuer prometheus job:
