@@ -588,9 +588,57 @@ TODO
 
 TODO
 
+1. Installation
+
+   ```shell
+   git clone https://github.com/jcollie/openldap_exporter.git
+   cd openldap_exporter
+   virtualenv --python=/usr/bin/python2 /opt/openldap_exporter
+   /opt/openldap_exporter/bin/pip install --requirement requirements.txt
+   cp openldap_exporter.py /opt/openldap_exporter
+   cp openldap_exporter.yml /opt/openldap_exporter
+   vi /opt/openldap_exporter/openldap_exporter.yml
+   
+   # edit configuration file
+   cp openldap_exporter.service /etc/systemd/system
+   systemctl daemon-reload
+   systemctl enable openldap_exporter
+   systemctl start openldap_exporter
+
+   docker build . -t openldap_exporter
+   ```
+
+2. Konfiguration - OpenLDAP
+  
+   ```yml
+   # ldapmodify -Y EXTERNAL -H ldapi:// <<EOF
+   dn: olcDatabase={1}monitor,cn=config
+   changetype: modify
+   replace: olcAccess
+   olcAccess: to * by dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth" read by dn.base="cn=Manager,dc=example,dc=com" read by * none
+   -
+   EOF
+   ```
+
+Quellen:
+
+- [OpenLDAP Prometheus Exporter](https://github.com/jcollie/openldap_exporter)
+
 #### 2.10) Mail
 
 TODO
+
+```nixos
+services.prometheus.exporters.postfix = {
+  enable = true;
+  port = 9154;
+  ...
+};
+```
+
+Quellen:
+
+- [NixOS Postfix Prometheus Exporter](https://search.nixos.org/options?channel=24.11&from=0&size=50&sort=relevance&type=packages&query=services.prometheus.exporters.postfix)
 
 ### 3. Status-Übersicht
 
@@ -695,10 +743,10 @@ Wir können beispielsweise überprüfen, ob Prometheus selbst funktioniert...
 
 Nachdem wir sehr viele dieser Alerts nutzen (auch viele vorkonfigurierte von [Github](https://samber.github.io/awesome-prometheus-alerts/rules.html)), werden wir nicht auf alle im Detail eingehen. Sie können in [`alert.rules.yml`](alert.rules.yml) eingesehen werden. Wir haben folgende Alert-Gruppen eingerichtet:
 
-- `EmbeddedExporter`: Prometheus Funktionalitäten
-- `NodeExporter`: VM-Überwachung
-- `PostgresExporter`: Datenbanken
-- `TODO`: TODO
+- `EmbeddedExporter`: Prometheus Funktionalitäten (Verfügbarkeit von Exportern, ...)
+- `NodeExporter`: VM-Überwachung (ungewöhnliche CPU Last, voller Speicher, läuft Filesystem-RAID noch)
+- `PostgresExporter`: Datenbanken (sind am laufen, Deadlock-Rate, ...)
+- `CoreDNS`: CoreDNS Panic Count
 
 Jeder Alert ist bei funktionierendem System `INACTIVE`, bei Fehlerhaften Checks wird dieser auf `FIRING` gesetzt.
 
