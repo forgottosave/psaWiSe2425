@@ -24,7 +24,7 @@ database        A       192.168.3.4
 
 ; VM 5
 vm5             A       192.168.3.5
-homeassistant   HTTPS   192.168.3.5
+;homeassistant   HTTPS   192.168.3.5
 homeassistant   A       192.168.3.5
 
 ; VM 6
