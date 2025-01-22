@@ -99,6 +99,30 @@ groups:
       summary: Postgresql high rollback rate (instance {{ $labels.instance }})
       description: "Ratio of transactions being aborted compared to committed is > 2 %\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
+- name: PostFix
+  rules:
+
+  - alert: PostfixDown
+    expr: postfix_up == 0
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      summary: Postfix down (instance {{ $labels.instance }})
+      description: "Postfix instance is down\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+- name: OpenLDAP
+  rules:
+
+  - alert: OpenLDAPDown
+    expr: openldap_up == 0
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      summary: OpenLDAP down (instance {{ $labels.instance }})
+      description: "OpenLDAP instance is down\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
 - name: EmbeddedExporter
   rules:
 
