@@ -7,6 +7,7 @@ include_files=(
     vm-network-config.nix
     database-backup.nix
     flake.nix
+    os-exporter.nix
 )
 
 # SED placeholders
@@ -19,6 +20,7 @@ sed_placeholders[imports]='
     ./user-config.nix
     ./vm-network-config.nix
     ./database-backup.nix
+    ./os-exporter.nix
 '
 
 sed_placeholders[system_packages]='

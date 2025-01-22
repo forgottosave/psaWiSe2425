@@ -89,7 +89,7 @@
   ## PROMETHEUS EXPORT
   services.prometheus.exporters.postgres = {
     enable = true;
-    port = 9100;
+    port = 9101;
     runAsLocalSuperUser = true;
   };
 }
