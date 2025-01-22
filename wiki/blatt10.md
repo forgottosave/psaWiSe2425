@@ -743,10 +743,14 @@ Wir können beispielsweise überprüfen, ob Prometheus selbst funktioniert...
 
 Nachdem wir sehr viele dieser Alerts nutzen (auch viele vorkonfigurierte von [Github](https://samber.github.io/awesome-prometheus-alerts/rules.html)), werden wir nicht auf alle im Detail eingehen. Sie können in [`alert.rules.yml`](alert.rules.yml) eingesehen werden. Wir haben folgende Alert-Gruppen eingerichtet:
 
-- `EmbeddedExporter`: Prometheus Funktionalitäten (Verfügbarkeit von Exportern, ...)
-- `NodeExporter`: VM-Überwachung (ungewöhnliche CPU Last, voller Speicher, läuft Filesystem-RAID noch)
-- `PostgresExporter`: Datenbanken (sind am laufen, Deadlock-Rate, ...)
 - `CoreDNS`: CoreDNS Panic Count
+- `DHCP`: DHCP läuft
+- `Homeassistant`: Homeassistant läuft
+- `NodeOsStatus`: VM-Überwachung (ungewöhnliche CPU Last, voller Speicher, läuft Filesystem-RAID noch)
+- `OpenLDAP`: OpenLDAP Server läuft
+- `Postfix`: Postfix Server läuft
+- `Postgresql`: Datenbanken (sind am laufen, Deadlock-Rate, ...)
+- `Prometheus`: Prometheus Funktionalitäten (besonders wichtig: Verfügbarkeit von Exportern)
 
 Jeder Alert ist bei funktionierendem System `INACTIVE`, bei Fehlerhaften Checks wird dieser auf `FIRING` gesetzt.
 

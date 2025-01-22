@@ -1,19 +1,16 @@
 groups:
 
-- name: CoreDNS
+- name: NodeOsStatus
   rules:
 
-  - alert: CorednsPanicCount
-    expr: increase(coredns_panics_total[1m]) > 0
+  - alert: PrometheusOsStatusJobMissing
+    expr: absent(up{job="os-status"})
     for: 0m
     labels:
       severity: critical
     annotations:
-      summary: CoreDNS Panic Count (instance {{ $labels.instance }})
-      description: "Number of CoreDNS panics encountered\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
-
-- name: NodeExporter
-  rules:
+      summary: Prometheus OS-Status job missing (instance {{ $labels.instance }})
+      description: "A Prometheus OS-Status job has disappeared\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
   - alert: HostOutOfMemory
     expr: (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100 < 10) * on(instance) group_left (nodename) node_uname_info{nodename=~".+"}
@@ -60,8 +57,47 @@ groups:
       summary: Host RAID array got inactive (instance {{ $labels.instance }})
       description: "RAID array {{ $labels.device }} is in a degraded state due to one or more disk failures. The number of spare drives is insufficient to fix the issue automatically.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
-- name: PostgresExporter
+- name: DHCP
   rules:
+
+  - alert: PrometheusDhcpJobMissing
+    expr: absent(up{job="dhcp"})
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      summary: Prometheus DHCP job missing (instance {{ $labels.instance }})
+      description: "A Prometheus DHCP job has disappeared\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+- name: Postgresql
+  rules:
+
+  - alert: PrometheusPostgresqlJobMissing
+    expr: absent(up{job="postgresql"})
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      summary: Prometheus Postgresql job missing (instance {{ $labels.instance }})
+      description: "A Prometheus Postgresql job has disappeared\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+  - alert: PrometheusBackupPostgresqlJobMissing
+    expr: absent(up{job="postgresql-backup"})
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      summary: Prometheus Postgresql-Backup job missing (instance {{ $labels.instance }})
+      description: "A Prometheus Postgresql-Backup job has disappeared\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+  - alert: PrometheusTeam02MySqlJobMissing
+    expr: absent(up{job="mysql-team02"})
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      summary: Prometheus Team 02 MySQL job missing (instance {{ $labels.instance }})
+      description: "A Prometheus Team 02 MySQL job has disappeared\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
   - alert: PostgresqlDown
     expr: pg_up == 0
@@ -99,8 +135,41 @@ groups:
       summary: Postgresql high rollback rate (instance {{ $labels.instance }})
       description: "Ratio of transactions being aborted compared to committed is > 2 %\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
+- name: Homeassistant
+  rules:
+
+  - alert: PrometheusHomeassistantJobMissing
+    expr: absent(up{job="homeassistant"})
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      summary: Prometheus Homeassistant job missing (instance {{ $labels.instance }})
+      description: "A Prometheus Homeassistant job has disappeared\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+- name: CoreDNS
+  rules:
+
+  - alert: CorednsPanicCount
+    expr: increase(coredns_panics_total[1m]) > 0
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      summary: CoreDNS Panic Count (instance {{ $labels.instance }})
+      description: "Number of CoreDNS panics encountered\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
 - name: PostFix
   rules:
+
+  - alert: PrometheusPostFixJobMissing
+    expr: absent(up{job="postfix"})
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      summary: Prometheus PostFix job missing (instance {{ $labels.instance }})
+      description: "A Prometheus PostFix job has disappeared\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
   - alert: PostfixDown
     expr: postfix_up == 0
@@ -114,6 +183,15 @@ groups:
 - name: OpenLDAP
   rules:
 
+  - alert: PrometheusOpenLDAPJobMissing
+    expr: absent(up{job="openldap"})
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      summary: Prometheus OpenLDAP job missing (instance {{ $labels.instance }})
+      description: "A Prometheus OpenLDAP job has disappeared\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
   - alert: OpenLDAPDown
     expr: openldap_up == 0
     for: 0m
@@ -123,7 +201,7 @@ groups:
       summary: OpenLDAP down (instance {{ $labels.instance }})
       description: "OpenLDAP instance is down\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
-- name: EmbeddedExporter
+- name: Prometheus
   rules:
 
   - alert: PrometheusJobMissing
@@ -143,15 +221,6 @@ groups:
     annotations:
       summary: Prometheus target missing (instance {{ $labels.instance }})
       description: "A Prometheus target has disappeared. An exporter might be crashed.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
-
-  - alert: PrometheusAllTargetsMissing
-    expr: sum by (job) (up) == 0
-    for: 0m
-    labels:
-      severity: critical
-    annotations:
-      summary: Prometheus all targets missing (instance {{ $labels.instance }})
-      description: "A Prometheus job does not have living target anymore.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
   - alert: PrometheusTargetMissingWithWarmupTime
     expr: sum by (instance, job) ((up == 0) * on (instance) group_right(job) (node_time_seconds - node_boot_time_seconds > 600))
@@ -179,15 +248,6 @@ groups:
     annotations:
       summary: Prometheus too many restarts (instance {{ $labels.instance }})
       description: "Prometheus has restarted more than twice in the last 15 minutes. It might be crashlooping.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
-
-  - alert: PrometheusAlertmanagerJobMissing
-    expr: absent(up{job="alertmanager"})
-    for: 0m
-    labels:
-      severity: warning
-    annotations:
-      summary: Prometheus AlertManager job missing (instance {{ $labels.instance }})
-      description: "A Prometheus AlertManager job has disappeared\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
   - alert: PrometheusAlertmanagerConfigurationReloadFailure
     expr: alertmanager_config_last_reload_successful != 1
