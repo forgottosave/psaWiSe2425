@@ -121,10 +121,6 @@ services:
     depends_on:
       - prometheus
     restart: unless-stopped
-    #environment:
-    # - HTTP_PROXY=http://proxy.cit.tum.de:8080/
-    # - HTTPS_PROXY=http://proxy.cit.tum.de:8080/
-    # - NO_PROXY=localhost,127.0.0.1,blackbox,
 
 volumes:
   grafana-storage: {}
@@ -219,27 +215,31 @@ scrape_configs:
           - '192.168.3.1:9100' #vm1
           - '192.168.3.2:9100' #vm2
           - '192.168.3.3:9100' #router
-          # database, homeassistant up over own exporter
-          #- '192.168.3.6:9100' #webserver
-          #- '192.168.3.7:9100' #fileserver
 ```
 
-Darauf muss `prometheus` neu gestartet mittels `docker compose restart prometheus` neugestarted werden.
-Worauf unter `http://131.159.74.56:60312/targets` die beiden VMs als `UP` angezeigt werden sollten.
+Darauf muss `prometheus` mittels `docker compose restart prometheus` neugestarted werden.
+Worauf unter `http://131.159.74.56:60312/targets` die beiden VMs als `UP` angezeigt werden sollten. (hierfür ist natürlich zunächst eine Portweiterleitung in VirtualBox notwendig)
 
 Nun können wir in Grafana die Metriken visualisieren. Dafür erstellen wir ein neues Dashboard und fügen ein Panel hinzu. Eine tolle Sache an Grafana ist hier das es bereits viele fertige Dashboards gibt, wie das `https://grafana.com/grafana/dashboards/1860-node-exporter-full/` Dashboard welches alle Metriken des node-exporters visualisiert.
 
 Um dieses Dashboard zu verwenden, müssen wir es in Grafana importieren. Dafür gehen wir auf `Dashboard` -> `New` -> `Import` und geben die ID des Dashboards ein. In diesem Fall `1860`. Nun muss nur noch `Prometheus` als Datenquelle ausgewählt werden und das Dashboard ist einsatzbereit.
 
+
 #### 2.2) Netzwerk
 
-# TODO
+Um die Erreichbarkeit der verschiedenen VMs zu überwachen, verwenden wir den `blackbox-exporter`. Dieser kann verschiedene Module verwenden, um die Erreichbarkeit von Diensten zu überprüfen. Configuriert wird dieser exporter über seine eigene `yml` Datei welche in compose file definiert wird. In unserem Fall verwenden wir das `ping`-Modul, wir wie folgt definiert haben:
 
-alle vms mit nodeexporter -> up/down
+```yml
+# blackbox.yml
+modules:
+  ping:
+    prober: icmp
+    timeout: 5s
+    icmp:
+      preferred_ip_protocol: "ip4"
+```
 
-##### pinging
-
-neuer prometheus job:
+Nun brauchen wir noch noch einen euen Job in der `prometheus.yml` Datei, um den blackbox-exporter abzufagen:
 
 ```yml
 # prometheus.yml
@@ -280,27 +280,14 @@ neuer prometheus job:
         replacement: blackbox:9115  # muss blackbox:9115 sein
 ```
 
-
-in grafana :
-The Prometheus Stat you are looking for it just 'up'.
-
-If up is 0, that means the target is unreachable, if it is 1 that means it is responding.
-
-To create a panel in Grafana that shows this, you can use a "Stat" panel.
-Set the Query to something like: up
-The legend to: {{instance}}
-And make a value mapping so that:
-1 -> UP and the color is Green
-0 -> DOWN and the color is RED
-(Value Mapping can be set in the panel settings, all the way at the bottom.)
-
-This will show all your Prometheus targets, their name, and whether they are up or down.
+In grafana importieren wir nun das interface https://grafana.com/grafana/dashboards/13659-blackbox-exporter-http-prober/ und nach etwas Anpassung haben nun eine schöne Übersicht über die Erreichbarkeit der verschiedenen Server.
 
 #### 2.3) DNS
 
-CoreDNS nativen prometheus exporter diesen nur aktivieren durch hinzufügen von `prometheus :9153` in `dns-config.nix`:
+CoreDNS bietet nativen prometheus support und es lässt such ein exporter einfach durch hinzufügen von `prometheus :9153` in `dns-config.nix` aktivieren:
 
 ```nix
+{ ... }:
 { ... }:
 {
   services.coredns = {
@@ -310,12 +297,7 @@ CoreDNS nativen prometheus exporter diesen nur aktivieren durch hinzufügen von 
             bind enp0s8
             root /etc/nixos/dns
             log
-        }
-        
-        . {
-            forward . 131.159.254.1 131.159.254.2
-            prometheus :9153 # Include metrics for this zone if desired
-            import default
+            prometheus :9153
         }
 ...
 ```
@@ -333,22 +315,22 @@ dann nur noch zu prometheus hinzufügen:
 
 grafana: https://grafana.com/grafana/dashboards/14981-coredns/
 
+
+
 #### 2.4) DHCP
 
-# Fertig? 
-
-added controll oscket to dhcpd.conf:
+added controll socket to dhcpd.conf:
 
 ```shell
-
+...
         "control-socket": {
             "socket-type": "unix",
             "socket-name": "/run/kea/kea-dhcp4.socket"
         },
-
+...
 ```
 
-created extra router-exporter.nix:
+einen neuen exporter router-exporter.nix:
 
 ```nix
 { config, lib, pkgs, ... }:
@@ -373,25 +355,15 @@ created extra router-exporter.nix:
 }
 ```
 
-firewall
-
 grafana https://grafana.com/grafana/dashboards/12688-kea-dhcp/
 
 #### 2.5) Webserver
 
-# FIXME 
 blackbox config:
 
 ```yml
 # blackbox.yml
 modules:
-  http_2xx_minimal:
-    prober: http
-    timeout: 5s
-    http:
-      valid_http_versions: ["HTTP/1.1", "HTTP/2.0"]
-      method: GET
-      follow_redirects: true
   http_2xx:
     prober: http
     timeout: 5s
@@ -411,7 +383,6 @@ modules:
     timeout: 5s
     icmp:
       preferred_ip_protocol: "ip4"
-
 ```
 
 neuer prometheus job:
@@ -422,29 +393,23 @@ neuer prometheus job:
   - job_name: 'webserver'
     metrics_path: /probe
     params:
-      module: [http_with_proxy]  # Look for a HTTP 200 response.
+      module: [http_2xx]  # Look for a HTTP 200 response.
     static_configs:
       - targets:
-        - http://prometheus.io    # Target to probe with http.
-        - https://prometheus.io   # Target to probe with https.
-        #- http://example.com:8080 # Target to probe with http on port 8080.
+        - http://web1.psa-team03.cit.tum.de
+        - https://web1.psa-team03.cit.tum.de
+        - https://web2.psa-team03.cit.tum.de
+        - https://web3.psa-team03.cit.tum.de
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target
       - source_labels: [__param_target]
         target_label: instance
       - target_label: __address__
-        replacement: blackbox:9115  # muss blackbox:9115 sein
+        replacement: 192.168.3.6:9102  # muss blackbox:9115 sein
 ```
 
 grafana: https://grafana.com/grafana/dashboards/13659-blackbox-exporter-http-prober/
-
-
-```yml
-  - job_name: 'webserver'
-    static_configs:
-      - targets: ['192.168.3.6:9101']
-```
 
 
 #### 2.6) Datenbank
@@ -536,10 +501,16 @@ grafana: https://grafana.com/grafana/dashboards/19792-cadvisor-dashboard/
 
 #### 2.8) Fileserver
 
+```yml
+# prometheus.yml
   - job_name: 'fileserver'
     static_configs:
       - targets: 
           - '192.168.3.8:9100' #vm1
+```
+
+grafana: https://grafana.com/grafana/dashboards/13976-node-exporter-full/
+anpassen sodass belegter und noch freier Speicherplatz angezeigt wird
 
 #### 2.9) LDAP
 
