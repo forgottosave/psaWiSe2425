@@ -261,15 +261,16 @@ neuer prometheus job:
         - mail.psa-team03.cit.tum.de
         - monitoring.psa-team03.cit.tum.de
         # team routers
-        - 192.168.1.1
-        - 192.168.2.1
-        - 192.168.4.1
-        - 192.168.5.1
-        - 192.168.6.1
-        - 192.168.7.1
-        - 192.168.8.5
-        - 192.168.9.1
-        - 192.168.10.2
+        - vm001.psa-team01.cit.tum.de
+        - vm1.psa-team02.cit.tum.de
+        - vm4.psa-team02.cit.tum.de
+        - vm04-02.psa-team04.cit.tum.de
+        - vm01.psa-team05.cit.tum.de
+        - shika.psa-team06.cit.tum.de
+        - vm1.psa-team07.cit.tum.de
+        - router.psa-team08.cit.tum.de
+        - ns01.psa-team09.cit.tum.de
+        - vm02.psa-team10.cit.tum.de
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target
