@@ -121,10 +121,10 @@ services:
     depends_on:
       - prometheus
     restart: unless-stopped
-    environment:
-     - HTTP_PROXY=http://proxy.cit.tum.de:8080/
-     - HTTPS_PROXY=http://proxy.cit.tum.de:8080/
-     - NO_PROXY=localhost,127.0.0.1,blackbox
+    #environment:
+    # - HTTP_PROXY=http://proxy.cit.tum.de:8080/
+    # - HTTPS_PROXY=http://proxy.cit.tum.de:8080/
+    # - NO_PROXY=localhost,127.0.0.1,blackbox,
 
 volumes:
   grafana-storage: {}
@@ -220,8 +220,8 @@ scrape_configs:
           - '192.168.3.2:9100' #vm2
           - '192.168.3.3:9100' #router
           # database, homeassistant up over own exporter
-          - '192.168.3.6:9100' #webserver
-          - '192.168.3.7:9100' #fileserver
+          #- '192.168.3.6:9100' #webserver
+          #- '192.168.3.7:9100' #fileserver
 ```
 
 Darauf muss `prometheus` neu gestartet mittels `docker compose restart prometheus` neugestarted werden.
@@ -250,16 +250,16 @@ neuer prometheus job:
       module: [ping]  # Look for a HTTP 200 response.
     static_configs:
       - targets:
-        - 192.168.3.1
-        - 192.168.3.2
-        - 192.168.3.3
-        - 192.168.3.4
-        - 192.168.3.5
-        - 192.168.3.6
-        - 192.168.3.7
-        - 192.168.3.8
-        - 192.168.3.9
-        - 192.168.3.10
+        - vm1.psa-team03.cit.tum.de
+        - vm2.psa-team03.cit.tum.de
+        - router.psa-team03.cit.tum.de
+        - database.psa-team03.cit.tum.de
+        - homeassistant.psa-team03.cit.tum.de
+        - vm6.psa-team03.cit.tum.de
+        - ldap.psa-team03.cit.tum.de
+        - fileserver.psa-team03.cit.tum.de
+        - mail.psa-team03.cit.tum.de
+        - monitoring.psa-team03.cit.tum.de
         # team routers
         - 192.168.1.1
         - 192.168.2.1
@@ -384,6 +384,13 @@ blackbox config:
 ```yml
 # blackbox.yml
 modules:
+  http_2xx_minimal:
+    prober: http
+    timeout: 5s
+    http:
+      valid_http_versions: ["HTTP/1.1", "HTTP/2.0"]
+      method: GET
+      follow_redirects: true
   http_2xx_example:
     prober: http
     timeout: 5s
@@ -391,10 +398,6 @@ modules:
       valid_http_versions: ["HTTP/1.1", "HTTP/2.0"]
       valid_status_codes: []  # Defaults to 2xx
       method: GET
-      headers:
-        Host: vhost.example.com
-        Accept-Language: en-US
-        Origin: example.com
       follow_redirects: true
       fail_if_ssl: false
       fail_if_not_ssl: false
@@ -410,7 +413,7 @@ modules:
         - header: Access-Control-Allow-Origin
           regexp: '(\*|example\.com)'
       tls_config:
-        insecure_skip_verify: false
+        insecure_skip_verify: true
       preferred_ip_protocol: "ip4" # defaults to "ip6"
       ip_protocol_fallback: false  # no fallback to "ip6"
   http_with_proxy:
@@ -418,46 +421,11 @@ modules:
     http:
       proxy_url: "http://proxy.cit.tum.de:8080/"
       skip_resolve_phase_with_proxy: true
-  dns_udp_example:
-    prober: dns
-    timeout: 5s
-    dns:
-      query_name: "www.prometheus.io"
-      query_type: "A"
-      valid_rcodes:
-        - NOERROR
-      validate_answer_rrs:
-        fail_if_matches_regexp:
-          - ".*127.0.0.1"
-        fail_if_all_match_regexp:
-          - ".*127.0.0.1"
-        fail_if_not_matches_regexp:
-          - "www.prometheus.io.\t300\tIN\tA\t127.0.0.1"
-        fail_if_none_matches_regexp:
-          - "127.0.0.1"
-      validate_authority_rrs:
-        fail_if_matches_regexp:
-          - ".*127.0.0.1"
-      validate_additional_rrs:
-        fail_if_matches_regexp:
-          - ".*127.0.0.1"
-  dns_soa:
-    prober: dns
-    dns:
-      query_name: "prometheus.io"
-      query_type: "SOA"
-  dns_tcp_example:
-    prober: dns
-    dns:
-      transport_protocol: "tcp" # defaults to "udp"
-      preferred_ip_protocol: "ip4" # defaults to "ip6"
-      query_name: "www.prometheus.io"
   ping:
     prober: icmp
     timeout: 5s
     icmp:
       preferred_ip_protocol: "ip4"
-      source_ip_address: "127.0.0.1"
 ```
 
 neuer prometheus job:
@@ -582,7 +550,10 @@ grafana: https://grafana.com/grafana/dashboards/19792-cadvisor-dashboard/
 
 #### 2.8) Fileserver
 
-TODO
+  - job_name: 'fileserver'
+    static_configs:
+      - targets: 
+          - '192.168.3.8:9100' #vm1
 
 #### 2.9) LDAP
 
