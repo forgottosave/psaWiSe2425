@@ -40,7 +40,7 @@ in
       "web1.psa-team03.cit.tum.de" = {
         listen = [
           { addr = "0.0.0.0"; port = 80; }
-          { addr = "0.0.0.0";port = 443; ssl = true; }
+          { addr = "0.0.0.0"; port = 443; ssl = true; }
         ];
         root = ./sites/web1;
         # http://.../~<login> -> ~<login>/.html-data
@@ -70,7 +70,7 @@ in
       "web2.psa-team03.cit.tum.de" = {
         listen = [
           { addr = "0.0.0.0"; port = 80; }
-          { addr = "0.0.0.0";port = 443; ssl = true; }
+          { addr = "0.0.0.0"; port = 443; ssl = true; }
         ];
         root = ./sites/web2;
         locations."/metrics" = {
@@ -85,7 +85,7 @@ in
       "web3.psa-team03.cit.tum.de" = {
         listen = [
           { addr = "0.0.0.0"; port = 80; }
-          { addr = "0.0.0.0";port = 443; ssl = true; }
+          { addr = "0.0.0.0"; port = 443; ssl = true; }
         ];
         root = ./sites/web3;
         locations."/metrics" = {
@@ -120,20 +120,6 @@ in
     '';
   };
 
-  # Add Prometheus Nginx Exporter
-  services.prometheus.exporters.nginx = {
-    enable = true;
-    port = 9101;
-    scrapeUri = "http://127.0.0.1:8080/metrics";
-  };
-
-  services.prometheus.exporters.blackbox = {
-    enable = true;
-    port = 9102;
-    openFirewall = true;
-    configFile = ./blackbox.yml;
-  };
-
   # Für jeden User wird eine fcgiwrap Service Instanz erzeugt
   services.fcgiwrap.instances = forEachUser (user:
     {
@@ -151,39 +137,6 @@ in
       };
     }
   );
-
-  # Activation Script um automatisch .html-data und .cgi-bin Ordner für jeden User zu erstellen
-#  system.activationScripts = forEachUser (user:
-#    {
-#      name = "webserver-user-${user.name}";
-#      value = {
-#        text =
-#          ''
-#            html_data_dir="${user.home}/.html-data"
-#            cgi_bin_dir="${user.home}/.cgi-bin"
-#
-#            if [ ! -d "$html_data_dir" ]; then
-#              mkdir -p "$html_data_dir"
-#              echo "Hello statically from ${user.name}" > "$html_data_dir/index.html"
-#              chown -R ${user.name}:${user.group} "$html_data_dir"
-#            fi
-#
-#            if [ ! -d "$cgi_bin_dir" ]; then
-#              mkdir -p "$cgi_bin_dir"
-#              cat > "$cgi_bin_dir/index.sh" << 'EOF'
-#            #!/usr/bin/env bash
-#            echo "Content-type: text/html"
-#            echo ""
-#            echo "Hello dynamically from $(whoami)"
-#            EOF
-#              chmod +x "$cgi_bin_dir/index.sh"
-#              chown -R ${user.name}:${user.group} "$cgi_bin_dir"
-#            fi
-#          '';
-#        deps = [ "user-activation" ];
-#      };
-#    }
-#  );
 
   # Log Rotation
   # Default deaktivieren
@@ -207,6 +160,21 @@ in
     compress = true;
     delaycompress = true;
     postrotate = "[ ! -f /var/run/nginx/nginx.pid ] || kill -USR1 `cat /var/run/nginx/nginx.pid`";
+  };
+
+
+  # Add Prometheus Nginx Exporter
+  services.prometheus.exporters.nginx = {
+    enable = true;
+    port = 9101;
+    scrapeUri = "http://127.0.0.1:8080/metrics";
+  };
+
+  services.prometheus.exporters.blackbox = {
+    enable = true;
+    port = 9102;
+    openFirewall = true;
+    configFile = ./blackbox.yml;
   };
 
   services.prometheus.exporters.node = {
