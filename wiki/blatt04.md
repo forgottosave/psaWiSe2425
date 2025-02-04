@@ -156,13 +156,7 @@ Für die web1 soll es nun noch möglich sein über `web1.psa-team03.cit.tum.de/~
 # ngin.nix
 { config, lib, pkgs, ... }:
 let 
-  # allgemeine SSL Attribute
-  sslAttr = {
-    forceSSL = true;
-    sslCertificateKey = "/etc/ssl/nginx/nginx.key";
-    sslCertificate = "/etc/ssl/nginx/nginx.crt";
-  };
-
+  ...
   # Liste aller Nutzernamen
   usernames = [
     "ge95vir" "ge43fim" "ge78nes" "ge96hoj" "ge78zig" "ge96xok"
@@ -181,17 +175,14 @@ let
 
 in
 {
-  # IP Adresse hinzufügen
-  systemd.network.networks."psa-internal".address = [ "192.168.3.66" ];
-
+  ...
   systemd.services = {
     # Normalerweise darf Nginx nicht auf Home Ordner lesend zugreifen.
     nginx.serviceConfig.ProtectHome = "read-only";
   };
 
   services.nginx = {
-    enable = true;
-    recommendedOptimisation = true;
+    ...
     virtualHosts = {
       "web1.psa-team03.cit.tum.de" = {
         root = ./sites/web1;
@@ -201,50 +192,9 @@ in
           alias = "/home/$1/.html-data/$2";
         };
       } // sslAttr;
-
-      "web2.psa-team03.cit.tum.de" = {
-        root = ./sites/web2;
-      } // sslAttr;
-
-      "web3.psa-team03.cit.tum.de" = {
-        root = ./sites/web3;
-      } // sslAttr;
+      ...
     };
   };  
-
-  # Activation Script um automatisch .html-data und .cgi-bin Ordner für jeden User zu erstellen
-  system.activationScripts = forEachUser (user:
-    {
-      name = "webserver-user-${user.name}";
-      value = {
-        text =
-          ''
-            html_data_dir="${user.home}/.html-data"
-            cgi_bin_dir="${user.home}/.cgi-bin"
-
-            if [ ! -d "$html_data_dir" ]; then
-              mkdir -p "$html_data_dir"
-              echo "Hello statically from ${user.name}" > "$html_data_dir/index.html"
-              chown -R ${user.name}:${user.group} "$html_data_dir"
-            fi
-
-            if [ ! -d "$cgi_bin_dir" ]; then
-              mkdir -p "$cgi_bin_dir"
-              cat > "$cgi_bin_dir/index.sh" << 'EOF'
-            #!/usr/bin/env bash
-            echo "Content-type: text/html"
-            echo ""
-            echo "Hello dynamically from $(whoami)"
-            EOF
-              chmod +x "$cgi_bin_dir/index.sh"
-              chown -R ${user.name}:${user.group} "$cgi_bin_dir"
-            fi
-          '';
-        deps = [ "users" ];
-      };
-    }
-  );
-
 }
 ```
 
@@ -261,7 +211,144 @@ users.users.ge87huk = {
 ...
 ```
 
+Zuletztmüssen nur noch beispielwebsiten für die Nutzer erstellt werden:
+
+```shell
+#!/usr/bin/env bash
+for dir in *; do
+
+html_data_dir="${dir}/.html-data"
+
+echo "doing ${dir} now, in $html_data_dir and $cgi_bin_dir"
+
+if [ ! -d "$html_data_dir" ]; then
+  mkdir -p "$html_data_dir"
+  echo "This is some *STATIC* content, directly from ${dir} :)" > "$html_data_dir/index.html"
+  chown -R "${dir}:students" "$html_data_dir"
+fi
+
+done
+```
+
+Hierauf sollte nun über `web1.psa-team03.cit.tum.de/~<login>` auf die jeweiligen Homepages der Nutzer zugegriffen werden können was z.B. mit dem folgenden Befehl getestet werden kann:
+
+```shell
+curl -Lk http://web1.psa-team03.cit.tum.de/~ge78zig
+```
+
+<hr>
+
+Nun Fehlen nur noch die dynamischen Homepages für alle Nutzer die in den Ordnern `$HOME/.cgi-bin/` abgelegt werden sollen. Hierfür haben wir die folgenden Änderungen vorgenommen:
+
+```nix
+# ngin.nix
+{ config, lib, pkgs, ... }:
+let 
+  ...
+  # Available script packages
+  scriptPkgs = with pkgs; [ bash php python3Minimal ];
+
+in
+{
+  ...
+  systemd.services = {
+    # Normalerweise darf Nginx nicht auf Home Ordner lesend zugreifen.
+    nginx.serviceConfig.ProtectHome = "read-only";
+  } //
+  # fcgiwrap systemd service packages zum path hinzufügen
+  forEachUsername (u:
+    {
+      name = "fcgiwrap-${u}";
+      value = {
+        path = scriptPkgs;
+      };
+    }
+  );
+
+  services.nginx = {
+    ...
+    virtualHosts = {
+      "web1.psa-team03.cit.tum.de" = {
+        ...
+
+        # http://.../~<login>/cgi-bin -> ~<login>/.cgi-bin
+        locations."~ ^/~(\\w+?)/cgi-bin(?:/(.*))?$" = {
+          priority = 1;
+          fastcgiParams.SCRIPT_FILENAME = "/home/$1/.cgi-bin/$2";
+          extraConfig =
+            ''
+              fastcgi_pass unix:/run/fcgiwrap-$1.sock;
+            '';
+        };
+      } // sslAttr;
+      ...
+    };
+  };
+
+  # Für jeden User wird eine fcgiwrap Service Instanz erzeugt
+  services.fcgiwrap.instances = forEachUser (user:
+    {
+      name = user.name;
+      value = {
+        process = {
+          user = user.name;
+          group = user.group;
+        };
+        socket = {
+          user = user.name;
+          group = config.services.nginx.group;
+          mode = "0660";
+        };
+      };
+    }
+  );
+}
+```
+
+Um nun auch noch eine Testseite für hier bash haben wir das vorherige Skript wie folgt erweitert:
+
+```shell
+#!/usr/bin/env bash
+
+for dir in *; do
+
+html_data_dir="${dir}/.html-data"
+cgi_bin_dir="${dir}/.cgi-bin"
+
+echo "doing ${dir} now, in $html_data_dir and $cgi_bin_dir"
+
+if [ ! -d "$html_data_dir" ]; then
+  mkdir -p "$html_data_dir"
+  echo "This is some *STATIC* content, directly from ${dir} :)" > "$html_data_dir/index.html"
+  chown -R "${dir}:students" "$html_data_dir"
+fi
+
+if [ ! -d "$cgi_bin_dir" ]; then
+  mkdir -p "$cgi_bin_dir"
+
+  cat <<< '#!/usr/bin/env bash
+  echo "Content-type: text/html"
+  echo ""
+  echo "This is some *DYNAMIC* content, directly from $(dir) :)"' > "$cgi_bin_dir/index.sh"
+
+  chmod +x "$cgi_bin_dir/index.sh"
+  chown -R "${dir}:students" "$cgi_bin_dir"
+fi
+
+done
+```
+
+Nun sollte über `web1.psa-team03.cit.tum.de/~<login>/cgi-bin` auf die dynamischen Homepages zugegriffen werden können was z.B. mit dem folgenden Befehl getestet werden kann:
+
+```shell
+curl -Lk http://web1.psa-team03.cit.tum.de/~ge59pib/cgi-bin/index.sh
+```
+
+Damit ist die Website1 fertig :D
+
 #### 3.2 Website2
+
+
 
 #### 3.3 Website3
 
