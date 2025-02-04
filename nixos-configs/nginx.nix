@@ -23,6 +23,9 @@ let
     f (builtins.getAttr username config.users.users)
   ) usernames);
 
+  # Available script packages
+  scriptPkgs = with pkgs; [ bash php python3Minimal ];
+
 in
 {
   # IP Adresse hinzufügen
@@ -31,7 +34,16 @@ in
   systemd.services = {
     # Normalerweise darf Nginx nicht auf Home Ordner lesend zugreifen.
     nginx.serviceConfig.ProtectHome = "read-only";
-  };
+  } //
+  # fcgiwrap systemd service packages zum path hinzufügen
+  forEachUsername (u:
+    {
+      name = "fcgiwrap-${u}";
+      value = {
+        path = scriptPkgs;
+      };
+    }
+  );
 
   services.nginx = {
     enable = true;

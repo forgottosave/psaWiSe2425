@@ -27,7 +27,9 @@ sed_placeholders[system_packages]='
     tcpdump
     traceroute
     dhcpdump
-    openssl
+    bash 
+    php 
+    python3Minimal
 '
 
 sed_placeholders[root_access]='
