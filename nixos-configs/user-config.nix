@@ -8,6 +8,7 @@
     home = "/home/ge95vir";  
     uid = 1010;  
     group = "students";  
+    createHome = true;
     homeMode = "755";
     openssh.authorizedKeys.keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEXPasCKmYHeTJ06DBWXCaYYUVM/Euo+X5tU0WpGWxRt gedeon.lenz@tum.de" ];  
   };  
@@ -15,7 +16,8 @@
     isNormalUser = true;  
     home = "/home/ge43fim";  
     uid = 1011;  
-    group = "students";  
+    group = "students"; 
+    createHome = true; 
     homeMode = "755";
     openssh.authorizedKeys.keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICJxRi9ByDSdft3zbasPq04DvoDHZDKHLzg5vtP+Caii andrey.maleev@tum.de" ];  
   };  

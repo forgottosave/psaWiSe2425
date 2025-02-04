@@ -2,9 +2,10 @@
 
 Aufgaben:
 
-1. erstellen eines Webservers mittels nginx über das Interface `enp0s8`
+1. erstellen eines Webservers mittels nginx erreichbar über das Interface `enp0s8`
 2. erstellen eines selbst signierten Zertifikats für ssl
 3. Webseiten erstellen:
+
     website1:
     - erreichbar über web1.psa-team03.cit.tum.de (sowohl http als auch https über 443)
     - dazu individuellen homepages für alle nutzer erreichbar über web1.psa-team03.cit.tum.de/~<login>  
@@ -17,7 +18,7 @@ Aufgaben:
     - unabhängige webseite auf http(s)://cname/ bereitstellen
 
     website3:
-    - zusätzliche ip für das Interface enp0s8
+    - zusätzliche IP für das Interface enp0s8 anlegen
     - DNS Server um einen Namen für diese Adresse in Form eines A-Records ergänzen
     - unabhängige website auf dieser IP bereitstellen
 
@@ -55,10 +56,7 @@ Da nixos nativen support für nginx hat, kann dieser einfach über die Konfigura
 
 Um auch `https` für die folgenden Webseiten bereitszustellen benötigen wir zunächst noch ein ein selbst signiertes Zertifikat. Dieses wird in den Ordner `/etc/ssl/nginx` abgelegt. Hierfür daktivieren wir zunächst die Firewall und erstellen dann das Zertifikat:
 
-Firewall deaktivieren:
-
-```shell
-firewall deaktivieren
+Firewall deaktivieren damit es nachher keine Porbleme gibt wenn nix temporär das openssl pkgs installiert um mit diesen ein Zertifikat zu erstellen:
 
 ```shell
 iptables -P INPUT ACCEPT
@@ -81,13 +79,13 @@ sudo chmod 640 /etc/ssl/nginx/nginx.key      # read-only for nginx, no access fo
 
 ### 3. Webseiten erstellen
 
-Nun brauchen wir neben dem Webserver auch 3 Websiten die wir über den Webserver bereitstellen wollen. Hierfür haben wir für jede Website eine eigene Konfigurationsdatei erstellt. Diese Konfigurationsdateien werden in der `nginx.nix` Datei eingebunden. Die Websiten sind dummy html Seiten die in den jeweiligen Ordnern `/etc/nixos/sites/web1`, `/etc/nixos/sites/web2` und `/etc/nixos/sites/web3` abgelegt werden. Die Konfigurationen `ginx.nix` sehen wie folgt aus:
+Nun brauchen wir neben dem Webserver auch 3 Websiten die wir über den Webserver bereitstellen wollen. Hierfür haben wir für jede Website eine eigene Konfigurationsdatei erstellt. Diese Konfigurationsdateien werden in der `nginx.nix` Datei eingebunden. Die Websiten sind dummy html Seiten die in den jeweiligen Ordnern `/etc/nixos/sites/web1`, `/etc/nixos/sites/web2` und `/etc/nixos/sites/web3` abgelegt werden. Die Konfigurationen `nginx.nix` sehen wie folgt aus:
 
 ```nix
 # ngin.nix
 { config, lib, pkgs, ... }:
 let 
-  # allgemeine SSL Attribute
+  # allgemeine SSL Attribute (von allen Webseiten genutzt)
   sslAttr = {
     forceSSL = true;
     sslCertificateKey = "/etc/ssl/nginx/nginx.key";
@@ -119,7 +117,7 @@ Hierbei wurde auch gleich ssl aktiviert, indem die `sslAttr` Variable in die Kon
 
 #### 3.0 Netzwerk Konfiguration
 
-Damit die Seiten auch erreichbar sind müssen noch änderungen an der Netzwerkkonfiguration vorgenommen werden. Einmal am Webserver selber der auf dem interface `enp0s8` eine weitere IP Adresse erhält `192.168.3.66` und einmal am DNS Server der die Domains auf die IP Adressen mapped. Hierfür haben wir die folgenden Änderungen vorgenommen:
+Damit die Seiten auch erreichbar sind müssen noch Änderungen an der Netzwerkkonfiguration vorgenommen werden. Einmal am Webserver selber der auf dem interface `enp0s8` eine weitere IP Adresse erhält `192.168.3.66` und einmal am DNS Server der den Domains die die jeweilige IP Adresse zuweißt. Hierfür haben wir die folgenden Änderungen vorgenommen:
 
 ```nix
 # nginx.nix
@@ -141,6 +139,14 @@ web3            A       192.168.3.66
 ```
 
 Nun sollten alle Webseiten über die Domains `web1.psa-team03.cit.tum.de`, `web2.psa-team03.cit.tum.de` und `web3.psa-team03.cit.tum.de` erreichbar sein.
+Dies Kann mit den folgenden Befehlen getestet werden:
+
+```shell
+curl -Lk http://web1.psa-team03.cit.tum.de
+curl -Lk https://web1.psa-team03.cit.tum.de
+curl -Lk https://web2.psa-team03.cit.tum.de
+curl -Lk https://web3.psa-team03.cit.tum.de
+```
 
 #### 3.1 Website1
 
