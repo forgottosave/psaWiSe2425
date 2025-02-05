@@ -7,18 +7,20 @@ in
 {
   services.postfix = {
     enable = true;
-    domain = "psa-team03.cit.tum.de";
-    networks = [ "127.0.0.0/8" "192.168.0.0/16" ];
-    hostname = "mail";
-    destination = [ "mail" "mail.psa-team03.cit.tum.de" "psa-team03.cit.tum.de" "localhost.cit.tum.de" "localhost" ];
-    origin = "psa-team03.cit.tum.de";
-    postmasterAlias = "ge78zig@psa-team03.cit.tum.de";
-    recipientDelimiter = "+";
+    domain = "psa-team03.cit.tum.de";                 # primäre domain von postfix
+    networks = [ "127.0.0.0/8" "192.168.0.0/16" ];    # netzwerke, die postfix als trusted betrachtet
+    hostname = "mail";                                # hostname von postfix -> mit domain ergibt mail.psa-team03.cit.tum.de
+    destination = [ "mail" "mail.psa-team03.cit.tum.de" "psa-team03.cit.tum.de" "localhost.cit.tum.de" "localhost" ]; # liste an hostnamen und domainnamen, die als lokale ziele betrachtet werden
+    origin = "psa-team03.cit.tum.de";                 # Ursprungsdomäne die in E-Mail-Headers verwendet wird
+    postmasterAlias = "ge78zig@psa-team03.cit.tum.de";# Admin an den Fehlermeldungen gehen
+    recipientDelimiter = "+";                         # Das Trennzeichen für Adresszusätze (z. B. benutzer+filter@domain)          
 
+    # zuvor erzeugte Datei in config eingebunden -> im extra-configs wird diese später referenziert
     mapFiles."sender_canonical" = sender_canonical_file;
 
+    # Konfiguration für den Milter (Mail Filter), der von rspamd bereitgestellt wird -> ermöglicht während der SMTP-Session zu überprüfen
     config = {
-      smtpd_milters = [ "unix:/run/rspamd/rspamd-milter.sock" ];
+      smtpd_milters = [ "unix:/run/rspamd/rspamd-milter.sock" ];  # Pfad zum Socket von rspamd
       milter_protocol = "6";
     };
 
@@ -33,7 +35,7 @@ in
 
       mailbox_size_limit = 0
       inet_interfaces = all
-      inet_protocols = all
+      inet_protocols = ipv4
       home_mailbox = Maildir/
 
       masquerade_domains = psa-team03.cit.tum.de
@@ -51,8 +53,10 @@ in
     enable = true;
 
     extraConfig = ''
+      listen = 0.0.0.0
+
       service auth {
-        unix_listener auth {
+        unix_listener /run/dovecot2/auth {
           mode = 0666
           user = postfix
           group = postfix
@@ -64,8 +68,8 @@ in
     '';
   };
 
-  services.clamav.daemon.enable = true;
-  services.clamav.updater.enable = true;
+  services.clamav.daemon.enable = true;   # Aktiviert den ClamAV-Daemon, der E-Mails auf Viren untersucht
+  services.clamav.updater.enable = true;  # Sorgt dafür, dass die Virensignaturen regelmäßig aktualisiert werden
 
   services.rspamd = {
     enable = true;
@@ -95,13 +99,14 @@ in
         gtube_patterns = "all";
       ''; };
     };
+
     workers.rspamd_proxy = {
-        type = "rspamd_proxy";
+        type = "rspamd_proxy";                        # Worker vom Typ rspamd_proxy, der als Milter für Postfix fungiert
         bindSockets = [{
-          socket = "/run/rspamd/rspamd-milter.sock";
-          mode = "0664";
+          socket = "/run/rspamd/rspamd-milter.sock";  # Bindet den Worker an den Unix-Socket /run/rspamd/rspamd-milter.sock (entsprechend der Postfix-Konfiguration)
+          mode = "0664";                              # Zugriffsrechte, sodass Postfix auf den Socket zugreifen kann
         }];
-        count = 1;
+        count = 1;                                    # Anzahl der Worker-Instanzen (hier nur 1x)
         extraConfig = ''
           milter = yes;
           timeout = 120s;
@@ -115,17 +120,20 @@ in
 
   };
 
+  # Systemd Service Abhängigkeiten (Postfix benötigt rspamd und rspamd clamav)
   systemd.services = {
+    # rspamd benötigt diesen den clamav-daemon -> wird erst dnaach gestartet
     rspamd = {
       requires = [ "clamav-daemon.service" ];
       after = [ "clamav-daemon.service" ];
     };
+    # postfix benötigt rspamd -> wird erst danach gestartet
     postfix = {
       after = [ "rspamd.service" ];
       requires = [ "rspamd.service" ];
     };
   };
 
-  users.extraUsers."postfix".extraGroups = [ "rspamd" ];
+  users.extraUsers."postfix".extraGroups = [ "rspamd" ];    # postfix wird der Gruppe rspamd hinzugefügt, um auf den rspamd-Socket zugreifen zu können
 
 }

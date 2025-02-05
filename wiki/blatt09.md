@@ -24,3 +24,10 @@ Aufgaben:
 ## Teilaufgaben
 
 ### 1) 
+
+
+
+
+caldav firewall rules
+
+104.16.218.84, 104.16.219.84
