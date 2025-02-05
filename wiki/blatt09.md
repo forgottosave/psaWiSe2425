@@ -13,12 +13,12 @@ Aufgaben:
    - bei alle versendeten oder zugestellten Mails From:-Header prüfen -> falls die Form `@irgendeinhostname.psa-team##.cit.tum.de` Header umschreiben und `irgendeinhostname.` löschen
    - Adresse `postmaster@...` muss existieren und soll an die Mail–Adresse des zuständigen Administrators weitergeleitet werden
 2) Netzwerk konfigurieren:
-   - DNS-Server: den MX-Record für alle Team-VMs aif den des Mail-Servers
+   - DNS-Server: den MX-Record für alle Team-VMs auf den des Mail-Servers
    - Alle anderen Team-VMs: Mails über den Mail-Server versenden
 3) IMAP/POP3 -> `dovecot`
    - für alle Benutzer der Team-VMs eine Mailbox bereitstellen
    - MTA muss an die jeweiligen Mailboxen zustellen
-4) Testen der Konfig
+4) Testen der config
 
 
 ## Teilaufgaben
@@ -26,8 +26,9 @@ Aufgaben:
 ### 1) 
 
 
-
-
-caldav firewall rules
-
+caldav firewall rule ausnahmen
 104.16.218.84, 104.16.219.84
+
+
+TODO: rx record
+TODO: testing
