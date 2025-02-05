@@ -56,7 +56,7 @@ in
       listen = 0.0.0.0
 
       service auth {
-        unix_listener /run/dovecot2/auth {
+        unix_listener auth {
           mode = 0666
           user = postfix
           group = postfix
