@@ -6,7 +6,7 @@ let
 in
 {
   services.postfix = {
-    enable = true;
+    enable = true;                                    # postfix aktivieren
     domain = "psa-team03.cit.tum.de";                 # primäre domain von postfix
     networks = [ "127.0.0.0/8" "192.168.0.0/16" ];    # netzwerke, die postfix als trusted betrachtet
     hostname = "mail";                                # hostname von postfix -> mit domain ergibt mail.psa-team03.cit.tum.de

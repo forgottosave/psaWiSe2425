@@ -84,6 +84,9 @@
       iptables -A OUTPUT -d 192.168.8.0/24 -j ACCEPT
       iptables -A OUTPUT -d 192.168.9.0/24 -j ACCEPT
       iptables -A OUTPUT -d 192.168.10.0/24 -j ACCEPT
+      # allow clamav
+      iptables -A OUTPUT -d 104.16.218.84 -j ACCEPT
+      iptables -A OUTPUT -d 104.16.219.84 -j ACCEPT
 
       # Allow: ICMP 
       iptables -A INPUT -p icmp -j ACCEPT
