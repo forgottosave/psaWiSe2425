@@ -106,23 +106,23 @@ Mit `rsync` können wir einfach alle Verzeichnisse synchronizieren (wir nutzen h
 └────────────────────────┘  │                                            
            o o o            │                                            
 ┌────────────────────────┐  │                                            
-│          VM 08         │  │                                            
-│       192.168.3.8      │  │                                            
-│------------------------│  │                                            
-│ /home                  ├──┤       ┌─────────────┐       ┌─────────────┐
-│                        │  │       │local machine│       │    VM 08    │
-└────────────────────────┘  │       │             │       │ 192.168.3.8 │
-                            │ rsync │-------------│ rsync │-------------│
-                            ├──────►│ /some/dir   ├──────►│   /export   │
-                            │       │             │       │             │
-┌────────────────────────┐  │       │             │       │             │
-│          VM 04         │  │       └─────────────┘       └─────────────┘
+│          VM 04         │  │                                            
 │       192.168.3.4      │  │                                            
 │------------------------│  │                                            
-│ /home                  ├──┤                                            
-│ /var/lib/postgresql/17 ├──┘                                            
+│ /home                  ├──┤       ┌─────────────┐       ┌─────────────┐
+│ /var/lib/postgresql/17 │  │       │local machine│       │    VM 08    │
+│                        │  │       │             │       │ 192.168.3.8 │
+└────────────────────────┘  │ rsync │-------------│ rsync │-------------│
+           o o o            ├──────►│ /some/dir   ├──────►│   /export   │
+┌────────────────────────┐  │       │             │       │             │
+│          VM 06         │  │       └─────────────┘       └─────────────┘
+│       192.168.3.6      │  │                                            
+│------------------------│  │                                            
+│ /home                  ├──┘                                             
+│ /etc/nixos/sites       │                                           
 │                        │                                               
 └────────────────────────┘                                                
+          o o o
 ```
 
 1. "Mergen" aller Daten auf den lokalen Rechner
@@ -138,7 +138,7 @@ Mit `rsync` können wir einfach alle Verzeichnisse synchronizieren (wir nutzen h
    Lediglich der Webserver DocumenRoot auf **VM 6** und das Datenbank-Verzeichnis von **VM 4** fehlen noch:
 
    ```shell
-   rsync -avz -e "ssh -p 60306" --progress root@psa.in.tum.de:/ TODO TODO TODO TODO TODO TODO TODO
+   rsync -avz -e "ssh -p 60306" --progress root@psa.in.tum.de:/etc/nixos/sites .
    rsync -avz -e "ssh -p 60304" --progress root@psa.in.tum.de:/var/lib/postgresql .
    ```
 
@@ -192,6 +192,7 @@ services.nfs.server = {
     /export                 192.168.0.0/16(rw,fsid=0,no_subtree_check)
     /export/home            192.168.0.0/16(rw,sync)
     /export/postgresql      192.168.3.4(rw,sync)
+    /export/sites           192.168.3.6(rw,sync)
   '';
 };
 ```
@@ -235,6 +236,7 @@ fileSystems."/home/ge96xok" = {
 Auch das Datenbank-Verzeichnis wird von dem NFS gemountet. Die default-location ist `/var/lib/postgresql/17/`. Wir behalten diesen Pfad bei, mounten ab `postgresql` jedoch vom NFS:
 
 ```nix
+# database.nix
 # Mount database from NFS
 fileSystems."/var/lib/postgresql" = {
   device = "192.168.3.8:/postgresql";
@@ -246,7 +248,13 @@ fileSystems."/var/lib/postgresql" = {
 Als letztes wird noch der Webserver Root vom NFS gemountet:
 
 ```nix
-#TODO
+# nginx.nix
+# Mount webserver root from NFS
+fileSystems."/etc/nixos/sites" = {
+  device = "192.168.3.8:/sites";
+  fsType = "nfs";
+  options = [ "x-systemd.automount" "noauto" "x-systemd.idle-timeout=600" ];
+};
 ```
 
 ### 5) Samba

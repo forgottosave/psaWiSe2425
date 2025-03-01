@@ -31,6 +31,7 @@
       /export                 192.168.0.0/16(rw,fsid=0,no_subtree_check)
       /export/home            192.168.0.0/16(rw,sync)
       /export/postgresql      192.168.3.4(rw,sync)
+      /export/sites           192.168.3.6(rw,sync)
     '';
   };
 

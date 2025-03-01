@@ -28,6 +28,12 @@ let
 
 in
 {
+  fileSystems."/etc/nixos/sites" = {
+    device = "192.168.3.8:/sites";
+    fsType = "nfs";
+    options = [ "x-systemd.automount" "noauto" "x-systemd.idle-timeout=600" ];
+  };
+
   # IP Adresse hinzufügen
   systemd.network.networks."psa-internal".address = [ "192.168.3.66" ];
 
