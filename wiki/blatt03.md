@@ -182,7 +182,131 @@ Quellen:
 
 ### 2) DHCP Server
 
-#TODO
+Um DHCP in NixOS zu ermöglichen lässt sich wieder eine simple nix-Config schreiben:
+
+```nix
+{ inputs, ... }:
+let 
+  overlay-kea-unstable = final: prev: {
+    kea = inputs.unstable.legacyPackages."x86_64-linux".kea;
+  };
+in
+{
+  imports = [
+    { nixpkgs.overlays = [ overlay-kea-unstable ]; }
+  ];
+
+  services.kea.dhcp4 = {
+    enable = true;
+    configFile = ./dhcp4-config.json;
+  };
+}
+```
+
+Nach dem importieren von kea (notwendig für dhcp4) und dem Aktivieren von DHCP müssen wir nurnoch die Konfiguration in `./dhcp4-config.json` bereitstellen. Viele der Konfigurationen sind selbsterklärend, oder default Empfehlungen, der Rest folgt in Kommentaren (`#`) in der folgenden Konfig:
+
+```json
+{
+    "Dhcp4": {
+        # DHCP Gültigkeit
+        "valid-lifetime": 300,
+        "renew-timer": 150,
+        "rebind-timer": 240,
+
+        "lease-database": {
+            "type": "memfile",
+            "persist": true,
+            "name": "/var/lib/kea/dhcp4.leases",
+            "lfc-interval": 1800
+        },
+        # Identifiziere Hosts anhand dessend Hardware Addresse
+        "host-reservation-identifiers": [ "hw-address" ],
+
+        "authoritative": false,
+
+        "interfaces-config": {
+            "interfaces": ["enp0s8/192.168.3.3"],
+            "dhcp-socket-type": "raw"
+        },
+
+        "control-socket": {
+            "socket-type": "unix",
+            "socket-name": "/run/kea/kea-dhcp4.socket"
+        },
+
+        # Unsere Subnet Konfiguration
+        "subnet4": [
+            {
+                "id": 1,
+                # In unserem Netzwerk
+                "subnet": "192.168.3.0/24",
+                "pools": [],
+                "reservations-out-of-pool": true,
+                # Trage hier reservierte Addressen ein
+                "reservations" : [
+                    # Hier nur ein Beispiel -> genauso für weitere VMs
+                    {
+                        "hw-address": "08:00:27:4c:bb:84",
+                        "ip-address": "192.168.3.1",
+                        "hostname": "vm1"
+                    },
+                ]
+            }
+        ],
+
+        "option-def": [
+            {
+                "code": 252,
+                "name": "wpad-proxy-url",
+                "type": "string"
+            }
+        ],
+
+        "option-data" : [
+            {
+                "name": "routers",
+                "data": "192.168.3.3",
+                "always-send": true
+            },
+            {
+                "name": "domain-name-servers",
+                "data": "192.168.3.3",
+                "always-send": true
+            },
+            {
+                "name": "domain-name",
+                "data": "psa-team03.cit.tum.de.",
+                "always-send": true
+            },
+            {
+                "code": 121,
+                "name": "classless-static-route",
+                "data": "192.168.0.0/16 - 192.168.3.3",
+                "always-send": true
+            },
+            {
+                "name": "wpad-proxy-url",
+                "data": "http://pac.lrz.de",
+                "always-send": true
+            }
+        ],
+
+        # Erstelle ein Log für Fehlerbehandlung
+        "loggers": [
+            {
+                "name": "kea-dhcp4",
+                "output-options": [
+                    {
+                        "output": "/home/kea.log"
+                    }
+                ],
+                "severity": "DEBUG"
+            }
+        ]
+
+    }
+}
+```
 
 ### 3) Testing
 

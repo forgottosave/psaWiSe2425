@@ -20,15 +20,15 @@ We use currently use [obsidian](https://obsidian.md/) as the Markdown editor for
 | ----- | ---- | --- | ------------------------------------------- |
 | 1     | X    | X   |                                             |
 | 2     | X    | X   |                                             |
-| 3     |      | !   | DHCP & Testing Wiki                         |
+| 3     |      | !   | DHCP Testing                                |
 | 4     |      |     | Website 2 & 3 & Log & Testing               |
 | 5     | X    | !   |                                             |
 | 6     | !    | !   |                                             |
 | 7     | X    | X   |                                             |
 | 8     |      |     | LDAP                                        |
 | 9     |      |     | Counter-Measures & Network Config & Testing |
-| 10    |      | !   | Status Übersicht Wiki                       |
-| 11    |      |     |                                             |
+| 10    |      | !   | Status Übersicht Wiki & LDAP & Mail         |
+| 11    |      |     | fehlt komplett?                             |
 
 Submission:
 
