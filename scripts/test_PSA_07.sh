@@ -53,6 +53,16 @@ if [ $VM_NUMBER -eq 8 ]; then
         print_failed "no nfsd process found"
     fi
 
+    ## TEST #########################################
+    ## check if NFS is running
+    start_test "check if Samba is running"
+    ps aux | grep samba
+    if [ $? -eq 0 ]; then
+        print_success "samba is running"
+    else
+        print_failed "no samba process found"
+    fi
+
 fi
 
 ## TEST #########################################

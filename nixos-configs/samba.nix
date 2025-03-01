@@ -7,23 +7,21 @@
     settings = {
       global = {
         "workgroup" = "WORKGROUP";
-        "server string" = "SambaFilesharingTeam03";
-        "netbios name" = "SambaFilesharingTeam03";
+        "server string" = "NixSamba Server";
+        "netbios name" = "NixSamba";
         "security" = "user";
-        #"use sendfile" = "yes";
-        #"max protocol" = "smb2";
-        # note: localhost is the ipv6 localhost ::1
-        #"hosts deny" = "0.0.0.0/0";
-        "hosts allow" = "192.168.0.0/16 127.0.0.1 localhost";
-        "guest ok" = "no";
-        "guest account" = "nobody";
-        "map to guest" = "bad user";
-        "read only" = "no";
-        "inherit owner" = "yes";
+        "map to guest" = "never";  # Do not allow guest access
+        "passdb backend" = "tdbsam";  # Use Samba's built-in authentication
+        "log file" = "/var/log/samba/log.%m";
+        "max log size" = "50";
       };
-      "public" = {
-        "path" = "/export/home";
-        "browseable" = "yes";
+      "homes" = {  # Special Samba share for user home directories
+        "path" = "/export/home/%S";  # %S = username
+        "browseable" = "no";  # Hide the home share list
+        "read only" = "no";
+        "valid users" = "%S";  # Allow only the owner access
+        "create mask" = "0700";
+        "directory mask" = "0700";
       };
     };
   };

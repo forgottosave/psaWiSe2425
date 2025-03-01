@@ -265,23 +265,29 @@ services.samba = {
       "server string" = "SambaFilesharingTeam03";
       "netbios name" = "SambaFilesharingTeam03";
       "security" = "user";
-      #"use sendfile" = "yes";
-      #"max protocol" = "smb2";
-      # note: localhost is the ipv6 localhost ::1
-      #"hosts deny" = "0.0.0.0/0";
-      "hosts allow" = "192.168.0.0/16 127.0.0.1 localhost";
-      "guest ok" = "no";
-      "guest account" = "nobody";
-      "map to guest" = "bad user";
-      "read only" = "no";
-      "inherit owner" = "yes";
+      "map to guest" = "never";                             # Kein Gastzugang
+      "passdb backend" = "tdbsam";                          # Nutze Samba Authentication
+      "log file" = "/var/log/samba/log.%m";                 # Log Datei
+      "max log size" = "50";
+      "hosts allow" = "192.168.0.0/16 127.0.0.1 localhost"; # Eingeschränkter Zugang
     };
-    "public" = {
-      "path" = "/export/home";
-      "browseable" = "yes";
+    "homes" = {                                             # Samba Share für Home Directories
+      "path" = "/export/home/%S";                           # %S = username
+      "browseable" = "no";
+      "read only" = "no";
+      "valid users" = "%S";                                 # Nur Nutzer hat Zugang
+      "create mask" = "0700";
+      "directory mask" = "0700";
     };
   };
 };
+```
+
+Damit die Nutzer als username-password Kombination zugreifen können, müssen wir diese noch hinzufügen. Das bedeutet für jeden Nutzer das Ausführen von:
+
+```shell
+sudo smbpasswd -a <username>
+sudo smbpasswd -e <username>
 ```
 
 Auch hier passen wir nochmal explizit die Firewall an:
@@ -339,5 +345,5 @@ Zudem können wir zusätzliche Tests auf der Fileserver VM ausführen, wie:
 2. Läuft der Samba Prozess?
 
    ```shell
-   TODO
+   ps aux | grep samba
    ```

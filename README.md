@@ -14,7 +14,7 @@ We use currently use [obsidian](https://obsidian.md/) as the Markdown editor for
 ## Progress
 
 - mark **done**: `!`
-- mark **submission-ready**: with `X`
+- mark **submission-ready**: `X`
 
 | Blatt | Doku | VMs | Anmerkungen (was fehlt)                     |
 | ----- | ---- | --- | ------------------------------------------- |
