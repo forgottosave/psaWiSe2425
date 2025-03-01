@@ -290,6 +290,22 @@ sudo smbpasswd -a <username>
 sudo smbpasswd -e <username>
 ```
 
+Wir können das um Zeit zu sparen automatisieren:
+
+```
+#!/bin/bash
+
+# Alle ge..... (also Studenten) Nutzer 
+USERS=$(getent passwd | awk -F: '$3 >= 1000 {print $1}' | grep ge)
+
+for user in $USERS; do
+    echo "Add $user to Samba..."
+    (echo "${user}smbpswrd"; echo "${user}smbpswrd") | smbpasswd -a -s "$user"
+    echo "Add $user to Samba..."
+    smbpasswd -e "$user"
+done
+```
+
 Auch hier passen wir nochmal explizit die Firewall an:
 
 ```shell
