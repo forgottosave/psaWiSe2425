@@ -139,10 +139,9 @@ in
   # Konfiguration für den Prometheus Exporter für Postfix
   services.prometheus.exporters.postfix = {
     enable = true;
-    listenAddress = "127.0.0.1";
     port = 9154;
     telemetryPath = "/metrics";
-    showqPath = "${pkgs.postfix}/sbin/postqueue";
+    #showqPath = "${pkgs.postfix}/sbin/postqueue";
     openFirewall = true;
   };
 
