@@ -299,9 +299,7 @@ Wir können das um Zeit zu sparen automatisieren:
 USERS=$(getent passwd | awk -F: '$3 >= 1000 {print $1}' | grep ge)
 
 for user in $USERS; do
-    echo "Add $user to Samba..."
     (echo "${user}smbpswrd"; echo "${user}smbpswrd") | smbpasswd -a -s "$user"
-    echo "Add $user to Samba..."
     smbpasswd -e "$user"
 done
 ```
@@ -315,6 +313,8 @@ iptables -A INPUT -s 192.168.3.0/16 -m state --state NEW -p udp --dport 138 -j A
 iptables -A INPUT -s 192.168.3.0/16 -m state --state NEW -p tcp --dport 139 -j ACCEPT
 iptables -A INPUT -s 192.168.3.0/16 -m state --state NEW -p tcp --dport 445 -j ACCEPT
 ```
+
+Nach einem `nixos-rebuid switch` steht nun auch Samba bereit.
 
 Quellen:
 
@@ -344,10 +344,13 @@ Auf allen VMs können wir folgende Punkte testen:
    rm -r "$TEST_DIR"
    ```
 
-3. Kann die Samba Verbindung genutzt werden?
+3. Kann die Samba Verbindung genutzt werden? (hier REMOTE_DIR:6, da wir das vorhergehende `/home/` nicht haben wollen)
 
    ```shell
-   TODO
+   mkdir "$TEST_DIR"
+   mount -t cifs //192.168.3.8/${REMOTE_DIR:6} $TEST_DIR -o username=${REMOTE_DIR:6},password=${REMOTE_DIR:6}smbpswrd
+   umount "$TEST_DIR"
+   rm -r "$TEST_DIR"
    ```
 
 Zudem können wir zusätzliche Tests auf der Fileserver VM ausführen, wie:

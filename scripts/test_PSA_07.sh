@@ -77,8 +77,8 @@ fi
 
 ## TEST #########################################
 ## check if remote NFS directories can be mounted
-start_test "check if remote NFS (home-)directories can be mounted"
-TEST_DIR="tmp_test_xyz"
+start_test "check NFS directory mount"
+TEST_DIR="tmp_test_nfs"
 
 for REMOTE_DIR in /home/*; do
     mkdir "$TEST_DIR"
@@ -94,8 +94,20 @@ done
 
 ## TEST #########################################
 ## check Samba
-start_test "check Samba access (TODO)"
-print_failed "TODO"
+start_test "check Samba directory mount"
+TEST_DIR="tmp_test_smb"
+
+for REMOTE_DIR in /home/*; do
+    mkdir "$TEST_DIR"
+    mount -t cifs //192.168.3.8/${REMOTE_DIR:6} $TEST_DIR -o username=${REMOTE_DIR:6},password=${REMOTE_DIR:6}smbpswrd
+    if [ $? -eq 0 ]; then
+        print_success "$REMOTE_DIR could be mounted"
+        umount "$TEST_DIR"
+    else
+        print_failed "failed to mount $REMOTE_DIR"
+    fi
+    rm -r "$TEST_DIR"
+done
 
 ## summary ######################################
 print_summary
