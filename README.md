@@ -20,8 +20,8 @@ We use currently use [obsidian](https://obsidian.md/) as the Markdown editor for
 | ----- | ---- | --- | ------------------------------------------- |
 | 1     | X    | X   |                                             |
 | 2     | X    | X   |                                             |
-| 3     |      | !   | DHCP Testing & DNS LÄUFT NICHT ?            |
-| 4     |      |     | Website 2 & 3 & Log & Testing               |
+| 3     |      | !   | DHCP Testing                                |
+| 4     |      |     |  Testing                                    |
 | 5     | X    | !   |                                             |
 | 6     | !    | !   |                                             |
 | 7     | X    | X   |                                             |

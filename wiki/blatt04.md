@@ -122,7 +122,7 @@ Damit die Seiten auch erreichbar sind müssen noch Änderungen an der Netzwerkko
 ```nix
 # nginx.nix
 ...
-  # IP Adresse hinzufügen
+  # IP Adresse hinzufügen für web3
   systemd.network.networks."psa-internal".address = [ "192.168.3.66" ];
 ...
 ```
@@ -147,6 +147,8 @@ curl -Lk https://web1.psa-team03.cit.tum.de
 curl -Lk https://web2.psa-team03.cit.tum.de
 curl -Lk https://web3.psa-team03.cit.tum.de
 ```
+
+Hiermit sind auch beraits Webseite2 und Webseite3 fertiggestellt :D
 
 #### 3.1 Website1
 
@@ -344,16 +346,68 @@ Nun sollte über `web1.psa-team03.cit.tum.de/~<login>/cgi-bin` auf die dynamisch
 curl -Lk http://web1.psa-team03.cit.tum.de/~ge59pib/cgi-bin/index.sh
 ```
 
-Damit ist die Website1 fertig :D
-
-#### 3.2 Website2
-
-
-
-#### 3.3 Website3
+Damit ist nun auch die Website1 fertig :D
 
 ### 4. Logfiles
 
-### 5. Testskript
+Beim Logging bestand die Aufgabe darin die IP-Adressen im Zugriffs-Log nicht/teilweise zu protokollieren und im Fehler-Log hingegen die IP-Adressen vollständig zu protokollieren. Hierfür haben wir im nginx service die `commonHttpConfig` wie folgt definiert:
 
+```nix
+# ngin.nix
+...
+  services.nginx = {
+    ...
+    # Logging
+    commonHttpConfig =
+    ''
+      # Anonymize IP addresses in access log
+      map $remote_addr $remote_addr_anon {
+        ~(?P<ip>\d+\.\d+\.\d+)\.    $ip.0;
+        default                     0.0.0.0;
+      }
 
+      # specify log format for access log
+      log_format combined_anon '$remote_addr_anon - $remote_user [$time_local] '
+                          '"$request" $status $body_bytes_sent '
+                          '"$http_referer" "$http_user_agent"';
+
+      # set Log Locations
+      access_log /var/log/nginx/access.log combined_anon;
+      error_log /var/log/nginx/error.log;
+    '';
+  };
+...
+```
+
+Nun werden alle Daten wie gewünscht in den Logfiles protokolliert. Als näcshtes muss die Rotation der Logfiles konfiguriert werden. Zunächst muss dafür die default Einstellung für die Logrotation deaktiviert werden. Anschließend können die Einstellungen für die Logrotation der Zugriffs- und Fehlerlogs definiert werden:
+
+```nix
+# ngin.nix
+...
+  # Log Rotation
+  # disable default settings for logrotate
+  services.logrotate.settings.nginx.enable = lib.mkForce false;
+  # Access Log
+  services.logrotate.settings.nginxaccess = {
+    files = "/var/log/nginx/access.log";
+    frequency = "daily";
+    su = "${config.services.nginx.user} ${config.services.nginx.group}";
+    rotate = 5;
+    compress = true;
+    delaycompress = true;
+    postrotate = "[ ! -f /var/run/nginx/nginx.pid ] || kill -USR1 `cat /var/run/nginx/nginx.pid`";
+  };
+  # Error Log
+  services.logrotate.settings.nginxerror = {
+    files = "/var/log/nginx/error.log";
+    frequency = "daily";
+    su = "${config.services.nginx.user} ${config.services.nginx.group}";
+    rotate = 1;
+    compress = true;
+    delaycompress = true;
+    postrotate = "[ ! -f /var/run/nginx/nginx.pid ] || kill -USR1 `cat /var/run/nginx/nginx.pid`";
+  };
+...
+```
+
+Nun sollten die Logfiles täglich rotiert werden und die Zugriffslogs nach 5 Tagen und die Fehlerlogs nach 1 Tag gelöscht werden.
