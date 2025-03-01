@@ -82,6 +82,9 @@ done
 ## check DHCP
 start_test "check DHCP"
 print_failed "test not implemented yet"
+# systemctl status kea-dhcp4-server.service
+# cat /var/lib/kea/dhcp4.leases
+# script anpassen von https://psa.in.tum.de/xwiki/bin/view/PSA%20WiSe%202024%20%202025/Dokumentation%20der%20Aufgaben/PSAwise2425Team5Aufgabe03/
 
 ## summary ######################################
 print_summary
