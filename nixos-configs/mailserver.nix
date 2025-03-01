@@ -136,4 +136,14 @@ in
 
   users.extraUsers."postfix".extraGroups = [ "rspamd" ];    # postfix wird der Gruppe rspamd hinzugefügt, um auf den rspamd-Socket zugreifen zu können
 
+  # Konfiguration für den Prometheus Exporter für Postfix
+  services.prometheus.exporters.postfix = {
+    enable = true;
+    listenAddress = "127.0.0.1";
+    port = 9150;
+    telemetryPath = "/metrics";
+    showqPath = "${pkgs.postfix}/sbin/postqueue";
+    openFirewall = true;
+  };
+
 }
