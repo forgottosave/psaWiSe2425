@@ -28,7 +28,7 @@ We use currently use [obsidian](https://obsidian.md/) as the Markdown editor for
 | 8     |      |     | LDAP                                        |
 | 9     |      |     | Counter-Measures & Network Config & Testing |
 | 10    |      | !   | Status Übersicht Wiki & LDAP & Mail         |
-| 11    |      |     | fehlt komplett?                             |
+| 11    |      |     | Security                                    |
 
 Submission:
 
@@ -40,16 +40,16 @@ Submission:
 
 The documentation of all projects can be found in `wiki/`.
 
-- [x] [`Blatt 01`](https://github.com/forgottosave/psaWiSe2425/blob/main/wiki/blatt01.md)
-- [x] [`Blatt 02`](https://github.com/forgottosave/psaWiSe2425/blob/main/wiki/blatt02.md)
-- [ ] [`Blatt 03`](https://github.com/forgottosave/psaWiSe2425/blob/main/wiki/blatt03.md)
-- [ ] [`Blatt 04`](https://github.com/forgottosave/psaWiSe2425/blob/main/wiki/blatt04.md)
-- [x] [`Blatt 05`](https://github.com/forgottosave/psaWiSe2425/blob/main/wiki/blatt05.md)
-- [ ] [`Blatt 06`](https://github.com/forgottosave/psaWiSe2425/blob/main/wiki/blatt06.md)
-- [ ] [`Blatt 07`](https://github.com/forgottosave/psaWiSe2425/blob/main/wiki/blatt07.md)
-- [ ] [`Blatt 08`](https://github.com/forgottosave/psaWiSe2425/blob/main/wiki/blatt08.md)
-- [ ] [`Blatt 09`](https://github.com/forgottosave/psaWiSe2425/blob/main/wiki/blatt09.md)
-- [ ] [`Blatt 10`](https://github.com/forgottosave/psaWiSe2425/blob/main/wiki/blatt10.md)
+- [`Blatt 01`](https://github.com/forgottosave/psaWiSe2425/blob/main/wiki/blatt01.md)
+- [`Blatt 02`](https://github.com/forgottosave/psaWiSe2425/blob/main/wiki/blatt02.md)
+- [`Blatt 03`](https://github.com/forgottosave/psaWiSe2425/blob/main/wiki/blatt03.md)
+- [`Blatt 04`](https://github.com/forgottosave/psaWiSe2425/blob/main/wiki/blatt04.md)
+- [`Blatt 05`](https://github.com/forgottosave/psaWiSe2425/blob/main/wiki/blatt05.md)
+- [`Blatt 06`](https://github.com/forgottosave/psaWiSe2425/blob/main/wiki/blatt06.md)
+- [`Blatt 07`](https://github.com/forgottosave/psaWiSe2425/blob/main/wiki/blatt07.md)
+- [`Blatt 08`](https://github.com/forgottosave/psaWiSe2425/blob/main/wiki/blatt08.md)
+- [`Blatt 09`](https://github.com/forgottosave/psaWiSe2425/blob/main/wiki/blatt09.md)
+- [`Blatt 10`](https://github.com/forgottosave/psaWiSe2425/blob/main/wiki/blatt10.md)
 
 ## Team
 
