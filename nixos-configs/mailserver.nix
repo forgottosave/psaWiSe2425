@@ -1,7 +1,7 @@
 { config, lib, pkgs, ... }:
 let
   sender_canonical_file = let
-    content = "@mail.psa-team03.cit.tum.de @cit.tum.de";
+    content = "/^(.*)@(.*\.)?psa-team([0-9]+)\.cit\.tum\.de$/  \$1@cit\.tum\.de";
   in builtins.toFile "sender_canonical" content;
 in
 {
@@ -50,7 +50,7 @@ in
 
     # smtp_generic_maps file anlegen
     mapFiles = {
-      generic = ./generic;
+      generic = sender_canonical_file;
     };
 
     # main.cf settings
