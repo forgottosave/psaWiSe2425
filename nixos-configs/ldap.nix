@@ -5,6 +5,7 @@
         enable = true;
         user = "root";
         group = "root";
+        domain = "portunus.team03.psa.cit.tum.de";
         # TODO seedPath = ... (create users)
         ldap.tls = true;
         ldap.suffix = "dc=team03,dc=psa,dc=cit,dc=tum,dc=de";
