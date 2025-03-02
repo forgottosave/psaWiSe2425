@@ -25,6 +25,9 @@ in {
       };
     };
   };
+  
+  # enable
+  psa.ldap.server.enable = true;
 
  config = lib.mkIf cfg.server.enable {
     services.openldap = {
