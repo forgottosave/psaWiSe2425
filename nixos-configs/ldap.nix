@@ -26,7 +26,7 @@
         };
         children."olcDatabase={1}mdb".attrs = {
             objectClass = [ "olcDatabaseConfig" "olcMdbConfig" ];
-            olcDatabase = {1}mdb;
+            olcDatabase = "{1}mdb";
             olcDbDirectory = "/var/lib/openldap/data";
             olcSuffix = "dc=team05,dc=psa,dc=cit,dc=tum,dc=de";
 
