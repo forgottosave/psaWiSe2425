@@ -16,19 +16,19 @@ vm1             A       192.168.3.1
 
 ; VM 2
 vm2             A       192.168.3.2
-mirror.database A       192.168.3.2
+mirror.database CNAME   vm2
 
 ; VM 3
 vm3             A       192.168.3.3
-router          A       192.168.3.3
+router          CNAME   vm3
 
 ; VM 4
 vm4             A       192.168.3.4
-database        A       192.168.3.4
+database        CNAME   vm4
 
 ; VM 5
 vm5             A       192.168.3.5
-homeassistant   A       192.168.3.5
+homeassistant   CNAME   vm5
 
 ; VM 6
 vm6             A       192.168.3.6

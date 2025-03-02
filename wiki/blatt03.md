@@ -224,6 +224,7 @@ Nach dem importieren von kea (notwendig für dhcp4) und dem Aktivieren von DHCP 
 
         "authoritative": false,
 
+        # es wird nur auf Anfragen geantwortet, die aus dem Team-Netzwerk sind
         "interfaces-config": {
             "interfaces": ["enp0s8/192.168.3.3"],
             "dhcp-socket-type": "raw"
@@ -245,15 +246,18 @@ Nach dem importieren von kea (notwendig für dhcp4) und dem Aktivieren von DHCP 
                 # Trage hier reservierte Addressen ein
                 "reservations" : [
                     # Hier nur ein Beispiel -> genauso für weitere VMs
+                    # Vergabe von IP-Adressen und Hostnamen anhand der Hardware-Adresse
                     {
                         "hw-address": "08:00:27:4c:bb:84",
                         "ip-address": "192.168.3.1",
                         "hostname": "vm1"
                     },
+                    ...
                 ]
             }
         ],
 
+        # custom option da per default option für wpad-proxy-url nicht existiert
         "option-def": [
             {
                 "code": 252,
@@ -262,6 +266,7 @@ Nach dem importieren von kea (notwendig für dhcp4) und dem Aktivieren von DHCP 
             }
         ],
 
+        # übergabe von infos wie default gateway, nameserver, static routes, ...
         "option-data" : [
             {
                 "name": "routers",
@@ -312,6 +317,6 @@ Nach dem importieren von kea (notwendig für dhcp4) und dem Aktivieren von DHCP 
 
 Das grundlegende Test-Setup bleibt identisch zu letzter Woche (siehe Blatt03).
 
-1. Um DNS zu testen, nutzen wir `host -a` und `nslookup`. #TODO
+1. Um DNS zu testen, nutzen wir `host -a` und `nslookup`.
 
-2. DHCP #TODO
+2. Um DHCP zu testen, wird geschaut ob kea läuft und der inhalt von `/var/lib/kea/dhcp4.leases` überprüft.

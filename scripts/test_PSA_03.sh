@@ -79,12 +79,37 @@ for addr in ${external_DNS[@]}; do
 done
 
 ## TEST #########################################
-## check DHCP
-start_test "check DHCP"
-print_failed "test not implemented yet"
-# systemctl status kea-dhcp4-server.service
-# cat /var/lib/kea/dhcp4.leases
-# script anpassen von https://psa.in.tum.de/xwiki/bin/view/PSA%20WiSe%202024%20%202025/Dokumentation%20der%20Aufgaben/PSAwise2425Team5Aufgabe03/
+# Check that the DHCP service is active
+start_test "check DHCP service status"
+if systemctl is-active kea-dhcp4-server.service | grep -q "active"; then
+    print_success "kea-dhcp4-server.service is active"
+else
+    print_failed "kea-dhcp4-server.service is not active"
+fi
+
+## TEST #########################################
+# Analyze the DHCP leases file to ensure all IPs are in 192.168.3.0/24
+start_test "validate IPs in DHCP leases file"
+if [ -f /var/lib/kea/dhcp4.leases ]; then
+    # Extract IP addresses from the leases file that do not start with 192.168.3.
+    non_matching_ips=$(grep -oP '"ip-address":\s*"\K(?!192\.168\.3\.)[0-9\.]+' /var/lib/kea/dhcp4.leases)
+    if [ -n "$non_matching_ips" ]; then
+        print_failed "Found IP addresses not in 192.168.3.0/24: ${non_matching_ips}"
+    else
+        print_success "All IP addresses in the leases file are in 192.168.3.0/24"
+    fi
+else
+    print_failed "Lease file /var/lib/kea/dhcp4.leases does not exist for IP analysis"
+fi
+
+## TEST #########################################
+# Check that the DHCP leases file has entries for the Team-internal VMs here the IP for vm1 is checked
+start_test "check DHCP leases file content"
+if grep -q "192.168.3.1" /var/lib/kea/dhcp4.leases; then
+    print_success "Lease file contains entry for 192.168.3.1"
+else
+    print_failed "Lease file does not contain entry for 192.168.3.1"
+fi
 
 ## summary ######################################
 print_summary
