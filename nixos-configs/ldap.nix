@@ -40,7 +40,7 @@
                 objectClass = [ "olcDatabaseConfig" "olcMdbConfig" ];
                 olcDatabase = "{1}mdb";
                 olcDbDirectory = "/var/lib/openldap/data";
-                olcSuffix = "dc=team05,dc=psa,dc=cit,dc=tum,dc=de";
+                olcSuffix = "dc=team03,dc=psa,dc=cit,dc=tum,dc=de";
         
                 olcRootDN = "cn=admin,dc=team03,dc=psa,dc=cit,dc=tum,dc=de";
                 olcRootPW.path = "/root/secrets/olcRootPW";
