@@ -307,35 +307,35 @@ in
 }
 ```
 
-Um nun auch noch eine Testseite für hier bash haben wir das vorherige Skript wie folgt erweitert:
+Um nun auch noch eine Testseite für hier bash haben wir das vorherige Skript wie folgt erweitert, wobei im dynamischen Inhalt der Nutzername (whoami) angezeigt wird:
 
 ```shell
 #!/usr/bin/env bash
 
 for dir in *; do
 
-html_data_dir="${dir}/.html-data"
-cgi_bin_dir="${dir}/.cgi-bin"
+  html_data_dir="${dir}/.html-data"
+  cgi_bin_dir="${dir}/.cgi-bin"
 
-echo "doing ${dir} now, in $html_data_dir and $cgi_bin_dir"
+  echo "doing ${dir} now, in $html_data_dir and $cgi_bin_dir"
 
-if [ ! -d "$html_data_dir" ]; then
-  mkdir -p "$html_data_dir"
-  echo "This is some *STATIC* content, directly from ${dir} :)" > "$html_data_dir/index.html"
-  chown -R "${dir}:students" "$html_data_dir"
-fi
+  if [ ! -d "$html_data_dir" ]; then
+    mkdir -p "$html_data_dir"
+    echo "This is some *STATIC* content, directly from $(whoami) :)" > "$html_data_dir/index.html"
+    chown -R "${dir}:students" "$html_data_dir"
+  fi
 
-if [ ! -d "$cgi_bin_dir" ]; then
-  mkdir -p "$cgi_bin_dir"
+  if [ ! -d "$cgi_bin_dir" ]; then
+    mkdir -p "$cgi_bin_dir"
 
-  cat <<< '#!/usr/bin/env bash
-  echo "Content-type: text/html"
-  echo ""
-  echo "This is some *DYNAMIC* content, directly from $(dir) :)"' > "$cgi_bin_dir/index.sh"
+    cat <<< '#!/usr/bin/env bash
+    echo "Content-type: text/html"
+    echo ""
+    echo "This is some *DYNAMIC* content, directly from $(dir) :)"' > "$cgi_bin_dir/index.sh"
 
-  chmod +x "$cgi_bin_dir/index.sh"
-  chown -R "${dir}:students" "$cgi_bin_dir"
-fi
+    chmod +x "$cgi_bin_dir/index.sh"
+    chown -R "${dir}:students" "$cgi_bin_dir"
+  fi
 
 done
 ```
