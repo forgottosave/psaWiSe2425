@@ -20,7 +20,7 @@
     enable = true;                                  # Enable the OpenSSH daemon
     settings.PermitRootLogin = "prohibit-password";          # Disable root passwd login
     settings.PasswordAuthentication = false;                 # Disable password authentication
-    settings.PermitRootLogin = "yes";               # Enable root login
+    # settings.PermitRootLogin = "yes";               # Enable root login
   };
 
   #networking.firewall.allowedTCPPorts = [ 22 ];
