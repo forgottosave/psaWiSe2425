@@ -147,34 +147,43 @@ settings -> People -> add Person -> <name> und "allow login" -> set passwd -> cr
 
 - Administratoren:
   
-  | Nutzer   | Passwort     |
-  | -------  | ------------ |
-  | ge78zig  | 9E56XY       |
-  | ge96xok  | w8yN11Vr6Wjn |
-  | sysAdmin | 6gXFy11JdcSO |
+  | Nutzer   | Passwort                                  |
+  | -------  | ----------------------------------------- |
+  | ge78zig  | /home/ge78zig/homeassistant_password.txt  |
+  | ge96xok  | /home/ge96xok/homeassistant_password.txt  |
+  | sysAdmin | /home/root/homeassistant_password.txt     |
 
 - Reguläre Nutzer:
 
-  | Nutzer  | Passwort     |
-  | ------- | ------------ |
-  | ge95vir | 8qM08hZWZXkG |
-  | ge43fim | 8qM08hZWZXkG |
-  | ge78nes | 8qM08hZWZXkG |
-  | ge96hoj | 8qM08hZWZXkG |
-  | ge87yen | 8qM08hZWZXkG |
-  | ge47sof | 8qM08hZWZXkG |
-  | ge47kut | 8qM08hZWZXkG |
-  | ge87liq | 8qM08hZWZXkG |
-  | ge59pib | 8qM08hZWZXkG |
-  | ge65peq | 8qM08hZWZXkG |
-  | ge63gut | 8qM08hZWZXkG |
-  | ge64baw | 8qM08hZWZXkG |
-  | ge84zoj | 8qM08hZWZXkG |
-  | ge94bob | 8qM08hZWZXkG |
-  | ge87huk | 8qM08hZWZXkG |
-  | ge64wug | 8qM08hZWZXkG |
-  | ge65hog | 8qM08hZWZXkG |
-  | ge38hoy | 8qM08hZWZXkG |
+  | Nutzer  | Passwort                                   |
+  | ------- | ------------------------------------------ |
+  | ge95vir | /home/ge95vir/homeassistant_password.txt   |
+  | ge43fim | /home/ge43fim/homeassistant_password.txt   |
+  | ge78nes | /home/ge78nes/homeassistant_password.txt   |
+  | ge96hoj | /home/ge96hoj/homeassistant_password.txt   |
+  | ge87yen | /home/ge87yen/homeassistant_password.txt   |
+  | ge47sof | /home/ge47sof/homeassistant_password.txt   |
+  | ge47kut | /home/ge47kut/homeassistant_password.txt   |
+  | ge87liq | /home/ge87liq/homeassistant_password.txt   |
+  | ge59pib | /home/ge59pib/homeassistant_password.txt   |
+  | ge65peq | /home/ge65peq/homeassistant_password.txt   |
+  | ge63gut | /home/ge63gut/homeassistant_password.txt   |
+  | ge64baw | /home/ge64baw/homeassistant_password.txt   |
+  | ge84zoj | /home/ge84zoj/homeassistant_password.txt   |
+  | ge94bob | /home/ge94bob/homeassistant_password.txt   |
+  | ge87huk | /home/ge87huk/homeassistant_password.txt   |
+  | ge64wug | /home/ge64wug/homeassistant_password.txt   |
+  | ge65hog | /home/ge65hog/homeassistant_password.txt   |
+  | ge38hoy | /home/ge38hoy/homeassistant_password.txt   |
+
+#### 2.3) Konfiguration eines Beispiels
+
+Da homeassistant nun fertig eingerichtet ist, richten wir nun noch ein kleines Beispiel ein, um zu zeigen, wie generell in Homeassistant neue Geräte wie Sensoren oder Lichter hinzugefügt werden können. Da wir leider keine echten Geräte haben, haben wir uns für ein Beispiel für ein virtuelles Gerät entschieden, nämlich `Ping`, welches, wie der name schon sagt, den Status eines Netzwerkgeräts überprüft.
+
+Hierfür muss man lediglich in die `Settings` gehen und unter `Integrations` das `Ping` Gerät hinzufügen. Hier kann man die IP-Adresse des Netzwerkgeräts angeben, das überwacht werden soll, und dann die Konfiguration abschließen, um das Gerät hinzuzufügen.
+
+Dies haben wir für alle unsere bisherigen VMs gemacht und können nun den Status der VMs überwachen:
+![alt text](image.png)
 
 ### 3) Testen
 
