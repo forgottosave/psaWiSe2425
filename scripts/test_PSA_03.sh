@@ -91,6 +91,7 @@ fi
 # Analyze the DHCP leases file to ensure all IPs are in 192.168.3.0/24
 start_test "validate IPs in DHCP leases file"
 if [ -f /var/lib/kea/dhcp4.leases ]; then
+    print_success "/var/lib/kea/dhcp4.leases exists"
     # Extract IP addresses from the leases file that do not start with 192.168.3.
     non_matching_ips=$(grep -oP '"ip-address":\s*"\K(?!192\.168\.3\.)[0-9\.]+' /var/lib/kea/dhcp4.leases)
     if [ -n "$non_matching_ips" ]; then
@@ -103,13 +104,21 @@ else
 fi
 
 ## TEST #########################################
-# Check that the DHCP leases file has entries for the Team-internal VMs here the IP for vm1 is checked
-start_test "check DHCP leases file content"
-if grep -q "192.168.3.1" /var/lib/kea/dhcp4.leases; then
-    print_success "Lease file contains entry for 192.168.3.1"
-else
-    print_failed "Lease file does not contain entry for 192.168.3.1"
-fi
+# Check that the DHCP leases file has entries for the Team-internal VMs
+
+team_vms=(
+    192.168.3.1
+    192.168.3.2
+)
+
+start_test "check DHCP leases file content for Team-internal VMs"
+for vm in ${team_vms[@]}; do
+    if grep -q "${vm}" /var/lib/kea/dhcp4.leases; then
+        print_success "Lease file contains entry for ${vm}"
+    else
+        print_failed "Lease file does not contain entry for ${vm}"
+    fi
+done
 
 ## summary ######################################
 print_summary
