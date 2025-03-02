@@ -31,7 +31,7 @@
             olcSuffix = "dc=team05,dc=psa,dc=cit,dc=tum,dc=de";
 
             olcRootDN = "cn=admin,dc=team03,dc=psa,dc=cit,dc=tum,dc=de";
-            olcRootPW.path = /root/secrets/olcRootPW
+            olcRootPW.path = "/root/secrets/olcRootPW";
 
             olcAccess = [
                 ''{0}to * by dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth" manage by * none''
