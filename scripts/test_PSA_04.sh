@@ -69,7 +69,7 @@ fi
 
 start_test "HTTPS access for website1, website2, website3"
 for domain in ${web_domains[@]}; do
-    HTTPS_STATUS=$(curl -Lk -s -o /dev/null -w "%{https_code}" https://$domain/)
+    HTTPS_STATUS=$(curl -Lk -s -o /dev/null -w "%{http_code}" https://$domain/)
     if [ "$HTTPS_STATUS" -eq 200 ]; then
         print_success "HTTPS access for $domain succeeded (status 200)"
     else
@@ -80,14 +80,14 @@ done
 
 ## User Homepages Tests ##########################
 start_test "User static and dynamic homepage for user 'ge95vir'"
-HTTPS_STATUS=$(curl -Lk -s -o /dev/null -w "%{https_code}" https://web1.psa-team03.cit.tum.de/~ge95vir)
+HTTPS_STATUS=$(curl -Lk -s -o /dev/null -w "%{http_code}" https://web1.psa-team03.cit.tum.de/~ge95vir)
 if [ "$HTTPS_STATUS" -eq 200 ]; then
     print_success "User static homepage served correctly"
 else
     print_failed "User static homepage not served (status $HTTP_STATUS)"
 fi
 
-HTTPS_STATUS=$(curl -Lk -s -o /dev/null -w "%{https_code}" https://web1.psa-team03.cit.tum.de/~ge95vir/cgi-bin/index.sh)
+HTTPS_STATUS=$(curl -Lk -s -o /dev/null -w "%{http_code}" https://web1.psa-team03.cit.tum.de/~ge95vir/cgi-bin/index.sh)
 if [ "$HTTPS_STATUS" -eq 200 ]; then
     print_success "User CGI script executed correctly"
 else
