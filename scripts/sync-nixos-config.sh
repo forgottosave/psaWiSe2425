@@ -105,6 +105,7 @@ cp ${THIS_DIR}/test_PSA_* /root/
 
 cp -a ${THIS_DIR}/../nixos-configs/bind-configs/. /etc/nixos/dns/ # Week 03
 cp -a ${THIS_DIR}/../nixos-configs/sites/. /etc/nixos/sites/ # Week 03
+cp -a ${THIS_DIR}/../nixos-configs/user-schema.ldif /etc/nixos/user-schema.ldif # Week 0something
 
 
 ## 7. reload config #######################################
