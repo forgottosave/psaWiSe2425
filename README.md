@@ -36,6 +36,10 @@ Submission:
 | ----- | ----------------------- | ------------ | ---------------------------- |
 | all   |                         |              |                              |
 
+## Team
+
+Team VMs: https://psa.in.tum.de/xwiki/bin/view/PSA%20WiSe%202024%20%202025/Teams/
+
 ## Wiki
 
 The documentation of all projects can be found in `wiki/`.
@@ -50,14 +54,7 @@ The documentation of all projects can be found in `wiki/`.
 - [`Blatt 08`](https://github.com/forgottosave/psaWiSe2425/blob/main/wiki/blatt08.md)
 - [`Blatt 09`](https://github.com/forgottosave/psaWiSe2425/blob/main/wiki/blatt09.md)
 - [`Blatt 10`](https://github.com/forgottosave/psaWiSe2425/blob/main/wiki/blatt10.md)
-
-## Team
-
-| VM | explanation                     |
-| -- | ------------------------------- |
-| 1  | Team-member 1 (Benjamin Liertz) |
-| 2  | Team-member 2 (Timon Ensel)     |
-| 3  | Router                          |
+- [`Blatt 11`](https://github.com/forgottosave/psaWiSe2425/blob/main/wiki/blatt11.md)
 
 ## NixOS Configuration
 
