@@ -23,7 +23,7 @@ We use currently use [obsidian](https://obsidian.md/) as the Markdown editor for
 | 3     | X    | !   |                                             |
 | 4     | X    | !   |                                             |
 | 5     | X    | !   |                                             |
-| 6     | !    | !   |                                             |
+| 6     | X    | !   |                                             |
 | 7     | X    | X   |                                             |
 | 8     |      |     | LDAP                                        |
 | 9     |      |     | Testing                                     |

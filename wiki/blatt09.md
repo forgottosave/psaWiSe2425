@@ -1,4 +1,4 @@
-# Aufgabenblatt 07
+# Aufgabenblatt 09
 
 In diesem Blatt geht es darum einen Mailserver einzurichten. Dieser wird bei uns auf VM 9 gehostet.
 
@@ -188,13 +188,11 @@ Diese Einstellungen bewirken, dass:
 - **Viren:** Mit Hilfe von ClamAV alle Mails gescannt werden und bei einem Virenbefund die E-Mail abgelehnt wird.
 - **Spam:** Rspamd erkennt Spam anhand definierter Schwellenwerte und markiert die E-Mails
 
-TODO: reichen die counter measures
-
 ---
 
 ## Aufgabe 2: Netzwerk konfigurieren
 
-Hier müssen nur zwei Änderungen an der Firwwall vorgenommen werden:
+Zuerst müssen nur zwei Änderungen an der Firewall vorgenommen werden:
 
 ```nix
       # Allow: SMTP
@@ -205,7 +203,12 @@ Hier müssen nur zwei Änderungen an der Firwwall vorgenommen werden:
       iptables -A OUTPUT -d 131.159.254.10 -j ACCEPT
 ```
 
-TODO: wirklich alle nötig? wirklich nur smtp?
+Nun fehlt noch der MX Record für die DNS Konfiguration. Dadurch wird sichergestellt, dass alle Team VMs von den Mailserver wissen und ihre Mails an diesen senden.
+
+```shell
+# psa-team03.zone
+@          MX  10  mail
+```
 
 ---
 
