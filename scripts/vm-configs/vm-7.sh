@@ -29,6 +29,7 @@ sed_placeholders[system_packages]='
     dhcpdump
     mdadm
     openssl
+    dhcping
 '
 
 sed_placeholders[root_access]='
