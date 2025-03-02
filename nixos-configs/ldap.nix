@@ -4,11 +4,9 @@
   pkgs,
  ...
 }: let
- cfg = config.psa.ldap;
-
  # suffix for the database carrying all data entries
- baseDN = "dc=team06,dc=psa,dc=cit,dc=tum,dc=de";
- domain = "ldap.team06.psa.cit.tum.de";
+ baseDN = "dc=team03,dc=psa,dc=cit,dc=tum,dc=de";
+ domain = "ldap.team03.psa.cit.tum.de";
 in {
  options = {
     psa.ldap.server = {
@@ -25,11 +23,8 @@ in {
       };
     };
   };
-  
-  # enable
-  psa.ldap.server.enable = true;
 
- config = lib.mkIf cfg.server.enable {
+ config = lib.mkIf config.psa.ldap.server.enable {
     services.openldap = {
      enable = true;
 
