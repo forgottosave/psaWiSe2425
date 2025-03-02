@@ -557,12 +557,24 @@ Quellen:
 TODO
 
 ```nixos
+# Konfiguration für den Prometheus Exporter für Postfix
 services.prometheus.exporters.postfix = {
   enable = true;
   port = 9154;
-  ...
+  telemetryPath = "/metrics";
+  openFirewall = true;
 };
 ```
+
+```yml
+# prometheus.yml
+  - job_name: 'postfix'
+    static_configs:
+      - targets: 
+          - '192.168.3.9:9154'
+```
+
+interface TODO (nur doku)
 
 Quellen:
 

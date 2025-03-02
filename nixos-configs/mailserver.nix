@@ -141,7 +141,6 @@ in
     enable = true;
     port = 9154;
     telemetryPath = "/metrics";
-    #showqPath = "${pkgs.postfix}/sbin/postqueue";
     openFirewall = true;
   };
 

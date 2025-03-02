@@ -188,13 +188,24 @@ Diese Einstellungen bewirken, dass:
 - **Viren:** Mit Hilfe von ClamAV alle Mails gescannt werden und bei einem Virenbefund die E-Mail abgelehnt wird.
 - **Spam:** Rspamd erkennt Spam anhand definierter Schwellenwerte und markiert die E-Mails
 
-TODO: counter measures
+TODO: reichen die counter measures
 
 ---
 
 ## Aufgabe 2: Netzwerk konfigurieren
 
-TODO
+Hier müssen nur zwei Änderungen an der Firwwall vorgenommen werden:
+
+```nix
+      # Allow: SMTP
+      iptables -A INPUT -p tcp --dport 25 -j ACCEPT
+      iptables -A OUTPUT -p tcp --sport 25 -j ACCEPT
+
+      # Allow: traffic to the mail relay
+      iptables -A OUTPUT -d 131.159.254.10 -j ACCEPT
+```
+
+TODO: wirklich alle nötig? wirklich nur smtp?
 
 ---
 

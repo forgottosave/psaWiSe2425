@@ -26,8 +26,8 @@ We use currently use [obsidian](https://obsidian.md/) as the Markdown editor for
 | 6     | !    | !   |                                             |
 | 7     | X    | X   |                                             |
 | 8     |      |     | LDAP                                        |
-| 9     |      |     | Counter-Measures & Network Config & Testing |
-| 10    |      | !   | Status Übersicht Wiki & LDAP & Mail         |
+| 9     |      |     | Testing                                     |
+| 10    |      | !   | Status Übersicht Wiki & LDAP                |
 | 11    |      |     | Security                                    |
 
 Submission:
