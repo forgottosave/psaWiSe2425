@@ -15,6 +15,7 @@
     services.openldap = {
         enable = true;
         package = pkgs.openldap;
+        urlList = [ldapi:/// ldaps:///];
         mutableConfig = true;
         # settings = {
         #     attrs = {
@@ -45,7 +46,7 @@
         #         olcRootPW.path = "/root/secrets/olcRootPW";
         # 
         #         olcAccess = [
-        #             ''{0}to * by dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth" manage by * none''
+        #             ''{0}to * by dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth,cn=config" manage by * none''
         #             ''{1}to attrs=sshPublicKey by self write by anonymous auth by * none''
         #             ''{2} to dn.children="ou=Users,dc=team03,dc=psa,dc=cit,dc=tum,dc=de" attrs=entry,uid by * read''
         #             ''{3}to * by users read by * search'' ];
