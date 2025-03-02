@@ -59,13 +59,15 @@ done
 
 
 ## HTTP/HTTPS Availability Tests ################
-start_test "HTTP access for website1 (web1.psa-team03.cit.tum.de)"
-HTTP_STATUS=$(curl -Lk -s -o /dev/null -w "%{http_code}" http://web1.psa-team03.cit.tum.de/)
-if [ "$HTTP_STATUS" -eq 200 ]; then
-    print_success "HTTP access on port 80 succeeded (status 200)"
-else
-    print_failed "HTTP access on port 80 failed (status $HTTP_STATUS)"
-fi
+start_test "HTTP access for website1, website2, website3"
+for domain in ${web_domains[@]}; do
+    HTTP_STATUS=$(curl -Lk -s -o /dev/null -w "%{http_code}" http://$domain/)
+    if [ "$HTTP_STATUS" -eq 200 ]; then
+        print_success "HTTP access for $domain succeeded (status 200)"
+    else
+        print_failed "HTTP access for $domain failed (status $HTTP_STATUS)"
+    fi
+done
 
 start_test "HTTPS access for website1, website2, website3"
 for domain in ${web_domains[@]}; do

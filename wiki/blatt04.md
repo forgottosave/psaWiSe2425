@@ -98,14 +98,26 @@ in
     recommendedOptimisation = true;
     virtualHosts = {
       "web1.psa-team03.cit.tum.de" = {
+        listen = [
+          { addr = "0.0.0.0"; port = 80; }
+          { addr = "0.0.0.0"; port = 443; ssl = true; }
+        ];
         root = ./sites/web1;
       } // sslAttr;
 
       "web2.psa-team03.cit.tum.de" = {
+        listen = [
+          { addr = "0.0.0.0"; port = 80; }
+          { addr = "0.0.0.0"; port = 443; ssl = true; }
+        ];
         root = ./sites/web2;
       } // sslAttr;
 
       "web3.psa-team03.cit.tum.de" = {
+        listen = [
+          { addr = "0.0.0.0"; port = 80; }
+          { addr = "0.0.0.0"; port = 443; ssl = true; }
+        ];
         root = ./sites/web3;
       } // sslAttr;
     };
@@ -143,6 +155,7 @@ Dies Kann mit den folgenden Befehlen getestet werden:
 
 ```shell
 curl -Lk http://web1.psa-team03.cit.tum.de
+curl -Lk http://web2.psa-team03.cit.tum.de
 curl -Lk https://web1.psa-team03.cit.tum.de
 curl -Lk https://web2.psa-team03.cit.tum.de
 curl -Lk https://web3.psa-team03.cit.tum.de
