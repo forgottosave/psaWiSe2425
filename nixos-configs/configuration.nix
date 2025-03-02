@@ -16,12 +16,11 @@
   boot.kernelParams = ["ipv6.disable=1"]; # Disable ipv6
 
   # https://nixos.wiki/wiki/SSH_public_key_authentication
-  services.sshd.enable = true;
   services.openssh = {
-    enable = true;
-    settings.PasswordAuthentication = true;
-    settings.KbdInteractiveAuthentication = false;
-    settings.PermitRootLogin = "yes";
+    enable = true;                                  # Enable the OpenSSH daemon
+    settings.PermitRootLogin = "prohibit-password";          # Disable root passwd login
+    settings.PasswordAuthentication = false;                 # Disable password authentication
+    settings.PermitRootLogin = "yes";               # Enable root login
   };
 
   #networking.firewall.allowedTCPPorts = [ 22 ];
