@@ -313,6 +313,25 @@ Nach dem importieren von kea (notwendig für dhcp4) und dem Aktivieren von DHCP 
 }
 ```
 
+DHCP ist nun soweit konfiguriert, nun fehlt nur noch die Freigabe der Ports in der Firewall:
+
+```nix
+# router-network.nix
+      # Allow: DHCP
+      iptables -A INPUT -p udp --sport 68 --dport 67 -j ACCEPT
+      iptables -A OUTPUT -p udp --sport 67 --dport 68 -j ACCEPT
+```
+
+als auch bei den client VMs:
+
+```nix
+# vm-network-config.nix
+      # Allow: DHCP
+      iptables -A INPUT -p udp --sport 68 --dport 67 -j ACCEPT
+```
+
+Nun fehlt nur noch ein switch rebuild und wir sind fertig :D
+
 ### 3) Testing
 
 Das grundlegende Test-Setup bleibt identisch zu letzter Woche (siehe Blatt03).

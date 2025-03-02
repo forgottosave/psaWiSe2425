@@ -20,7 +20,7 @@ We use currently use [obsidian](https://obsidian.md/) as the Markdown editor for
 | ----- | ---- | --- | ------------------------------------------- |
 | 1     | X    | X   |                                             |
 | 2     | X    | X   |                                             |
-| 3     |      | !   | DHCP Testing                                |
+| 3     | X    | !   |                                             |
 | 4     | !    | !   |  Testing, https from other vms              |
 | 5     | X    | !   |                                             |
 | 6     | !    | !   |                                             |
