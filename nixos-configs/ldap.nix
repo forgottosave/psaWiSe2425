@@ -61,9 +61,20 @@ in
                         ''
                     ];
                 };
+                "cn=schema".includes = [
+                    # required
+                    "${pkgs.openldap}/etc/schema/core.ldif"
+                    # NIS
+                    "${pkgs.openldap}/etc/schema/cosine.ldif"
+                    "${pkgs.openldap}/etc/schema/inetorgperson.ldif"
+                    # posixAccount & posixGroup
+                    "${pkgs.openldap}/etc/schema/nis.ldif"
+                    # custom users
+                    /etc/ldap/schemas/user-schema.ldif
+                ];
             };  
         };
-        
+
         #settings = {
         #    attrs = {
         #        olcLogLevel = "conns config";
