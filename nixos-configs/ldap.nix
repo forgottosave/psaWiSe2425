@@ -70,7 +70,7 @@ in
                     # posixAccount & posixGroup
                     "${pkgs.openldap}/etc/schema/nis.ldif"
                     # custom users
-                    /etc/ldap/schemas/user-schema.ldif
+                    ./user-schema.ldif
                 ];
             };  
         };
