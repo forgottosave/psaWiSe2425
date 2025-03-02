@@ -42,14 +42,14 @@ function print_summary {
 
 ## DNS Tests ####################################
 
-web_domains={
-    web1.psa-team03.cit.tum.de,
-    web2.psa-team03.cit.tum.de,
+web_domains=(
+    web1.psa-team03.cit.tum.de
+    web2.psa-team03.cit.tum.de
     web3.psa-team03.cit.tum.de
-}
+)
 
 start_test "DNS Resolution for web1, web2, web3"
-for domain in $web_domains; do
+for domain in ${team_vms[@]}; do
     if host $domain &> /dev/null; then
         print_success "DNS lookup for $domain succeeded"
     else
@@ -60,7 +60,7 @@ done
 
 ## HTTP/HTTPS Availability Tests ################
 start_test "HTTP access for website1 (web1.psa-team03.cit.tum.de)"
-HTTP_STATU=$(curl -s -o /dev/null -w "%{http_code}" http://web1.psa-team03.cit.tum.de/)
+HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://web1.psa-team03.cit.tum.de/)
 if [ "$HTTP_STATUS" -eq 200 ]; then
     print_success "HTTP access on port 80 succeeded (status 200)"
 else
@@ -68,7 +68,7 @@ else
 fi
 
 start_test "HTTPS access for website1, website2, website3"
-for domain in web2.psa-team03.cit.tum.de web3.psa-team03.cit.tum.de; do
+for domain in ${team_vms[@]}; do
     HTTPS_STATUS=$(curl -s -o /dev/null -w "%{https_code}" https://$domain/)
     if [ "$HTTPS_STATUS" -eq 200 ]; then
         print_success "HTTPS access for $domain succeeded (status 200)"
@@ -80,18 +80,18 @@ done
 
 ## User Homepages Tests ##########################
 start_test "User static and dynamic homepage for user 'ge95vir'"
-HTTP_STATUS=$(curl -s -o /dev/null -w "%{https_code}" https://web1.psa-team03.cit.tum.de/~ge95vir)
+HTTPS_STATUS=$(curl -s -o /dev/null -w "%{https_code}" https://web1.psa-team03.cit.tum.de/~ge95vir)
 if [ "$HTTPS_STATUS" -eq 200 ]; then
     print_success "User static homepage served correctly"
 else
     print_failed "User static homepage not served (status $HTTP_STATUS)"
 fi
 
-HTTP_STATUS=$(curl -s -o /dev/null -w "%{https_code}" https://web1.psa-team03.cit.tum.de/~ge95vir/cgi-bin/index.sh)
+HTTPS_STATUS=$(curl -s -o /dev/null -w "%{https_code}" https://web1.psa-team03.cit.tum.de/~ge95vir/cgi-bin/index.sh)
 if [ "$HTTPS_STATUS" -eq 200 ]; then
     print_success "User CGI script executed correctly"
 else
-    print_failed "User CGI script failed to execute (status $HTTP_STATUS)"
+    print_failed "User CGI script failed to execute (status $HTTPS_STATUS)"
 fi
 
 CGI_OUTPUT=$(curl -s http://web1.psa-team03.cit.tum.de/~ge95vir/cgi-bin/index.sh)
