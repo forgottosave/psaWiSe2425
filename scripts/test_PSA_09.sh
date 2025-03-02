@@ -43,7 +43,7 @@ else
     print_failed "Postfix-Service läuft nicht"
 fi
 
-if systemctl is-active --quiet dovecot; then
+if systemctl is-active --quiet dovecot2; then
     print_success "Dovecot-Service ist aktiv"
 else
     print_failed "Dovecot-Service läuft nicht"
@@ -125,10 +125,10 @@ else
     print_failed "Rspamd Milter-Socket (/run/rspamd/rspamd-milter.sock) wurde nicht gefunden"
 fi
 
-if [ -S /run/dovecot/auth ]; then
+if [ -S /run/dovecot2/auth ]; then
     print_success "Dovecot Auth-Socket existiert"
 else
-    print_failed "Dovecot Auth-Socket (/run/dovecot/auth) wurde nicht gefunden"
+    print_failed "Dovecot Auth-Socket (/run/dovecot2/auth) wurde nicht gefunden"
 fi
 
 ## summary ######################################

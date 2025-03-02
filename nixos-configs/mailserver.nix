@@ -13,40 +13,77 @@ in
     destination = [ "mail" "mail.psa-team03.cit.tum.de" "psa-team03.cit.tum.de" "localhost.cit.tum.de" "localhost" ]; # liste an hostnamen und domainnamen, die als lokale ziele betrachtet werden
     origin = "psa-team03.cit.tum.de";                 # Ursprungsdomäne die in E-Mail-Headers verwendet wird
     postmasterAlias = "ge78zig@psa-team03.cit.tum.de";# Admin an den Fehlermeldungen gehen
-    recipientDelimiter = "+";                         # Das Trennzeichen für Adresszusätze (z. B. benutzer+filter@domain)          
+    
+    relayHost = "mailrelay.cit.tum.de";                # Relayhost für ausgehende E-Mails
 
-    # zuvor erzeugte Datei in config eingebunden -> im extra-configs wird diese später referenziert
-    mapFiles."sender_canonical" = sender_canonical_file;
+    relayDomains = [                               # Domains die relayed werden dürfen
+      "psa-team01.cit.tum.de"
+      "psa-team02.cit.tum.de"
+      "psa-team06.cit.tum.de"
+      "psa-team04.cit.tum.de"
+      "psa-team05.cit.tum.de"
+      "psa-team07.cit.tum.de"
+      "psa-team08.cit.tum.de"
+      "psa-team09.cit.tum.de"
+      "psa-team10.cit.tum.de"
+    ];
+    # Domains die gesondert vom relay host weitergeleitet werden sollen
+    transport = ''
+      psa-team01.cit.tum.de smtp:
+      psa-team02.cit.tum.de smtp:
+      psa-team06.cit.tum.de smtp:
+      psa-team04.cit.tum.de smtp:
+      psa-team05.cit.tum.de smtp:
+      psa-team07.cit.tum.de smtp:
+      psa-team08.cit.tum.de smtp:
+      psa-team09.cit.tum.de smtp:
+      psa-team10.cit.tum.de smtp:
+    '';
 
-    # Konfiguration für den Milter (Mail Filter), der von rspamd bereitgestellt wird -> ermöglicht während der SMTP-Session zu überprüfen
-    config = {
-      smtpd_milters = [ "unix:/run/rspamd/rspamd-milter.sock" ];  # Pfad zum Socket von rspamd
-      milter_protocol = "6";
+    enableHeaderChecks = true;                    # Header Checks
+    headerChecks = [                              # From-Header auf reine Domain reduzieren
+      {
+        pattern = "/^From:(.*)@.+?\\.psa-team(\\d+)\\.cit\\.tum\\.de/";
+        action = "REPLACE From:\${1}@psa-team\${2}.cit.tum.de";
+      }
+    ];
+
+    # smtp_generic_maps file anlegen
+    mapFiles = {
+      generic = ./generic;
     };
 
-    extraConfig = ''
-      smtpd_recipient_restrictions = permit_mynetworks, permit_sasl_authenticated, reject_unauth_destination, reject_unverified_recipient
-      unknown_local_recipient_reject_code = 550
-      smtpd_relay_restrictions = permit_mynetworks, permit_sasl_authenticated, reject_unauth_destination, reject_unverified_recipient
-      local_recipient_maps = proxy:unix:passwd.byname
+    # main.cf settings
+    config = {
+      smtp_generic_maps = "regexp:/etc/postfix/generic";
 
-      sender_canonical_maps = hash:/etc/postfix/sender_canonical
-      relayhost = mailrelay.cit.tum.de
+      smtpd_helo_required = "yes";
+      smtpd_helo_restrictions = [
+        "permit_mynetworks"
+        "permit_sasl_authenticated"
+        "reject_invalid_helo_hostname"
+        "reject_unknown_helo_hostname"
+      ];
+      smtpd_recipient_restrictions = [
+        "permit_mynetworks"
+        "permit_sasl_authenticated"
+        "reject_unknown_recipient_domain"
+        "reject_unauth_destination"
+        "reject"
+      ];
+      smtpd_relay_restrictions = [
+        "permit_mynetworks"
+        "permit_sasl_authenticated"
+        "reject_unauth_destination"
+      ];
 
-      mailbox_size_limit = 0
-      inet_interfaces = all
-      inet_protocols = ipv4
-      home_mailbox = Maildir/
-
-      masquerade_domains = psa-team03.cit.tum.de
-
-      smtpd_sasl_type = dovecot
-      smtpd_sasl_path = /run/dovecot2/auth
-      smtpd_sasl_auth_enable = yes
-      smtpd_tls_auth_only = yes
-      smtpd_sasl_security_options = noanonymous
-      smtpd_sasl_local_domain = $myhostname;
-    '';
+      # use dovecot with sasl
+      smtpd_sasl_type = "dovecot";
+      smtpd_sasl_auth_enable = "yes";
+      smtpd_sasl_local_domain = "$myhostname";
+      smtpd_sasl_security_options = "noanonymous";
+      smtpd_sasl_path = "/run/dovecot2/auth";
+    };
   };
 
   services.dovecot2 = {
