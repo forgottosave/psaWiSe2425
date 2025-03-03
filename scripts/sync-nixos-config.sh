@@ -6,7 +6,8 @@ THIS_DIR=$(dirname "$0")
 ## Defaults
 #VM_NUMBER=$(hostname)
 #VM_NUMBER=${VM_NUMBER: -1}
-VM_NUMBER=$(( $(hostname | grep -oE '[0-9]+$') ))
+#VM_NUMBER=$(( $(hostname | grep -oE '[0-9]+$') ))
+VM_NUMBER=$(hostname | grep -oE '[0-9]+$')
 
 PATH_CONFIG_SRC="$THIS_DIR/../nixos-configs/"
 PATH_CONFIG_DEST='/etc/nixos/'

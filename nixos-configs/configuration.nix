@@ -24,7 +24,7 @@
   };
 
   #networking.firewall.allowedTCPPorts = [ 22 ];
-  networking.hostName = "vmpsateam03-0%%vm%%";
+  networking.hostName = "vmpsateam03-%%vm%%";
   networking.networkmanager.enable = true;
   time.timeZone = "Europe/Amsterdam";
 
