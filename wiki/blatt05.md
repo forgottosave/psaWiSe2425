@@ -99,7 +99,7 @@ In diesem Blatt geht es darum eine Datenbank einzurichten. Wir hosten sie auf de
     '';
     ```
 
-    NAls nächstes schränken wir den Zugriff auf die Datenbanken jedes Nutzers ein. Dies geschieht in `authentication = ...` indem für jede Verbindung erst der Verbindungs-Typ, die Datenbank auf die zugegriffen werden soll, der Nutzer, optional die host-IP und die Authentifizierung-Methode eingegeben werden soll. Wie oben beschrieben sollen die Nutzer `localusr` und `ronlyusr` nur lokal zugreifen, der `remotusr` nur von einer anderen VM in unserem Team-Netzwerk auf die Datenbanken, bzw. nur seine Datenbank, zugreifen können.
+    Als nächstes schränken wir den Zugriff auf die Datenbanken jedes Nutzers ein. Dies geschieht in `authentication = ...` indem für jede Verbindung erst der Verbindungs-Typ, die Datenbank auf die zugegriffen werden soll, der Nutzer, optional die host-IP und die Authentifizierung-Methode eingegeben werden soll. Wie oben beschrieben sollen die Nutzer `localusr` und `ronlyusr` nur lokal zugreifen, der `remotusr` nur von einer anderen VM in unserem Team-Netzwerk auf die Datenbanken, bzw. nur seine Datenbank, zugreifen können.
 
     ```nixos
     authentication = pkgs.lib.mkOverride 10 ''

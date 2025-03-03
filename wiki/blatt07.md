@@ -221,13 +221,13 @@ Quellen:
 
 ### 4) Mounten von File-Systemen
 
-Die User Home-Verzeichnisse auf allen anderen VMs werden nun von dem NFS gemountet:
+Die User Home-Verzeichnisse auf allen anderen VMs werden nun von dem NFS gemountet, wobei wir jeweils den fileserver des Teams angeben, sowie den Pfad zum jeweiligen exporteten Verzeichnis:
 
 ```nix
 # user-config.nix
 # wird für jeden User wiederholt
-fileSystems."/home/ge96xok" = {
-  device = "192.168.3.8:/home/ge96xok";
+fileSystems."/home/ge65peq" = {
+  device = "fileserver.psa-team<nr>.cit.tum.de:/<path/to/home>/<user>";
   fsType = "nfs";
   options = [ "x-systemd.automount" "noauto" "x-systemd.idle-timeout=600" ];
 };
