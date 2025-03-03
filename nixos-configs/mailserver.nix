@@ -8,15 +8,15 @@ in
   services.postfix = {
     enable = true;                                    # postfix aktivieren
     domain = "psa-team03.cit.tum.de";                 # primäre domain von postfix
-    networks = [ "127.0.0.0/8" "192.168.0.0/16" ];    # netzwerke, die postfix als trusted betrachtet
     hostname = "mail";                                # hostname von postfix -> mit domain ergibt mail.psa-team03.cit.tum.de
+    networks = [ "127.0.0.0/8" "192.168.0.0/16" ];    # netzwerke die postfix als trusted betrachtet
     destination = [ "mail" "mail.psa-team03.cit.tum.de" "psa-team03.cit.tum.de" "localhost.cit.tum.de" "localhost" ]; # liste an hostnamen und domainnamen, die als lokale ziele betrachtet werden
     origin = "psa-team03.cit.tum.de";                 # Ursprungsdomäne die in E-Mail-Headers verwendet wird
-    postmasterAlias = "ge78zig@psa-team03.cit.tum.de";# Admin an den Fehlermeldungen gehen
+    postmasterAlias = "ge78zig, ge96xok";             # Admins an die Fehlermeldungen gehen
     
     relayHost = "mailrelay.cit.tum.de";                # Relayhost für ausgehende E-Mails
 
-    relayDomains = [                               # Domains die relayed werden dürfen
+    relayoDmains = [
       "psa-team01.cit.tum.de"
       "psa-team02.cit.tum.de"
       "psa-team06.cit.tum.de"
@@ -40,8 +40,9 @@ in
       psa-team10.cit.tum.de smtp:
     '';
 
-    enableHeaderChecks = true;                    # Header Checks
-    headerChecks = [                              # From-Header auf reine Domain reduzieren
+    # Headers fals von @irgendeinhost.psa-teamX.cit.tum.de kommen auf @psa-teamX.cit.tum.de umschreiben
+    enableHeaderChecks = true;
+    headerChecks = [ 
       {
         pattern = "/^From:(.*)@.+?\\.psa-team(\\d+)\\.cit\\.tum\\.de/";
         action = "REPLACE From:\${1}@psa-team\${2}.cit.tum.de";
@@ -64,6 +65,7 @@ in
         "reject_invalid_helo_hostname"
         "reject_unknown_helo_hostname"
       ];
+      # um unbekannte Empfänger bereits im SMTP-Dialog abzulehnen
       smtpd_recipient_restrictions = [
         "permit_mynetworks"
         "permit_sasl_authenticated"
@@ -71,13 +73,20 @@ in
         "reject_unauth_destination"
         "reject"
       ];
+      # um open relay zu verhindern
       smtpd_relay_restrictions = [
         "permit_mynetworks"
         "permit_sasl_authenticated"
-        "reject_unauth_destination"
+        "reject"
       ];
 
-      # use dovecot with sasl
+      # mails nur von bekannten nutzern annehmen
+      smtpd_sender_restrictions = [
+        "permit_sasl_authenticated"
+        "reject"
+      ];
+
+      # als auth bei smtp dovecot2 verwenden
       smtpd_sasl_type = "dovecot";
       smtpd_sasl_auth_enable = "yes";
       smtpd_sasl_local_domain = "$myhostname";
@@ -88,6 +97,8 @@ in
 
   services.dovecot2 = {
     enable = true;
+    enableImap = true;
+    enablePop3 = true;
 
     extraConfig = ''
       listen = 0.0.0.0
@@ -143,7 +154,7 @@ in
           socket = "/run/rspamd/rspamd-milter.sock";  # Bindet den Worker an den Unix-Socket /run/rspamd/rspamd-milter.sock (entsprechend der Postfix-Konfiguration)
           mode = "0664";                              # Zugriffsrechte, sodass Postfix auf den Socket zugreifen kann
         }];
-        count = 1;                                    # Anzahl der Worker-Instanzen (hier nur 1x)
+        count = 1;
         extraConfig = ''
           milter = yes;
           timeout = 120s;
@@ -180,5 +191,4 @@ in
     telemetryPath = "/metrics";
     openFirewall = true;
   };
-
 }

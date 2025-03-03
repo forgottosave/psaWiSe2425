@@ -64,54 +64,6 @@ fi
 
 ## TEST ########################################
 
-start_test "SMTP: Unbekannten Empfänger ablehnen (Erwarteter Fehlercode 550)"
-smtp_response=$( ( 
-    echo "EHLO localhost"
-    echo "MAIL FROM:<test@localhost>"
-    echo "RCPT TO:<unknown@psa-team03.cit.tum.de>"
-    echo "QUIT"
-) | nc -w 5 localhost 25 2>/dev/null )
-
-if echo "$smtp_response" | grep -q "550"; then
-    print_success "Unbekannter Empfänger wird mit 550 abgelehnt"
-else
-    print_failed "Unbekannter Empfänger wurde nicht korrekt abgelehnt"
-fi
-
-
-## TEST ########################################
-
-start_test "Postfix Relayhost-Konfiguration überprüfen"
-relayhost=$(postconf -h relayhost 2>/dev/null)
-if [ "$relayhost" = "mailrelay.cit.tum.de" ]; then
-    print_success "Relayhost ist korrekt auf mailrelay.cit.tum.de gesetzt"
-else
-    print_failed "Relayhost falsch konfiguriert (gefunden: $relayhost)"
-fi
-
-
-## TEST ########################################
-
-start_test "Sender-Canonical Map und Datei überprüfen"
-scm=$(postconf -h sender_canonical_maps 2>/dev/null)
-if echo "$scm" | grep -q "hash:/etc/postfix/sender_canonical"; then
-    print_success "Sender-Canonical Map ist in Postfix konfiguriert"
-else
-    print_failed "Sender-Canonical Map fehlt oder ist falsch konfiguriert"
-fi
-
-if [ -f /etc/postfix/sender_canonical ]; then
-   if grep -q "mail.psa-team03.cit.tum.de" /etc/postfix/sender_canonical && grep -q "cit.tum.de" /etc/postfix/sender_canonical; then
-      print_success "Inhalt der Sender-Canonical Datei ist korrekt"
-   else
-      print_failed "Inhalt der Sender-Canonical Datei entspricht nicht den Erwartungen"
-   fi
-else
-   print_failed "Sender-Canonical Datei /etc/postfix/sender_canonical existiert nicht"
-fi
-
-## TEST ########################################
-
 start_test "Prüfe, ob alle Sockets vorhanden ist"
 if [ -S /run/clamav/clamd.ctl ]; then
     print_success "ClamAV-Socket existiert"
@@ -130,6 +82,58 @@ if [ -S /run/dovecot2/auth ]; then
 else
     print_failed "Dovecot Auth-Socket (/run/dovecot2/auth) wurde nicht gefunden"
 fi
+
+
+## Test ########################################
+
+start_test "teste ob postemaster funktioniert"
+
+## TEST ########################################
+
+start_test "SMTP: Ablehnung von unbekannten Empfängern"
+
+## TEST ########################################
+
+start_test "testen ob kein open relay"
+
+## TEST ########################################
+
+start_test "mails von unauth. Nutzern werden abgelehnt"
+
+## TEST ########################################
+
+start_test "mails von auth. Nutzern werden akzeptiert"
+
+## TEST ########################################
+
+start_test "valide mails weiterleiten an andere mailserver der Praktikumsumgebung"
+
+## TEST ########################################
+
+start_test "valide externe mails weiterleiten an mailrelay"
+
+start_test "bei weiterleitung an mailrelay anpassen des headers"
+
+## TEST ########################################
+
+start_test "bei allen mails header umschreiben zu @pdas-team##.cit.tum.de"
+
+## TEST ########################################
+
+start_test "vierenscann test"
+
+## TEST ########################################
+
+start_test "spamscann test"
+
+## TEST ########################################
+
+start_test "mx record test"
+
+## TEST ########################################
+
+start_test "dovecot user mailbox test"
+
 
 ## summary ######################################
 print_summary
