@@ -298,7 +298,7 @@ sudo smbpasswd -a <username>
 sudo smbpasswd -e <username>
 ```
 
-Wir können das um Zeit zu sparen automatisieren:
+Wir können das um Zeit zu sparen automatisieren. Hierfür iterieren wir in einer Schleife über jeden Nutzer, setzen das Passwort auf `{user}smbpwsrd` und aktivieren diesen für Samba:
 
 ```
 #!/bin/bash
