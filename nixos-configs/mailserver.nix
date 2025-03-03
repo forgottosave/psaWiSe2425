@@ -16,7 +16,7 @@ in
     
     relayHost = "mailrelay.cit.tum.de";                # Relayhost für ausgehende E-Mails
 
-    relayDmains = [
+    relayDomains = [
       "psa-team01.cit.tum.de"
       "psa-team02.cit.tum.de"
       "psa-team06.cit.tum.de"
