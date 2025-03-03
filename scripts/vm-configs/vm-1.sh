@@ -35,7 +35,6 @@ sed_placeholders[system_packages]='
     nmap
     masscan
     lynis
-    rkhunter
     nikto
     gobuster
     john
