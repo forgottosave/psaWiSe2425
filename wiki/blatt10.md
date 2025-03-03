@@ -1,21 +1,21 @@
 # Aufgabenblatt 10
 
-In diesem Blatt geht es darum alle bisher erstellten Systeme zentral zu überwachen und bei Bedarf über Fehler informiert zu werden.
-Um dies umzusetzen haben wir uns für Prometheus und Grafana entschieden, wobei Prometheus die Metriken sammelt und Grafana diese visualisiert.
+In diesem Blatt geht es darum, alle bisher erstellten Systeme zentral zu überwachen und bei Bedarf über Fehler informiert zu werden.
+Um dies umzusetzen, haben wir uns für Prometheus und Grafana entschieden, wobei Prometheus die Metriken sammelt und Grafana diese visualisiert.
 
 Aufgaben:
 
-1. installieren von Prometheus und Grafana
+1. Installation von Prometheus und Grafana
 2. Überwachung der Dienste:
-    1. Betriebssystem -> ping, cpu load, Prozesse
-    2. Netzwerk -> router up, ping eigene Team VMs, ping andere Team VMs
-    3. DNS -> verfügbarkeit, prüfe ob Domain test domains auflöst, anzahl Anfragen
-    4. DHCP -> verfügbarkeit, anzahl anfragen
-    5. Webserver -> verfügbarkeit (http & https), ladezeit, anzahl anfragen
-    6. Datenbank -> verfügbarkeit (eigene & Team x), anzahl anfragen
-    7. Webanwendung -> verfügbarkeit, ladezeit, anzahl anfragen
-    8. Fileserver -> freien Speicherplatz
-    9. LDAP -> verfügbarkeit, anzahl anfragen
+    1. Betriebssystem -> Ping, CPU Load, Prozesse
+    2. Netzwerk -> Router up, Ping eigene Team-VMs, Ping andere Team-VMs
+    3. DNS -> Verfügbarkeit, prüfe, ob Domain-Tests auflöst, Anzahl Anfragen
+    4. DHCP -> Verfügbarkeit, Anzahl Anfragen
+    5. Webserver -> Verfügbarkeit (HTTP & HTTPS), Ladezeit, Anzahl Anfragen
+    6. Datenbank -> Verfügbarkeit (eigene & Team X), Anzahl Anfragen
+    7. Webanwendung -> Verfügbarkeit, Ladezeit, Anzahl Anfragen
+    8. Fileserver -> Freien Speicherplatz
+    9. LDAP -> Verfügbarkeit, Anzahl Anfragen
     10. Mail -> Länge der Warteschlange
 3. Für alle Dienste soll eine Art Status-Übersicht erstellt werden
 4. Alarmierung bei Fehlern aber auch mit alternative zum Mailserver
@@ -25,9 +25,9 @@ Aufgaben:
 
 ### 1. Installation
 
-#### 1.1) Konfiguaration von Nixos
+#### 1.1) Konfiguration von Nixos
 
-Zum deployen von Prometheus und Grafana haben wir uns entschieden Docker zu verwenden. Dafür haben wir zunächst das `docker-compose` pkg zur `configuration.nix` hinzugefügt und dann eine neue nixos-config `monitoring-config.nix` erstellt und in der `configuration.nix` importiert.
+Zum Deployen von Prometheus und Grafana haben wir uns entschieden, Docker zu verwenden. Dafür haben wir zunächst das `docker-compose`-Paket zur `configuration.nix` hinzugefügt und dann eine neue NixOS-Config `monitoring-config.nix` erstellt und in der `configuration.nix` importiert.
 
 ```nix
 # monitoring-config.nix
@@ -48,7 +48,7 @@ Hiermit sind nur noch Änderungen an der Firewall notwendig, um die Verbindung z
       iptables -A OUTPUT -p tcp --dport 9090 -j ACCEPT
 ```
 
-#### 1.2) Konfiguaration von Docker
+#### 1.2) Konfiguration von Docker
 
 Zunächst brauchen wir die folgenden Dateien und Verzeichnisse in denen nacher die Config-Datein der einzelnen Dienste liegen:
 
@@ -126,11 +126,11 @@ volumes:
   grafana-storage: {}
 ```
 
-Durch die obige compose Datei wird ein Prometheus-Server, ein Grafana-Server, ein Alertmanager und ein Blackbox-Exporter gestartet. Die Konfigurationsdateien für die einzelnen Dienste werden in den entsprechenden Verzeichnissen gemountet und für Dienste die Internetzugriff benötigen, wird der Proxy konfiguriert.
+Durch die obige compose-Datei wird ein Prometheus-Server, ein Grafana-Server, ein Alertmanager und ein Blackbox-Exporter gestartet. Die Konfigurationsdateien für die einzelnen Dienste werden in den entsprechenden Verzeichnissen gemountet und für Dienste die Internetzugriff benötigen, wird der Proxy konfiguriert.
+  
+#### 1.3) Konfiguration von Prometheus
 
-#### 1.3) Konfiguaration von Prometheus
-
-Prometheus sammelt Metriken von den verschiedenen Diensten und speichert diese in einer Datenbank. Die Konfiguration erfolgt über die `prometheus.yml` Datei. Hier werden abgesehen von ein par globalen einstellungen, die verschiedenen Dienste definiert, die Prometheus überwachen soll:
+Prometheus sammelt Metriken von den verschiedenen Diensten und speichert diese in einer Datenbank. Die Konfiguration erfolgt über die `prometheus.yml` Datei. Hier werden abgesehen von ein paar globalen Einstellungen die verschiedenen Dienste definiert, die Prometheus überwachen soll:
 
 ```yml
 # prometheus.yml
@@ -165,26 +165,20 @@ iptables -F
 docker compose up -d
 ```
 
-#### 1.4) Konfiguaration von Grafana
+#### 1.4) Konfiguration von Grafana
 
 Wenn Grafana zum erstenmal gestartet wird, muss ein neues Passwort gesetzt werden. Zunächst muss man sich mit dem Standard-Login `admin` und Passwort `admin` anmelden und wird dann nach einen neuen Passwort gefragt.
 
-Jetzt muss nur noch Prometheus als Datenquelle hinzugefügt werden und dann ist auch Grafane einsatzbereit. Hierzu wählt man im linken Menü uter dem Reiter "Connections” "Data Sources" aus. Dort dann auf "Add data source" klicken und "Prometheus" als Datenquelle auswählen. Die URL sollte auf http://prometheus:9090 gesetzt werden und dann auf "Save & Test" klicken. (Wichtig: der Hostname muss `prometheus` sein)
-
-
-
-
-
-
+Jetzt muss nur noch Prometheus als Datenquelle hinzugefügt werden und dann ist auch Grafana einsatzbereit. Hierzu wählt man im linken Menü unter dem Reiter "Connections” "Data Sources" aus. Dort dann auf "Add data source" klicken und "Prometheus" als Datenquelle auswählen. Die URL sollte auf `http://prometheus:9090` gesetzt werden und dann auf "Save & Test" klicken. (Wichtig: der Hostname muss `prometheus` sein)
 
 ### 2. Überwachung der Dienste
 
 #### 2.1) Betriebssystem
 
-Zunächst sollen die beidem vm1 und vm2 überwacht werden. Dafür müssen wir auf den beiden VMs den node-exporter installieren. Dieser sammelt Metriken über das Betriebssystem und stellt sie Prometheus zur Verfügung.
+Zunächst sollen die beiden vm1 und vm2 überwacht werden. Dafür müssen wir auf den beiden VMs den node-exporter installieren. Dieser sammelt Metriken über das Betriebssystem und stellt sie Prometheus zur Verfügung.
 
 ```nix
-# os-expoerter.nix
+# os-exporter.nix
 { config, lib, pkgs, ... }:
 {
   services.prometheus.exporters.node = {
@@ -223,7 +217,6 @@ Worauf unter `http://131.159.74.56:60312/targets` die beiden VMs als `UP` angeze
 Nun können wir in Grafana die Metriken visualisieren. Dafür erstellen wir ein neues Dashboard und fügen ein Panel hinzu. Eine tolle Sache an Grafana ist hier das es bereits viele fertige Dashboards gibt, wie das `https://grafana.com/grafana/dashboards/1860-node-exporter-full/` Dashboard welches alle Metriken des node-exporters visualisiert.
 
 Um dieses Dashboard zu verwenden, müssen wir es in Grafana importieren. Dafür gehen wir auf `Dashboard` -> `New` -> `Import` und geben die ID des Dashboards ein. In diesem Fall `1860`. Nun muss nur noch `Prometheus` als Datenquelle ausgewählt werden und das Dashboard ist einsatzbereit.
-
 
 #### 2.2) Netzwerk
 
@@ -280,7 +273,7 @@ Nun brauchen wir noch noch einen euen Job in der `prometheus.yml` Datei, um den 
         replacement: blackbox:9115  # muss blackbox:9115 sein
 ```
 
-In grafana importieren wir nun das interface https://grafana.com/grafana/dashboards/13659-blackbox-exporter-http-prober/ und nach etwas Anpassung haben nun eine schöne Übersicht über die Erreichbarkeit der verschiedenen Server.
+In grafana importieren wir nun das interface `https://grafana.com/grafana/dashboards/13659-blackbox-exporter-http-prober/` und nach etwas Anpassung haben nun eine schöne Übersicht über die Erreichbarkeit der verschiedenen Server.
 
 #### 2.3) DNS
 
@@ -313,9 +306,7 @@ dann nur noch zu prometheus hinzufügen:
             - "192.168.3.3:9153"
 ```
 
-grafana: https://grafana.com/grafana/dashboards/14981-coredns/
-
-
+grafana: `https://grafana.com/grafana/dashboards/14981-coredns/`
 
 #### 2.4) DHCP
 
@@ -355,7 +346,7 @@ einen neuen exporter router-exporter.nix:
 }
 ```
 
-grafana https://grafana.com/grafana/dashboards/12688-kea-dhcp/
+grafana `https://grafana.com/grafana/dashboards/12688-kea-dhcp/`
 
 #### 2.5) Webserver
 
@@ -409,8 +400,7 @@ neuer prometheus job:
         replacement: 192.168.3.6:9102  # muss blackbox:9115 sein
 ```
 
-grafana: https://grafana.com/grafana/dashboards/13659-blackbox-exporter-http-prober/
-
+grafana: `https://grafana.com/grafana/dashboards/13659-blackbox-exporter-http-prober/`
 
 #### 2.6) Datenbank
 
@@ -476,7 +466,6 @@ Quellen:
 
 #### 2.7) Webanwendung
 
-#funktioniert, fertig?
 cadvisor zu homeassistant compose file:
 
 ```yml
@@ -497,7 +486,7 @@ cadvisor zu homeassistant compose file:
     privileged: true
 ```
 
-grafana: https://grafana.com/grafana/dashboards/19792-cadvisor-dashboard/
+grafana: `https://grafana.com/grafana/dashboards/19792-cadvisor-dashboard/`
 
 #### 2.8) Fileserver
 
@@ -509,7 +498,7 @@ grafana: https://grafana.com/grafana/dashboards/19792-cadvisor-dashboard/
           - '192.168.3.8:9100' #vm1
 ```
 
-grafana: https://grafana.com/grafana/dashboards/13976-node-exporter-full/
+grafana: `https://grafana.com/grafana/dashboards/13976-node-exporter-full/`
 anpassen sodass belegter und noch freier Speicherplatz angezeigt wird
 
 #### 2.9) LDAP

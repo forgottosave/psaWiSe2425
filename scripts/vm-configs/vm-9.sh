@@ -30,6 +30,7 @@ sed_placeholders[system_packages]='
     inetutils
     mailutils
     nullmailer
+    swaks
 '
 
 sed_placeholders[root_access]='

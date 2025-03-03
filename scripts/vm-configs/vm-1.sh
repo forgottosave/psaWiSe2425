@@ -32,6 +32,13 @@ sed_placeholders[system_packages]='
     inetutils
     mailutils
     nullmailer
+    nmap
+    masscan
+    lynis
+    rkhunter
+    nikto
+    gobuster
+    john
 '
 
 sed_placeholders[root_access]='
