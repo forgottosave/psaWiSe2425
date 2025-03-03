@@ -28,6 +28,8 @@ sed_placeholders[system_packages]='
     traceroute
     dhcpdump
     inetutils
+    mailutils
+    nullmailer
 '
 
 sed_placeholders[root_access]='

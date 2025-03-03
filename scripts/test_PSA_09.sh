@@ -107,24 +107,30 @@ start_test "mails von auth. Nutzern werden akzeptiert"
 ## TEST ########################################
 
 start_test "valide mails weiterleiten an andere mailserver der Praktikumsumgebung"
+#echo "Testnachricht" |mail -s "Testbetreff" -r "benjamin.liertz@psa-team03.cit.tum.de" gedeon.lenz@psa-team01.cit.tum.de
 
 ## TEST ########################################
 
 start_test "valide externe mails weiterleiten an mailrelay"
+#echo "Testnachricht" |mail -s "Testbetreff" -r "benjamin.liertz@psa-team03.cit.tum.de" benjamin.liertz@tum.de
 
 start_test "bei weiterleitung an mailrelay anpassen des headers"
 
 ## TEST ########################################
 
-start_test "bei allen mails header umschreiben zu @pdas-team##.cit.tum.de"
+start_test "bei allen mails header umschreiben zu @psa-team##.cit.tum.de"
+# senden email mit nullmail mit from "benjamin.liertz@vmpsateam03-01.psa-team03.cit.tum.de"
+# prüfen von /var/log/mail.log
 
 ## TEST ########################################
 
-start_test "vierenscann test"
+start_test "vierenscan test"
+# echo "Test email with EICAR" | mail -s "Test Email" -A eicar.txt benjamin.liertz@psa-team03.cit.tum.de
+# prüfen von /var/log/mail.log
 
 ## TEST ########################################
 
-start_test "spamscann test"
+start_test "spamscan test"
 
 ## TEST ########################################
 
@@ -133,6 +139,7 @@ start_test "mx record test"
 ## TEST ########################################
 
 start_test "dovecot user mailbox test"
+# elnet 127.0.0.1 143 -> a login benjamin.liertz <password> -> a select INBOX
 
 
 ## summary ######################################

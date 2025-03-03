@@ -29,6 +29,9 @@ sed_placeholders[system_packages]='
     bind
     dhcpdump
     dhcping
+    inetutils
+    mailutils
+    nullmailer
 '
 
 sed_placeholders[root_access]='
