@@ -135,7 +135,7 @@ Mit `rsync` können wir einfach alle Verzeichnisse synchronizieren (wir nutzen h
    done
    ```
 
-   Lediglich der Webserver DocumenRoot auf **VM 6** und das Datenbank-Verzeichnis von **VM 4** fehlen noch:
+   Lediglich der Webserver DocumentRoot auf **VM 6** und das Datenbank-Verzeichnis von **VM 4** fehlen noch:
 
    ```shell
    rsync -avz -e "ssh -p 60306" --progress root@psa.in.tum.de:/etc/nixos/sites .

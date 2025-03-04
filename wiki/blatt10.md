@@ -41,7 +41,7 @@ Zum Deployen von Prometheus und Grafana haben wir uns entschieden, Docker zu ver
 Hiermit sind nur noch Änderungen an der Firewall notwendig, um die Verbindung zu Dockerhub zu erlauben und die Ports für Prometheus und Grafana freizugeben:
 
 ```nix
-#TODO
+#vm-network-config.nix
       iptables -A INPUT -p tcp --dport 9100 -j ACCEPT
       iptables -A INPUT -p tcp --dport 9090 -j ACCEPT
       iptables -A OUTPUT -p tcp --dport 9100 -j ACCEPT 
