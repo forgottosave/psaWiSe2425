@@ -4,7 +4,7 @@ let
     domain = "ldap.team03.psa.cit.tum.de";
 
     rootName = "admin";
-    rootPw = "{SSHA}lcmBfaWPfrVVkG6Bb5TuTqkmvwwjP4JK"; # pwd
+    rootPw = "{SSHA}2z9hw3YwUr94eBUdGhUmcnZht0TyF7VW"; # ldapadmin123
 
     ssl.crtFile = "/etc/ssl/openldap/slapd.crt";
     ssl.keyFile = "/etc/ssl/openldap/slapd.key";
@@ -36,24 +36,14 @@ in
                 olcTLSCipherSuite = "DEFAULT:!kRSA:!kDHE";
             };
             children = {
-                # Database
                 "olcDatabase={1}mdb".attrs = {
                     objectClass = ["olcDatabaseConfig" "olcMdbConfig"];
                     olcDatabase = "{1}mdb";
-
-                    # Base DN for all entries in the database
                     olcSuffix = baseDN;
-
-                    # Credentials for DN without access restrictions
-                    # Meta, doesn't actually need to exist in the database
                     olcRootDN = "cn=${rootName},${baseDN}";
                     olcRootPW = rootPw;
-
-                    # Directory to store the database in
                     olcDbDirectory = "/var/lib/openldap/data";
-
                     olcAccess = [
-                        # linux root user: full access
                         ''
                           {0}to *
                            by dn.exact=uidNumber=0+gidNumber=0,cn=peercred,cn=external,cn=auth manage
