@@ -36,9 +36,25 @@ Submission:
 | ----- | ----------------------- | ------------ | ---------------------------- |
 | all   |                         |              |                              |
 
-## Team
+## Virtual Machines
 
 Team VMs: https://psa.in.tum.de/xwiki/bin/view/PSA%20WiSe%202024%20%202025/Teams/
+
+| VM | Purpose | Works | Config Ready | Anmerkungen (was fehlt)                     |
+| -- | ------- | ----- | ------------ | ------------------------------------------- |
+| 1  | default | X     | !            |                                             |
+| 2  | db-copy |       | !            | abhängig VM 4                               |
+| 3  | router  |       |              |                                             |
+| 4  | db      |       | !            | abhängig VM 8                               |
+| 5  | web-app | !     | !            |                                             |
+| 6  | website |       | !            | abhängig VM 8                               |
+| 7  | ldap    |       |              | fehlt komplett!                             |
+| 8  | files   |       |              | *broken*                                    |
+| 9  | mail    |       |              |                                             |
+| 10 | monitor | !     | !            |                                             |
+
+- *Works* = is providing its intended service
+- *Config Ready* = config probably complete (regardless of if it runs right now)
 
 ## Wiki
 
