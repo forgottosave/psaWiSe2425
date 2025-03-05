@@ -136,11 +136,11 @@ in
       access_log /var/log/nginx/access.log combined_anon;
       error_log /var/log/nginx/error.log;
     '';
-    appendHttpConfig = 
-    ''
-      add_header X-Frame-Options "SAMEORIGIN";
-      add_header X-Content-Type-Options "nosniff";
-    '';
+    #appendHttpConfig = 
+    #''
+    #  add_header X-Frame-Options "SAMEORIGIN";
+    #  add_header X-Content-Type-Options "nosniff";
+    #'';
   };
 
   # Für jeden User wird eine fcgiwrap Service Instanz erzeugt
