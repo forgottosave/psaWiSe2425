@@ -51,7 +51,7 @@ mkdir -p "$ATTACH_DIR"
 TAIL_CMD="tail -n +2 $INPUT_FILE"
 
 # Process all users
-while IFS="," read -r Name Vorname Geschlecht Geburtsdatum Geburtsort Nationalitaet Strasse PLZ Ort Telefon Matrikelnummer UID User; do
+while IFS="," read -r Name Vorname Geschlecht Geburtsdatum Geburtsort Nationalitaet Strasse PLZ Ort Telefon Matrikelnummer UserId User; do
     
     # .ldif file & user directory
     FILE="$OUTPUT_DIR/$User.ldif"
@@ -87,7 +87,7 @@ objectClass: pkiUser
 objectClass: auxPerson
 uid: $User
 cn: $Vorname $Name
-uidNumber: $UID
+uidNumber: $UserId
 gidNumber: 1000
 homeDirectory: /home/$User
 loginShell: /bin/bash
