@@ -10,7 +10,7 @@ In diesem Blatt geht es darum einen LDAP Server (VM 7) einzurichten und diesen v
 
 Lösungsansätze:
 
-- [x] **FAILED** Anleitung: Fehler bei Einlesen con base.ldif
+- [x] **SOLVED** Anleitung: Fehler bei Einlesen con base.ldif
     `sudo ldapadd -H ldapi:// -Y EXTERNAL -f base.ldif`
 
     ```shell
@@ -19,12 +19,19 @@ Lösungsansätze:
            additional info: invalid DN
     ```
 
-    Schon 2-mal von vorne versucht...
-    Hab es nicht hinbekommen das Problem zu lösen, weiß nicht was schief läuft.
-    Wenn man das hinbekommen würde wäre das hier ein möglicher Lösungsansatz...
-    Optional auch erstmal ohne SSL. Schauen ob das klappt?
+    ~~Schon 2-mal von vorne versucht...~~
+    ~~Hab es nicht hinbekommen das Problem zu lösen, weiß nicht was schief läuft.~~
+    ~~Wenn man das hinbekommen würde wäre das hier ein möglicher Lösungsansatz...~~
+    ~~Optional auch erstmal ohne SSL. Schauen ob das klappt?~~
 
-    Idee: vielleicht liegt das an irendwelchen DNS geschichten? needs investigation
+    Test Hat geklappt, nachdem
+
+    1. SSL-Zeritifikat, custom.ldif & nix-config fertig waren
+    2. ich dann nochmal `/etc/openldap/` und `/var/lib/openldap/` gelöscht habe
+    3. und dann `openldap.enable` in der nix-config einmal deaktiviert und wieder aktivier habe
+
+    Das hat anscheinend alles nochmal richtig geladen.
+    Versuche es jetzt weiter...
 
 - [ ] Dieser Arch-Linux LDAP Anleitung folgen: [wiki.archlinux.org](https://wiki.archlinux.org/title/OpenLDAP)
     Optional auch erstmal ohne SSL. Schauen ob das klappt?

@@ -13,7 +13,7 @@ in
     services.openldap = {
         enable = true;
         package = pkgs.openldap;
-        urlList = [ldapi:/// ldaps:///];
+        urlList = ["ldapi:///" "ldaps:///"];
         mutableConfig = true;
         settings = {
             attrs = {
