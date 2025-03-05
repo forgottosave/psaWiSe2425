@@ -75,7 +75,11 @@ while IFS="," read -r Name Vorname Geschlecht Geburtsdatum Geburtsort Nationalit
     CERT_FILE="$USER_DIR/$User.crt"
     KEY_FILE="$USER_DIR/$User.key"
     openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout $KEY_FILE -out $CERT_FILE -subj "/C=DE/ST=Bayern/L=München/O=TUM-PSA/OU=users/CN=$User/emailAddress=$User@psa-team03.cit.tum.de"
-    Certificate=$(openssl x509 -in $CERT_FILE -outform DER)
+    # generate base64 binary to pass in .ldif
+    base64 -w 0 $CERT_FILE > $CERT_FILE.b64
+    Certificate=$(cat $CERT_FILE.b64)
+    rm $CERT_FILE.b64
+    #Certificate=$(openssl x509 -in $CERT_FILE -outform DER)
 
     # Create .ldif file for user
     echo "    Generating $User.ldif..."
@@ -91,7 +95,7 @@ uidNumber: $UserId
 gidNumber: 1000
 homeDirectory: /home/$User
 loginShell: /bin/bash
-userPassword: {SSHA}$PasswordHash
+userPassword: $PasswordHash
 userCertificate;binary:: $Certificate
 givenName: $Name
 sn: $User
