@@ -39,7 +39,15 @@ Lösungsansätze:
     -> fertige Tabelle mit allen (Praktikum & csv) Nutzern
     -> nur ein Skript für alle :)
 
-    generate config: `./ldap-user-config.sh -g`
+    generate config `./ldap-user-config.sh -g` & apply `-a`
+
+    User erfolgreich durch Mega-Skript hinzugefügt -> Zertifikate & Passwörter aktuell in commit `b845478`, als Info falls das aus versehen geändert wird :)
+
+    TODOs:
+
+  - Nutzer-Verzeichnisse für neue csv Nutzer anlegen & mounten
+  - Zugriff auf LDAP Server einschränken
+  - Clients einrichten!
 
 - [ ] Dieser Arch-Linux LDAP Anleitung folgen: [wiki.archlinux.org](https://wiki.archlinux.org/title/OpenLDAP)
     Optional auch erstmal ohne SSL. Schauen ob das klappt?
