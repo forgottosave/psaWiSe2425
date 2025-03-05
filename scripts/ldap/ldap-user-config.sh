@@ -76,8 +76,10 @@ while IFS="," read -r Name Vorname Geschlecht Geburtsdatum Geburtsort Nationalit
     KEY_FILE="$USER_DIR/$User.key"
     openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout $KEY_FILE -out $CERT_FILE -subj "/C=DE/ST=Bayern/L=München/O=TUM-PSA/OU=users/CN=$User/emailAddress=$User@psa-team03.cit.tum.de"
     # generate base64 binary to pass in .ldif
-    base64 -w 0 $CERT_FILE > $CERT_FILE.b64
+    openssl x509 -in $CERT_FILE -outform der -out $CERT_FILE.der
+    base64 -w 0 $CERT_FILE.der > $CERT_FILE.b64
     Certificate=$(cat $CERT_FILE.b64)
+    rm $CERT_FILE.der
     rm $CERT_FILE.b64
     #Certificate=$(openssl x509 -in $CERT_FILE -outform DER)
 
