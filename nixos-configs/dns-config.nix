@@ -5,7 +5,7 @@
     enable = true;
     config = ''
         (default) {
-            bind enp0s8
+            bind 127.0.0.1 enp0s8
             root /etc/nixos/dns
             log
             prometheus :9153
