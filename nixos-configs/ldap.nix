@@ -15,43 +15,43 @@ in
         package = pkgs.openldap;
         urlList = [ldapi:/// ldaps:///];
         mutableConfig = true;
-        #settings = {
-        #    attrs = {
-        #        olcLogLevel = ["stats" "conns" "config" "acl"];
-        #        olcTLSCertificateFile = ssl.crtFile;
-        #        olcTLSCertificateKeyFile = ssl.keyFile;
-        #        olcTLSProtocolMin = "3.3";
-        #        olcTLSCipherSuite = "DEFAULT:!kRSA:!kDHE";
-        #    };
-        #    children = {
-        #        "olcDatabase={1}mdb".attrs = {
-        #            objectClass = ["olcDatabaseConfig" "olcMdbConfig"];
-        #            olcDatabase = "{1}mdb";
-        #            olcSuffix = baseDN;
-        #            olcRootDN = "cn=${rootName},${baseDN}";
-        #            olcRootPW = rootPw;
-        #            olcDbDirectory = "/var/lib/openldap/data";
-        #            olcAccess = [
-        #                ''
-        #                  {0}to *
-        #                   by dn.exact=uidNumber=0+gidNumber=0,cn=peercred,cn=external,cn=auth manage
-        #                   by * break
-        #                ''
-        #            ];
-        #        };
-        #        "cn=schema".includes = [
-        #            # required
-        #            "${pkgs.openldap}/etc/schema/core.ldif"
-        #            # NIS
-        #            "${pkgs.openldap}/etc/schema/cosine.ldif"
-        #            "${pkgs.openldap}/etc/schema/inetorgperson.ldif"
-        #            # posixAccount & posixGroup
-        #            "${pkgs.openldap}/etc/schema/nis.ldif"
-        #            # custom users
-        #            ./user-schema.ldif
-        #        ];
-        #    };  
-        #};
+        settings = {
+            attrs = {
+                olcLogLevel = ["stats" "conns" "config" "acl"];
+                olcTLSCertificateFile = ssl.crtFile;
+                olcTLSCertificateKeyFile = ssl.keyFile;
+                olcTLSProtocolMin = "3.3";
+                olcTLSCipherSuite = "DEFAULT:!kRSA:!kDHE";
+            };
+            children = {
+                "olcDatabase={1}mdb".attrs = {
+                    objectClass = ["olcDatabaseConfig" "olcMdbConfig"];
+                    olcDatabase = "{1}mdb";
+                    olcSuffix = baseDN;
+                    olcRootDN = "cn=${rootName},${baseDN}";
+                    olcRootPW = rootPw;
+                    olcDbDirectory = "/var/lib/openldap/data";
+                    olcAccess = [
+                        ''
+                          {0}to *
+                           by dn.exact=uidNumber=0+gidNumber=0,cn=peercred,cn=external,cn=auth manage
+                           by * break
+                        ''
+                    ];
+                };
+                "cn=schema".includes = [
+                    # required
+                    "${pkgs.openldap}/etc/schema/core.ldif"
+                    # NIS
+                    "${pkgs.openldap}/etc/schema/cosine.ldif"
+                    "${pkgs.openldap}/etc/schema/inetorgperson.ldif"
+                    # posixAccount & posixGroup
+                    "${pkgs.openldap}/etc/schema/nis.ldif"
+                    # custom users
+                    ./user-schema.ldif
+                ];
+            };  
+        };
 
         #settings = {
         #    attrs = {

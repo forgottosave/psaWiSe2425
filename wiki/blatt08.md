@@ -26,7 +26,7 @@ Lösungsansätze:
 
     Idee: vielleicht liegt das an irendwelchen DNS geschichten? needs investigation
 
-- [ ] Dieser Arch-Linux LDAP Anleitung folgen: https://wiki.archlinux.org/title/OpenLDAP
+- [ ] Dieser Arch-Linux LDAP Anleitung folgen: [wiki.archlinux.org](https://wiki.archlinux.org/title/OpenLDAP)
     Optional auch erstmal ohne SSL. Schauen ob das klappt?
 
 - [ ] Einrichten auf einem nicht-NixOS System & hoffen dass man es da hinbekommt (mehr Anleitungen, Quellen, etc.)
