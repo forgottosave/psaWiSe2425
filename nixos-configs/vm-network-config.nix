@@ -145,7 +145,7 @@
   };  
 
   networking.useNetworkd = true;
-  networking..proxy.noProxy = "localhost,127.0.0.1,192.168.0.0/16";
+  networking.proxy.noProxy = "localhost,127.0.0.1,192.168.0.0/16";
 
   systemd.network = {
     enable = true;
