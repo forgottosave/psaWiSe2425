@@ -87,6 +87,9 @@
       # allow clamav
       iptables -A OUTPUT -d 104.16.218.84 -j ACCEPT
       iptables -A OUTPUT -d 104.16.219.84 -j ACCEPT
+      # wpad proxy
+      iptables -A OUTPUT -d 129.187.254.50 -j ACCEPT
+      iptables -A OUTPUT -d 129.187.254.49 -j ACCEPT 
 
       # Allow: ICMP 
       iptables -A INPUT -p icmp -j ACCEPT
@@ -142,6 +145,7 @@
   };  
 
   networking.useNetworkd = true;
+  networking..proxy.noProxy = "localhost,127.0.0.1,192.168.0.0/16";
 
   systemd.network = {
     enable = true;

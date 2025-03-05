@@ -33,7 +33,7 @@
     proxy.httpsProxy = "http://proxy.cit.tum.de:8080/"; 
     proxy.httpProxy = "http://proxy.cit.tum.de:8080/";
 
-    proxy.noProxy = "vm1.psa-team03.cit.tum.de,vm2.psa-team03.cit.tum.de,router.psa-team01.cit.tum.de";
+    proxy.noProxy = "localhost,127.0.0.1,192.168.0.0/16";
 
     nat = {
       enable = true;
@@ -120,6 +120,9 @@
       iptables -A OUTPUT -d 54.227.20.253 -j ACCEPT
       iptables -A OUTPUT -d 54.236.113.205 -j ACCEPT
       iptables -A OUTPUT -d 54.198.86.24 -j ACCEPT
+      # wpad proxy
+      iptables -A OUTPUT -d 129.187.254.50 -j ACCEPT
+      iptables -A OUTPUT -d 129.187.254.49 -j ACCEPT 
 
       # Allow: Forrwarding between the networks
       # intern->extern
