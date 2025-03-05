@@ -118,8 +118,20 @@ fi
 ## Apply ##################################################
 if [ "$APPLY" = true ] ; then
 
-echo "Apply .ldif files..."
-echo TODO
+echo "Apply .ldif files to LDAP server..."
+
+for file in "$OUTPUT_DIR"/*.ldif; do
+    [ -f "$file" ] || continue # Ensure file format
+    
+    User=$(basename "$file" .ldif)
+
+    # check if user exists in LDAP already
+    echo "  Warning: not checking if user exists already. Modifying users currently not supported."
+
+    # apply new user
+    echo "  Appling user $User from file $file..."
+    sudo ldapmodify -ac -Y EXTERNAL -H ldapi:// -Q -f $file
+done
 
 fi
 ###########################################################
