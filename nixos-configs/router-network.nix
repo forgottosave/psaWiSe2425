@@ -35,7 +35,7 @@
 
     proxy.noProxy = "localhost,127.0.0.1,192.168.0.0/16";
 
-    nameservers = [ "127.0.0.1" "192.168.2.1"];
+    nameservers = [ "127.0.0.1" "192.168.2.1" "9.9.9.9" ];
 
     nat = {
       enable = true;
