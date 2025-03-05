@@ -33,6 +33,12 @@ Lösungsansätze:
     Das hat anscheinend alles nochmal richtig geladen.
     Versuche es jetzt weiter...
 
+    `rsync -avz -e "ssh" --progress ge96xok@psa.in.tum.de:/opt/psa/data/Aufgabe_8/benutzerdaten.csv scripts/ldap` + Benutzerdaten der Praktikumsteilnehmer hinzufügen (default Daten wo unbekannt)
+
+    `=LOWER(LEFT(A22 & B22, 5))` für User ID Generierung der nicht-Praktikums-Nutzer
+    -> fertige Tabelle mit allen (Praktikum & csv) Nutzern
+    -> nur ein Skript für alle :)
+
 - [ ] Dieser Arch-Linux LDAP Anleitung folgen: [wiki.archlinux.org](https://wiki.archlinux.org/title/OpenLDAP)
     Optional auch erstmal ohne SSL. Schauen ob das klappt?
 
