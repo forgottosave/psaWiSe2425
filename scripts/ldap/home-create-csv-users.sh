@@ -4,6 +4,7 @@
 
 THIS_DIR=$(dirname "$0")
 ## Defaults
+INPUT_FILE="benutzerdaten.csv"
 OUTPUT_DIR="/export/home"
 GENERATE=false
 DELETE=false
