@@ -36,7 +36,7 @@ Lösungsansätze:
     `rsync -avz -e "ssh" --progress ge96xok@psa.in.tum.de:/opt/psa/data/Aufgabe_8/benutzerdaten.csv scripts/ldap` + Benutzerdaten der Praktikumsteilnehmer hinzufügen (default Daten wo unbekannt)
 
     `=LOWER(LEFT(A22 & B22, 5))` für User ID Generierung der nicht-Praktikums-Nutzer
-    -> fertige Tabelle mit allen (Praktikum & csv) Nutzern
+    -> fertige Tabelle mit allen (Praktikum & csv) Nutzern (vielleicht auch nochmal hochladen)
     -> nur ein Skript für alle :)
 
     generate config `./ldap-user-config.sh -g` & apply `-a`
