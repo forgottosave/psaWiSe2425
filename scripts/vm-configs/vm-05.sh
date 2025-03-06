@@ -7,6 +7,9 @@ include_files=(
     user-config.nix
     homeassistant.nix
     flake.nix
+    ldap-client.nix
+    slapd.crt
+    sssd.conf
 )
 
 # SED placeholders
@@ -19,6 +22,7 @@ sed_placeholders[imports]='
     ./vm-network-config.nix
     ./user-config.nix
     ./homeassistant.nix
+    ./ldap-client.nix
 '
 
 sed_placeholders[system_packages]='
