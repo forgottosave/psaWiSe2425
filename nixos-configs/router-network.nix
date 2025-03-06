@@ -33,7 +33,7 @@
     proxy.httpsProxy = "http://proxy.cit.tum.de:8080/"; 
     proxy.httpProxy = "http://proxy.cit.tum.de:8080/";
 
-    proxy.noProxy = "localhost,127.0.0.1,192.168.0.0/16";
+    proxy.noProxy = "localhost,127.0.0.1,192.168.0.0/16,.cit.tum.de";
 
     nameservers = [ "127.0.0.1" "192.168.2.1" "9.9.9.9" ];
 
