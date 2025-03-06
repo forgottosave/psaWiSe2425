@@ -9,8 +9,10 @@ include_files=(
     ldap-client.nix
     slapd.crt
     sssd.conf
+    user-config.nix
+    csv-users.nix
 )
-#user-config.nix
+
 
 # SED placeholders
 declare -A sed_placeholders
@@ -22,10 +24,9 @@ sed_placeholders[imports]='
     ./vm-network-config.nix
     ./homeassistant.nix
     ./ldap-client.nix
- 
+    ./user-config.nix
+    ./csv-users.nix
 '
-#    ./user-config.nix
-#    ./csv-users.nix
 
 sed_placeholders[system_packages]='
     git

@@ -6,7 +6,7 @@ THIS_DIR=$(dirname "$0")
 ## Defaults
 INPUT_FILE="benutzerdaten.csv"
 OUTPUT_DIR="nix-user-configs"
-FILE="$OUTPUT_DIR/users.nix"
+FILE="$OUTPUT_DIR/csv-users.nix"
 GENERATE=false
 APPLY=false
 HELP="\033[0;1mNix user config generation for users from csv...
@@ -68,13 +68,13 @@ while IFS="," read -r Name Vorname Geschlecht Geburtsdatum Geburtsort Nationalit
     # Create .nix entry for user
     echo "    Generating $User.ldif..."
     cat >> "$FILE" <<EOL  
-  users.users.$User = {  
-    isNormalUser = true;  
-    home = "/home/$User";  
-    uid = $UserId;  
-    group = "students";  
-    homeMode = "701";
-  };
+  #users.users.$User = {  
+  #  isNormalUser = true;  
+  #  home = "/home/$User";  
+  #  uid = $UserId;  
+  #  group = "students";  
+  #  homeMode = "701";
+  #};
   fileSystems."/home/$User" = {
     device = "192.168.3.8:/home/$User";
     fsType = "nfs";

@@ -47,7 +47,8 @@ Lösungsansätze:
 
     Zugriff auf LDAP Server einschränken -> nixos config
 
-    Client: password authentication erlauben, `sssd.config` & `slapd.crt` jedem bereitstellen + `/etc/secrets/sssd.env` anlegen
+    Client: password authentication erlauben, `sssd.config` & `slapd.crt` jedem bereitstellen `sudo ldapadd -H ldapi:// -Y EXTERNAL -f sssd.ldif`
+    und `/etc/secrets/sssd.env` anlegen
 
 - [ ] Dieser Arch-Linux LDAP Anleitung folgen: [wiki.archlinux.org](https://wiki.archlinux.org/title/OpenLDAP)
     Optional auch erstmal ohne SSL. Schauen ob das klappt?
