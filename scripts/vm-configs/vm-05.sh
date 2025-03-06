@@ -4,13 +4,13 @@
 include_files=(
     configuration.nix
     vm-network-config.nix
-    user-config.nix
     homeassistant.nix
     flake.nix
     ldap-client.nix
     slapd.crt
     sssd.conf
 )
+#user-config.nix
 
 # SED placeholders
 declare -A sed_placeholders
@@ -20,10 +20,12 @@ sed_placeholders[vm]="$VM_NUMBER"
 sed_placeholders[imports]='
     ./hardware-configuration.nix
     ./vm-network-config.nix
-    ./user-config.nix
     ./homeassistant.nix
     ./ldap-client.nix
+ 
 '
+#    ./user-config.nix
+#    ./csv-users.nix
 
 sed_placeholders[system_packages]='
     git

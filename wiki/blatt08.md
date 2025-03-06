@@ -37,7 +37,7 @@ Lösungsansätze:
 
     `=LOWER(LEFT(A22 & B22, 5))` für User ID Generierung der nicht-Praktikums-Nutzer
     -> fertige Tabelle mit allen (Praktikum & csv) Nutzern (vielleicht auch nochmal hochladen)
-    -> nur ein Skript für alle :)
+    -> nur ein Skript für alle `:)`
 
     generate config `./ldap-user-config.sh -g` & apply `-a`
 
