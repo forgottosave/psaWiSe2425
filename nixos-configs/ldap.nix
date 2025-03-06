@@ -32,10 +32,41 @@ in
                     olcRootPW = rootPw;
                     olcDbDirectory = "/var/lib/openldap/data";
                     olcAccess = [
+                        # root access
                         ''
                           {0}to *
                            by dn.exact=uidNumber=0+gidNumber=0,cn=peercred,cn=external,cn=auth manage
                            by * break
+                        ''
+                        # sssd
+                        ''
+                         {1}to *
+                          by dn.exact=cn=sssd,${baseDN} read
+                          by * break
+                        ''
+                        # bind and change password
+                        ''
+                         {2}to attrs=userPassword
+                          by anonymous auth
+                          by self write
+                          by * none
+                        ''
+                        # anonymous UID search access
+                        ''
+                         {3}to attrs=entry,uid
+                          by * read
+                        ''
+                        # share certificates
+                        ''
+                         {4}to attrs=userCertificate
+                          by users read
+                          by * none
+                        ''
+                        # self access
+                        ''
+                         {5}to *
+                          by self read
+                          by * none
                         ''
                     ];
                 };
