@@ -19,7 +19,7 @@
   services.openssh = {
     enable = true;                                  # Enable the OpenSSH daemon
     settings.PermitRootLogin = "prohibit-password";          # Disable root passwd login
-    settings.PasswordAuthentication = false;                 # Disable password authentication
+    settings.PasswordAuthentication = true;                 # Disable password authentication
     # settings.PermitRootLogin = "yes";               # Enable root login
   };
 
