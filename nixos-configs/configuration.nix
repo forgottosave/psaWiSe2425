@@ -42,41 +42,10 @@
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
   nix.optimise.automatic = true;
 
-  # accept our custom LDAP certificate
-  security.pki.certificates = [''-----BEGIN CERTIFICATE-----
-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
-RSYoXOqWJ79mGqUfEOu/DVWZhC7Ystc=
------END CERTIFICATE-----''];
+  # make bash shebang available
+  systemd.tmpfiles.rules = [
+    "L /bin/bash - - - - /run/current-system/sw/bin/bash"
+  ];
 
   # Pick only one of the below networking options.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
