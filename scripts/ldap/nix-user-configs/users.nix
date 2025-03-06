@@ -85,6 +85,18 @@
     fsType = "nfs";
     options = [ "x-systemd.automount" "noauto" "x-systemd.idle-timeout=600"];
   };
+  users.users.georg = {  
+    isNormalUser = true;  
+    home = "/home/georg";  
+    uid = 10007;  
+    group = "students";  
+    homeMode = "701";
+  };
+  fileSystems."/home/georg" = {
+    device = "192.168.3.8:/home/georg";
+    fsType = "nfs";
+    options = [ "x-systemd.automount" "noauto" "x-systemd.idle-timeout=600"];
+  };
   users.users.shulm = {  
     isNormalUser = true;  
     home = "/home/shulm";  

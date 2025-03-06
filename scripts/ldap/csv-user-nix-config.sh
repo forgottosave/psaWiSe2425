@@ -59,7 +59,7 @@ TAIL_CMD="tail -n +2 $INPUT_FILE"
 # Process all users
 while IFS="," read -r Name Vorname Geschlecht Geburtsdatum Geburtsort Nationalitaet Strasse PLZ Ort Telefon Matrikelnummer UserId User; do
     
-    if [[ $User == ge* ]]; then
+    if [[ $User =~ ^ge[0-9].* ]]; then
         echo "  Skipping PSA user $User"
         continue
     fi
