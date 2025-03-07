@@ -137,6 +137,8 @@
       # Allow LDAP
       iptables -A INPUT -p tcp --dport 389 -j ACCEPT
       iptables -A OUTPUT -p tcp --sport 389 -j ACCEPT
+      iptables -A INPUT -p tcp --dport 636 -j ACCEPT
+      iptables -A OUTPUT -p tcp --sport 636 -j ACCEPT
 
       # Allow: traffic to the mail relay
       iptables -A OUTPUT -d 131.159.254.10 -j ACCEPT

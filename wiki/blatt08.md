@@ -64,6 +64,7 @@ Lösungsansätze:
     1. password authentication erlauben
     2. `sssd.config` & `slapd.crt` anlegen
     3. `/etc/secrets/sssd.env` anlegen
+    4. Auf SSSD Fehler prüfen: `journalctl -u sssd.service --no-pager --since "10 minutes ago"`
 
 - [ ] Dieser Arch-Linux LDAP Anleitung folgen: [wiki.archlinux.org](https://wiki.archlinux.org/title/OpenLDAP)
     Optional auch erstmal ohne SSL. Schauen ob das klappt?
