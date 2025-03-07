@@ -10,14 +10,7 @@ In diesem Blatt geht es darum einen LDAP Server (VM 7) einzurichten und diesen v
 
 Lösungsansätze:
 
-- [x] **SOLVED** Anleitung: Fehler bei Einlesen con base.ldif
-    `sudo ldapadd -H ldapi:// -Y EXTERNAL -f base.ldif`
-
-    ```shell
-    adding new entry "dc=team03,dc=psa,dc=cit,dc=tum,dc=de"
-    ldap_add: Invalid DN syntax (34)
-           additional info: invalid DN
-    ```
+- [x] NixOS
 
     ~~Schon 2-mal von vorne versucht...~~
     ~~Hab es nicht hinbekommen das Problem zu lösen, weiß nicht was schief läuft.~~

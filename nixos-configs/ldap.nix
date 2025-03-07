@@ -4,7 +4,7 @@ let
     domain = "ldap.team03.psa.cit.tum.de";
 
     rootName = "admin";
-    rootPw = "{SSHA}2z9hw3YwUr94eBUdGhUmcnZht0TyF7VW"; # ldapadmin123
+    rootPw = "{SSHA}2z9hw3YwUr94eBUdGhUmcnZht0TyF7VW";
 
     ssl.crtFile = "/etc/ssl/openldap/slapd.crt";
     ssl.keyFile = "/etc/ssl/openldap/slapd.key";
