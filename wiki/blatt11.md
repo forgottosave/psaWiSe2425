@@ -80,7 +80,7 @@ echo "Scanning IP range ${ip_prefix}${start}-${end}..."
 for i in $(seq $start $end); do
     ip="${ip_prefix}${i}"
     echo "Scanning ${ip}..."
-    nmap -oG - -p 1-1024 $ip | grep -v "^#" >> $temp_file
+    nmap -oG - -p 1-65535 $ip | grep -v "^#" >> $temp_file
 done
 
 # print results
@@ -118,22 +118,44 @@ und folgendes Ergebnis erhalten:
 ```bash
 IP Address      Hostname                                 Open Ports (with Service)                                             
 ---------------------------------------------------------------------------------------------------------------
-192.168.3.1     (vm1.psa-team03.cit.tum.de)              22/open/tcp/ssh 111/open/tcp/rpcbind 
-192.168.3.2     (vm2.psa-team03.cit.tum.de)              22/open/tcp/ssh 111/open/tcp/rpcbind 
-192.168.3.3     (vm3.psa-team03.cit.tum.de)              22/open/tcp/ssh 53/open/tcp/domain 111/open/tcp/rpcbind 
-192.168.3.4     (database.psa-team03.cit.tum.de)         22/open/tcp/ssh 111/open/tcp/rpcbind 
-192.168.3.5     (homeassistant.psa-team03.cit.tum.de)    22/open/tcp/ssh                                     
-192.168.3.6     (web1.psa-team03.cit.tum.de)             22/open/tcp/ssh 80/open/tcp/http 111/open/tcp/rpcbind 443/open/tcp/https 
+192.168.3.1     (vm1.psa-team03.cit.tum.de)              22/open/tcp/ssh 111/open/tcp/rpcbind 5355/open/tcp/llmnr      9100/open/tcp/jetdirect 
+192.168.3.2     (vm2.psa-team03.cit.tum.de)              22/open/tcp/ssh 111/open/tcp/rpcbind 5432/open/tcp/postgresql 9100/open/tcp/jetdirect   9101/open/tcp/jetdirect 
+192.168.3.3     (ns1.psa-team03.cit.tum.de)              22/open/tcp/ssh 53/open/tcp/domain   111/open/tcp/rpcbind     8123/open/tcp/polipo      9100/open/tcp/jetdirect 9101/open/tcp/jetdirect 9153/open/tcp/ 
+192.168.3.4     (vm4.psa-team03.cit.tum.de)              22/open/tcp/ssh 111/open/tcp/rpcbind 5432/open/tcp/postgresql 
+192.168.3.5     (vm5.psa-team03.cit.tum.de)              22/open/tcp/ssh 111/open/tcp/rpcbind 5355/open/tcp/llmnr      8080/open/tcp/http-proxy  8123/open/tcp/polipo    18555/open/tcp/ 
+192.168.3.6     (vm6.psa-team03.cit.tum.de)              22/open/tcp/ssh 80/open/tcp/http     111/open/tcp/rpcbind     443/open/tcp/https        5355/open/tcp/llmnr     9100/open/tcp/jetdirect 9101/open/tcp/jetdirect 9102/open/tcp/jetdirect 41027/open/tcp/ 
 192.168.3.7     (vm7.psa-team03.cit.tum.de)              22/open/tcp/ssh 111/open/tcp/rpcbind 389/open/tcp/ldap 
-192.168.3.8     (vm8.psa-team03.cit.tum.de)              22/open/tcp/ssh 111/open/tcp/rpcbind 139/open/tcp/netbios-ssn 445/open/tcp/microsoft-ds 
-192.168.3.9     (mail.psa-team03.cit.tum.de)             22/open/tcp/ssh 25/open/tcp/smtp 111/open/tcp/rpcbind 
-192.168.3.10    (vm10.psa-team03.cit.tum.de)             22/open/tcp/ssh 111/open/tcp/rpcbind 
+192.168.3.8     (vm8.psa-team03.cit.tum.de)              22/open/tcp/ssh 111/open/tcp/rpcbind 139/open/tcp/netbios-ssn 445/open/tcp/microsoft-ds 2049/open/tcp/nfs       5355/open/tcp/llmnr     9100/open/tcp/jetdirect 20048/open/tcp/mountd   33469/open/tcp/ 33761/open/tcp/ 
+192.168.3.9     (vm9.psa-team03.cit.tum.de)              22/open/tcp/ssh 25/open/tcp/smtp     111/open/tcp/rpcbind     9154/open/tcp/ 
+192.168.3.10    (vm10.psa-team03.cit.tum.de)             22/open/tcp/ssh 111/open/tcp/rpcbind 3000/open/tcp/ppp        9090/open/tcp/zeus-admin  9100/open/tcp/jetdirect 9115/open/tcp/ 
+```
+
+team2:
+
+```bash
+IP Address      Hostname                                 Open Ports (with Service)                                             
+---------------------------------------------------------------------------------------------------------------
+192.168.2.1     (ns.psa-team02.cit.tum.de)               22/open/tcp/ssh 53/open/tcp/domain 5666/open/tcp/nrpe 8123/open/tcp/polipo 
+192.168.2.2     (vm2.psa-team02.cit.tum.de)              22/open/tcp/ssh 5666/open/tcp/nrpe 8123/open/tcp/polipo 
+192.168.2.3     (vm3.psa-team02.cit.tum.de)              22/open/tcp/ssh 80/open/tcp/http 443/open/tcp/https 5666/open/tcp/nrpe 8123/open/tcp/polipo 
+192.168.2.4     (db.psa-team02.cit.tum.de)               22/open/tcp/ssh 3306/open/tcp/mysql 5666/open/tcp/nrpe 8123/open/tcp/polipo 
+192.168.2.5     (dbm.psa-team02.cit.tum.de)              22/open/tcp/ssh 3306/open/tcp/mysql 5666/open/tcp/nrpe 8123/open/tcp/polipo 
+192.168.2.6     (cloudserv.psa-team02.cit.tum.de)        22/open/tcp/ssh 80/open/tcp/http 443/open/tcp/https 5666/open/tcp/nrpe 8123/open/tcp/polipo 
+192.168.2.7     (fileserver.psa-team02.cit.tum.de)       22/open/tcp/ssh 111/open/tcp/rpcbind 139/open/tcp/netbios-ssn 445/open/tcp/microsoft-ds 2049/open/tcp/nfs 5666/open/tcp/nrpe 8123/open/tcp/polipo 
+192.168.2.8     (ldap.psa-team02.cit.tum.de)             22/open/tcp/ssh 389/open/tcp/ldap 636/open/tcp/ldapssl 5666/open/tcp/nrpe 8123/open/tcp/polipo 
+192.168.2.9     (mail.psa-team02.cit.tum.de)             22/open/tcp/ssh 25/open/tcp/smtp 110/open/tcp/pop3 143/open/tcp/imap 5666/open/tcp/nrpe 8123/open/tcp/polipo 
+192.168.2.10    (due.psa-team02.cit.tum.de)              22/open/tcp/ssh 80/open/tcp/http 443/open/tcp/https 5666/open/tcp/nrpe 8123/open/tcp/polipo 
 ```
 
 
-
-
 ### 2. Dokumentation gefundener Sicherheitslücken
+
+bekannt:
+
+- kein tls bei mail
+- nfs unverschlüsselt
+- communikation mit datenbank unverschlüsselt?
+- communikation prometheus offen
 
 #### 2.1. Eigene VMs, local exploit
 
