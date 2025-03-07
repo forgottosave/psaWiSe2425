@@ -41,14 +41,29 @@ Lösungsansätze:
 
     generate config `./ldap-user-config.sh -g` & apply `-a`
 
-    User erfolgreich durch Mega-Skript hinzugefügt -> Zertifikate & Passwörter aktuell in commit `b845478`, als Info falls das aus versehen geändert wird :)
+    User erfolgreich durch Mega-Skript hinzugefügt -> Zertifikate & Passwörter aktuell in commit ~~`b845478`~~ `bafda9b`, als Info falls das aus versehen geändert wird :)
 
     Nutzer-Verzeichnisse auf fileserver für neue csv Nutzer anlegen & mounten
 
     Zugriff auf LDAP Server einschränken -> nixos config
 
-    Client: password authentication erlauben, `sssd.config` & `slapd.crt` jedem bereitstellen `sudo ldapadd -H ldapi:// -Y EXTERNAL -f sssd.ldif`
-    und `/etc/secrets/sssd.env` anlegen
+    Nochmal alle Schritte zusammengefasst:
+
+    Server:
+
+    1. Existierende configs entfernen: `rm -r /var/lib/openldap/ /etc/openldap/`
+    2. LDAP deaktivieren: `nano /etc/nixos/ldap.nix` (`enable = false;`) & `nixos-rebuild switch`
+    3. LDAP re-aktivieren: `nano /etc/nixos/ldap.nix` (`enable = true;`) & `nixos-rebuild switch`
+    4. `base.ldif` einlesen: `cd` & `sudo ldapadd -H ldapi:// -Y EXTERNAL -f base.ldif`
+    5. Nutzer generieren: `~/psaWiSe2425/scripts/ldap` & `./ldap-user-config.sh -g`
+    6. Nutzer einlesen: `./ldap-user-config.sh -g`
+    7. SSSD Nutzer einlesen: `cd` & `sudo ldapadd -H ldapi:// -Y EXTERNAL -f sssd.ldif`
+
+    Client:
+
+    1. password authentication erlauben
+    2. `sssd.config` & `slapd.crt` anlegen
+    3. `/etc/secrets/sssd.env` anlegen
 
 - [ ] Dieser Arch-Linux LDAP Anleitung folgen: [wiki.archlinux.org](https://wiki.archlinux.org/title/OpenLDAP)
     Optional auch erstmal ohne SSL. Schauen ob das klappt?
