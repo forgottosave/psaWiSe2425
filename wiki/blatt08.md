@@ -333,7 +333,7 @@ Auf den letzen Punkt gehen wir genauer ein:
     Certificate=$(cat $CERT_FILE.b64)
     ```
 
-3. Mit `ldap-user-config.sh -a` werden diese mit `sudo ldapmodify -ac -Y EXTERNAL -H ldapi:// -Q -f $file` angewandt.
+3. Mit `ldap-user-config.sh -a` werden diese mit `sudo ldapmodify -ac -Y EXTERNAL -H ldapi:// -Q -f $file` angewandt. Die "Start-Passwörter" können übrigens unter `/root/ldap/ldap-user-attach/` gefunden werden.
 
 Somit ist die Server Seite fertig und wir können uns dem Client widmen.
 
