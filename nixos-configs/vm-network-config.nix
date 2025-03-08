@@ -84,8 +84,8 @@
       iptables -A INPUT -p tcp --dport 8123 -m conntrack --ctstate NEW -j ACCEPT
 
       # --- HTTP/HTTPS (server) --- (only vm6)
-      iptables -A INPUT -p tcp --dport 80 -m conntrack --ctstate NEW -s 192.168.0.0/16 -j ACCEPT  
-      iptables -A INPUT -p tcp --dport 443 -m conntrack --ctstate NEW -s 192.168.0.0/16 -j ACCEPT
+      iptables -A INPUT -p tcp --dport 80 -s 192.168.0.0/16 -j ACCEPT  
+      iptables -A INPUT -p tcp --dport 443 -s 192.168.0.0/16 -j ACCEPT
 
       # --- LDAP (server) --- (only vm7)
       iptables -A INPUT -p tcp --dport 389 -m conntrack --ctstate NEW -s 192.168.0.0/16 -j ACCEPT

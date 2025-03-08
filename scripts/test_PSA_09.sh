@@ -139,7 +139,7 @@ start_test "mx record test"
 ## TEST ########################################
 
 start_test "dovecot user mailbox test"
-# elnet 127.0.0.1 143 -> a login benjamin.liertz <password> -> a select INBOX
+# telnet 127.0.0.1 143 -> a login benjamin.liertz <password> -> a select INBOX
 
 
 ## summary ######################################
