@@ -214,6 +214,10 @@ scrape_configs:
 Darauf muss `prometheus` mittels `docker compose restart prometheus` neugestarted werden.
 Worauf unter `http://131.159.74.56:60312/targets` die beiden VMs als `UP` angezeigt werden sollten. (hierfür ist natürlich zunächst eine Portweiterleitung in VirtualBox notwendig)
 
+Prometheus: [link](http://131.159.74.56:60312/)
+Grafana: [link](http://131.159.74.56:60313/)
+Alertmanager: [link](http://131.159.74.56:60314/)
+
 Nun können wir in Grafana die Metriken visualisieren. Dafür erstellen wir ein neues Dashboard und fügen ein Panel hinzu. Eine tolle Sache an Grafana ist hier das es bereits viele fertige Dashboards gibt, wie das `https://grafana.com/grafana/dashboards/1860-node-exporter-full/` Dashboard welches alle Metriken des node-exporters visualisiert.
 
 Um dieses Dashboard zu verwenden, müssen wir es in Grafana importieren. Dafür gehen wir auf `Dashboard` -> `New` -> `Import` und geben die ID des Dashboards ein. In diesem Fall `1860`. Nun muss nur noch `Prometheus` als Datenquelle ausgewählt werden und das Dashboard ist einsatzbereit.
