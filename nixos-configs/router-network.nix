@@ -51,55 +51,54 @@
     };
 
     firewall.extraCommands = '' 
-      #iptables -P INPUT ACCEPT
-      #iptables -P OUTPUT ACCEPT
-      #iptables -P FORWARD ACCEPT
-      #iptables -F
-      
-      # by default: Disable connection tracking
-      iptables -t raw -A PREROUTING -p tcp --dport 80 -j NOTRACK  
-      iptables -t raw -A OUTPUT -p tcp --sport 80 -j NOTRACK
-      iptables -t raw -A PREROUTING -p tcp --dport 443 -j NOTRACK 
-      iptables -t raw -A OUTPUT -p tcp --sport 443 -j NOTRACK
-
       # by default: Drop all packages (in and outgoing) 
       iptables -P INPUT DROP 
       iptables -P FORWARD DROP 
       iptables -P OUTPUT DROP
 
+      # by default: Disable connection tracking for HTTP and HTTPS
+      iptables -t raw -A PREROUTING -p tcp --dport 80 -j NOTRACK  
+      iptables -t raw -A OUTPUT -p tcp --sport 80 -j NOTRACK
+      iptables -t raw -A PREROUTING -p tcp --dport 443 -j NOTRACK 
+      iptables -t raw -A OUTPUT -p tcp --sport 443 -j NOTRACK
+
       # Allow: loopback
       iptables -A INPUT -i lo -j ACCEPT
       iptables -A OUTPUT -o lo -j ACCEPT
 
-      # Allow: established connections
-      iptables -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT    
+      # Allow established/related connections
+      iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+      iptables -A OUTPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
       iptables -A FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 
-      # Allow: SSH
-      iptables -A INPUT -p tcp --dport 22 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
-      iptables -A OUTPUT -p tcp --sport 22 -m conntrack --ctstate ESTABLISHED -j ACCEPT
 
-      # Allow: DNS
-      iptables -A OUTPUT -p udp --dport 53 -j ACCEPT
-      iptables -A OUTPUT -p tcp --dport 53 -j ACCEPT
-      iptables -A INPUT -p udp --dport 53 -j ACCEPT 
-      iptables -A INPUT -p tcp --dport 53 -j ACCEPT
+      # --- SSH (access to the router) ---
+      iptables -A INPUT -p tcp --dport 22 -m conntrack --ctstate NEW -j ACCEPT
 
-      # Allow: DHCP
-      iptables -A INPUT -p udp --sport 68 --dport 67 -j ACCEPT
-      iptables -A OUTPUT -p udp --sport 67 --dport 68 -j ACCEPT
+      # --- ICMP --- 
+      iptables -A INPUT -p icmp -j ACCEPT
+      iptables -A OUTPUT -p icmp -j ACCEPT
 
-      # Allow: git (https://serverfault.com/questions/682373/setting-up-iptables-filter-to-allow-git)
-      iptables -A INPUT -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
-      iptables -A OUTPUT -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
-      iptables -A INPUT -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
-      iptables -A OUTPUT -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
+      # --- DNS (server) --- 
+      iptables -A INPUT -p udp --dport 53 -m conntrack --ctstate NEW -j ACCEPT
+      iptables -A INPUT -p tcp --dport 53 -m conntrack --ctstate NEW -j ACCEPT
 
-      # Allow incoming HTTP, HTTPS, and responses to the requests
-      iptables -A INPUT -p tcp --dport 80 -j ACCEPT
-      iptables -A OUTPUT -p tcp --sport 80 -j ACCEPT
-      iptables -A INPUT -p tcp --dport 443 -j ACCEPT
-      iptables -A OUTPUT -p tcp --sport 443 -j ACCEPT
+      # --- DNS (client) --- 
+      #iptables -A OUTPUT -p udp --dport 53 -m conntrack --ctstate NEW -j ACCEPT
+      #iptables -A OUTPUT -p tcp --dport 53 -m conntrack --ctstate NEW -j ACCEPT
+
+      # --- DHCP (server) ---
+      iptables -A INPUT -p udp --dport 67 -m conntrack --ctstate NEW -j ACCEPT
+      iptables -A INPUT -p udp --dport 68 -m conntrack --ctstate NEW -j ACCEPT
+
+      # --- HTTP/HTTPS (client) ---       
+      iptables -A OUTPUT -p tcp --dport 80 -m conntrack --ctstate NEW -j ACCEPT
+      iptables -A OUTPUT -p tcp --dport 443 -m conntrack --ctstate NEW -j ACCEPT
+
+      # --- Forwarding between networks ---
+      iptables -A FORWARD -i enp0s8 -s 192.168.3.0/24 -d 192.168.0.0/16 -j ACCEPT
+      iptables -A FORWARD -i enp0s8 -s 192.168.0.0/16 -d 192.168.3.0/24 -j ACCEPT 
+   
 
       # Outgoing only to specific IPs
       iptables -A OUTPUT -d 146.75.118.217 -j ACCEPT # nixos cache
@@ -125,90 +124,44 @@
       # wpad proxy
       iptables -A OUTPUT -d 129.187.254.50 -j ACCEPT
       iptables -A OUTPUT -d 129.187.254.49 -j ACCEPT 
+      # git (https://serverfault.com/questions/682373/setting-up-iptables-filter-to-allow-git)
+      iptables -A INPUT -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
+      iptables -A OUTPUT -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
+      iptables -A INPUT -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
+      iptables -A OUTPUT -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
 
-      # Allow: Forrwarding between the networks
-      # intern->extern
-      iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.3.0/24 -d 192.168.1.0/24 -j ACCEPT
-      iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.3.0/24 -d 192.168.2.0/24 -j ACCEPT
-      iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.3.0/24 -d 192.168.4.0/24 -j ACCEPT
-      iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.3.0/24 -d 192.168.5.0/24 -j ACCEPT
-      iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.3.0/24 -d 192.168.6.0/24 -j ACCEPT
-      iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.3.0/24 -d 192.168.7.0/24 -j ACCEPT
-      iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.3.0/24 -d 192.168.8.0/24 -j ACCEPT
-      iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.3.0/24 -d 192.168.9.0/24 -j ACCEPT
-      iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.3.0/24 -d 192.168.10.0/24 -j ACCEPT
-      # extern->intern (subnets & router)
-      iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.1.0/24 -d 192.168.3.0/24 -j ACCEPT
-      iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.31.0/24 -d 192.168.3.0/24 -j ACCEPT
-      iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.2.0/24 -d 192.168.3.0/24 -j ACCEPT
-      iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.32.0/24 -d 192.168.3.0/24 -j ACCEPT
-      iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.4.0/24 -d 192.168.3.0/24 -j ACCEPT
-      iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.43.0/24 -d 192.168.3.0/24 -j ACCEPT
-      iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.5.0/24 -d 192.168.3.0/24 -j ACCEPT
-      iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.53.0/24 -d 192.168.3.0/24 -j ACCEPT
-      iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.6.0/24 -d 192.168.3.0/24 -j ACCEPT
-      iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.63.0/24 -d 192.168.3.0/24 -j ACCEPT
-      iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.7.0/24 -d 192.168.3.0/24 -j ACCEPT
-      iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.73.0/24 -d 192.168.3.0/24 -j ACCEPT
-      iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.8.0/24 -d 192.168.3.0/24 -j ACCEPT
-      iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.83.0/24 -d 192.168.3.0/24 -j ACCEPT
-      iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.9.0/24 -d 192.168.3.0/24 -j ACCEPT
-      iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.93.0/24 -d 192.168.3.0/24 -j ACCEPT
-      iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.10.0/24 -d 192.168.3.0/24 -j ACCEPT
-      iptables -A FORWARD -i enp0s8 -o enp0s8 -s 192.168.103.0/24 -d 192.168.3.0/24 -j ACCEPT
 
-      # Allow: ICMP 
-      iptables -A INPUT -p icmp -j ACCEPT
-      iptables -A OUTPUT -p icmp -j ACCEPT
+      # --- Database (client) ---
+      iptables -A OUTPUT -p tcp --sport 5432 -m conntrack --ctstate NEW -j ACCEPT
 
-      # Allow: database access
-      iptables -A INPUT -p tcp --dport 5432 -j ACCEPT
-      iptables -A OUTPUT -p tcp --sport 5432 -j ACCEPT
+      # --- NFS (client) ---
+      iptables -A OUTPUT -p tcp --dport 111 -m conntrack --ctstate NEW -j ACCEPT
+      iptables -A OUTPUT -p udp --dport 111 -m conntrack --ctstate NEW -j ACCEPT
+      iptables -A OUTPUT -p tcp --dport 2049 -m conntrack --ctstate NEW -j ACCEPT
 
-      # Allow: homeassistant
-      iptables -A INPUT -p tcp --dport 8123 -j ACCEPT
-      iptables -A OUTPUT -p tcp --sport 8123 -j ACCEPT
+      # --- Samba (client) ---
+      iptables -A OUTPUT -p udp --dport 137 -m conntrack --ctstate NEW -j ACCEPT
+      iptables -A OUTPUT -p udp --dport 138 -m conntrack --ctstate NEW -j ACCEPT
+      iptables -A OUTPUT -p tcp --dport 139 -m conntrack --ctstate NEW -j ACCEPT
+      iptables -A OUTPUT -p tcp --dport 445 -m conntrack --ctstate NEW -j ACCEPT
 
-      # Allow: NFS
-      iptables -A INPUT -s 192.168.3.0/16 -m state --state NEW -p udp --dport 111 -j ACCEPT
-      iptables -A INPUT -s 192.168.3.0/16 -m state --state NEW -p tcp --dport 111 -j ACCEPT
-      iptables -A INPUT -s 192.168.3.0/16 -m state --state NEW -p tcp --dport 2049 -j ACCEPT
-      iptables -A INPUT -s 192.168.3.0/16 -m state --state NEW -p tcp --dport 32803 -j ACCEPT
-      iptables -A INPUT -s 192.168.3.0/16 -m state --state NEW -p udp --dport 32769 -j ACCEPT
-      iptables -A INPUT -s 192.168.3.0/16 -m state --state NEW -p tcp --dport 892 -j ACCEPT
-      iptables -A INPUT -s 192.168.3.0/16 -m state --state NEW -p udp --dport 892 -j ACCEPT
-      iptables -A INPUT -s 192.168.3.0/16 -m state --state NEW -p tcp --dport 875 -j ACCEPT
-      iptables -A INPUT -s 192.168.3.0/16 -m state --state NEW -p udp --dport 875 -j ACCEPT
-      iptables -A INPUT -s 192.168.3.0/16 -m state --state NEW -p tcp --dport 662 -j ACCEPT
-      iptables -A INPUT -s 192.168.3.0/16 -m state --state NEW -p udp --dport 662 -j ACCEPT
+      # --- Mail (client) ---
+      # sending of mail
+      iptables -A OUTPUT -p tcp --dport 25 -m conntrack --ctstate NEW -j ACCEPT
+      iptables -A OUTPUT -p tcp --dport 587 -m conntrack --ctstate NEW -j ACCEPT
+      # retrieval of mail
+      iptables -A OUTPUT -p tcp --dport 143 -m conntrack --ctstate NEW -j ACCEPT
+      iptables -A OUTPUT -p tcp --dport 993 -m conntrack --ctstate NEW -j ACCEPT
+      iptables -A OUTPUT -p tcp --dport 110 -m conntrack --ctstate NEW -j ACCEPT
+      iptables -A OUTPUT -p tcp --dport 995 -m conntrack --ctstate NEW -j ACCEPT
 
-      # Allow: Samba
-      iptables -A INPUT -s 192.168.3.0/16 -m state --state NEW -p udp --dport 137 -j ACCEPT
-      iptables -A INPUT -s 192.168.3.0/16 -m state --state NEW -p udp --dport 138 -j ACCEPT
-      iptables -A INPUT -s 192.168.3.0/16 -m state --state NEW -p tcp --dport 139 -j ACCEPT
-      iptables -A INPUT -s 192.168.3.0/16 -m state --state NEW -p tcp --dport 445 -j ACCEPT
-    
-      # Allow: prometheus exporter
-      iptables -A INPUT -p tcp --dport 9100 -j ACCEPT
-      iptables -A INPUT -p tcp --dport 9090 -j ACCEPT
-      iptables -A INPUT -p tcp --dport 9101 -j ACCEPT
-      iptables -A OUTPUT -p tcp --dport 9100 -j ACCEPT 
-      iptables -A OUTPUT -p tcp --dport 9090 -j ACCEPT
-      iptables -A OUTPUT -p tcp --dport 9101 -j ACCEPT
+      # --- LDAP (client) ---
+      iptables -A OUTPUT -p tcp --dport 389 -m conntrack --ctstate NEW -j ACCEPT
+      iptables -A OUTPUT -p tcp --dport 636 -m conntrack --ctstate NEW -j ACCEPT
 
-      # Allow: SMTP
-      iptables -A INPUT -p tcp --dport 25 -j ACCEPT
-      iptables -A OUTPUT -p tcp --sport 25 -j ACCEPT
-
-      # Allow LDAP
-      iptables -A INPUT -p tcp --dport 389 -j ACCEPT
-      iptables -A OUTPUT -p tcp --sport 389 -j ACCEPT
-      iptables -A INPUT -p tcp --dport 636 -j ACCEPT
-      iptables -A OUTPUT -p tcp --sport 636 -j ACCEPT
-
-      # Allow: traffic to the mail relay
-      iptables -A INPUT -d 131.159.254.10 -j ACCEPT
-      iptables -A OUTPUT -d 131.159.254.10 -j ACCEPT
+      # --- prometheus (exporter/server) ---
+      iptables -A INPUT -p tcp --dport 9100 -s 192.168.3.10 -j ACCEPT
+      iptables -A INPUT -p tcp --dport 9101 -s 192.168.3.10 -j ACCEPT
     '';
   };
 
