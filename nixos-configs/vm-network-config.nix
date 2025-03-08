@@ -122,17 +122,13 @@
       iptables -A OUTPUT -p tcp --dport 9330 -d 192.168.3.0/24 -j ACCEPT # ldap
       iptables -A OUTPUT -p tcp --dport 9153 -d 192.168.3.0/24 -j ACCEPT  # coredns
       iptables -A OUTPUT -p tcp --dport 8080 -d 192.168.3.0/24 -j ACCEPT  # cadvisor
-      # docker inbound rules
-      #iptables -A INPUT -p tcp --dport 9090 -j ACCEPT
-      #iptables -A INPUT -p tcp --dport 3000 -j ACCEPT
-      #iptables -A INPUT -p tcp --dport 9093 -j ACCEPT
-      #iptables -A INPUT -p tcp --dport 9115 -j ACCEPT
       # interface for prometheus
       iptables -A INPUT -p tcp --dport 9090 -m conntrack --ctstate NEW -j ACCEPT
       iptables -A INPUT -p tcp --dport 3000 -m conntrack --ctstate NEW -j ACCEPT
       iptables -A INPUT -p tcp --dport 9093 -m conntrack --ctstate NEW -j ACCEPT
       # forwarding
       iptables -I DOCKER-USER -j ACCEPT
+      iptables -I FORWARD 1 -j DOCKER-USER
 
 
 
