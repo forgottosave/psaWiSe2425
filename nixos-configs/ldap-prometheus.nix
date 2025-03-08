@@ -2,7 +2,7 @@
 
 let
   openldap_exporter = pkgs.stdenv.mkDerivation {
-    name = "openldap_exporter-2.3.2"
+    name = "openldap_exporter-2.3.2";
     pname = "openldap_exporter";
     version = "2.3.2";
     src = pkgs.fetchurl {
