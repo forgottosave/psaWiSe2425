@@ -7,6 +7,7 @@ include_files=(
     user-config.nix
     flake.nix
     ldap.nix
+    csv-users.nix
 )
 
 # SED placeholders

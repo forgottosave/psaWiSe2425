@@ -357,7 +357,7 @@ Im Detail:
 
 2. **Nutzer** wurden bisher in der `user-config.nix` angelegt, sowie deren Homeverzeichnisse auf Automount gestellt. Wir entfernen hier alle Nutzer, und fügen in der `csv-users.nix` noch die Automounts für die Homeverzeichnisse der anderen Nutzer hinzu. Dies erfolgt automatisiert über das `home-create-csv-users.sh` Skript.
 
-3. **SSSD** muss konfiguriert und aktiviert werden. Hierfür legen wir eine Konfiguration an (Quelle Team06), wobei wir das Passwort nicht plaintext hier speichern, sondern als Umgebungsvariable in `/etc/secrets/sssd.env` mit dem Inhalt `SSSD_LDAP_DEFAULT_AUTHTOK=<Passwort>` und den Rechten `600` angeben.
+3. **SSSD** muss konfiguriert und aktiviert werden. Hierfür legen wir eine Konfiguration an (Quelle Team06):
 
     ```config
     [sssd]
@@ -378,6 +378,12 @@ Im Detail:
     ldap_default_bind_dn = cn=sssd,dc=team03,dc=psa,dc=cit,dc=tum,dc=de
     ldap_default_authtok_type = password
     ldap_default_authtok = $SSSD_LDAP_DEFAULT_AUTHTOK
+    ```
+
+    Das Passwort speichern wir an dieser Stelle nicht Plaintext, sondern als Umgebungsvariable in `/etc/secrets/sssd.env` mit dem Inhalt `SSSD_LDAP_DEFAULT_AUTHTOK=<Passwort>` und den Rechten `600`. Als ein Kommando zum anlegen:
+
+    ```shell
+    mkdir -p /etc/secrets && echo "SSSD_LDAP_DEFAULT_AUTHTOK=<Passwort>" >> /etc/secrets/sssd.env && chmod 600 /etc/secrets/sssd.env
     ```
 
     und stellen das Server Zertifikat bereit. Beides geben wir in der NixOS Konfiguration `ldap-client.nix` an, welche wir auf allen Client-VMs einbinden. Hier aktivieren wir SSSD direkt:

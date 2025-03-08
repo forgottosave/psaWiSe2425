@@ -4,12 +4,16 @@
 include_files=(
     configuration.nix
     router-network.nix
-    user-config.nix
     dns-config.nix
     dhcp-config.nix
     flake.nix
     dhcp4-config.json
     router-exporter.nix
+    ldap-client.nix
+    slapd.crt
+    sssd.conf
+    user-config.nix
+    csv-users.nix
 )
 
 # SED placeholders
@@ -19,10 +23,12 @@ sed_placeholders[vm]="$VM_NUMBER"
 
 sed_placeholders[imports]='
     ./hardware-configuration.nix
-    ./user-config.nix
     ./router-network.nix
     ./dns-config.nix
     ./router-exporter.nix
+    ./ldap-client.nix
+    ./user-config.nix
+    ./csv-users.nix
 '
 
 sed_placeholders[system_packages]='

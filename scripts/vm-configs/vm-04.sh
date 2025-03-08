@@ -4,9 +4,13 @@
 include_files=(
     configuration.nix
     vm-network-config.nix
-    user-config.nix
     database.nix
     flake.nix
+    ldap-client.nix
+    slapd.crt
+    sssd.conf
+    user-config.nix
+    csv-users.nix
 )
 
 # SED placeholders
@@ -16,9 +20,11 @@ sed_placeholders[vm]="$VM_NUMBER"
 
 sed_placeholders[imports]='
     ./hardware-configuration.nix
-    ./user-config.nix
     ./vm-network-config.nix
     ./database.nix
+    ./ldap-client.nix
+    ./user-config.nix
+    ./csv-users.nix
 '
 
 sed_placeholders[system_packages]='
