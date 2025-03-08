@@ -19,7 +19,8 @@
         "path" = "/export/home/%S";  # %S = username
         "browseable" = "no";  # Hide the home share list
         "read only" = "no";
-        "valid users" = "%S";  # Allow only the owner access
+        "valid users" = "%S root";  # Allow only the owner access
+        "admin users" = "root";
         "create mask" = "0700";
         "directory mask" = "0700";
       };
