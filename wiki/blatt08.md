@@ -274,6 +274,12 @@ Unsere gesamte Nix Konfiguration kann in der `ldap.nix` eingesehen werden. Hier 
 3. LDAP re-aktivieren: `nano /etc/nixos/ldap.nix` (`enable = true;`) & `nixos-rebuild switch`
 4. Die folgenden Schitte aus 2.3 neu anwenden
 
+Quellen:
+
+- [brennan.id LDAP Basic Configuratoin](https://www.brennan.id.au/20-Shared_Address_Book_LDAP.html)
+- [ArchLinux LDAP Documentation](https://wiki.archlinux.org/title/OpenLDAP)
+- [Team06 LDAP Documentation](https://psa.in.tum.de/xwiki/bin/view/PSA%20WiSe%202024%20%202025/Dokumentation%20der%20Aufgaben/PSAwise2425Team6Aufgabe08/)
+
 #### 1.3) Dynamisches Einrichten
 
 Nach der grundlegenden Konfiguration unseres LDAP Servers können wir nun alle Nutzerdaten anlegen. Dies erfordert 2 Schritte:
@@ -298,7 +304,7 @@ Auf den letzen Punkt gehen wir genauer ein:
     objectClass: auxPerson
     uid: $User
     cn: $Vorname $Name
-    uidNumber: $UserId
+    uidNumber: $UserID
     gidNumber: 1000
     homeDirectory: /home/$User
     loginShell: /bin/bash
@@ -333,17 +339,79 @@ Somit ist die Server Seite fertig und wir können uns dem Client widmen.
 
 ### 2) LDAP Clients
 
-Wir wollen nun auf allen VMs die Nutzung des LDAP Servers zur Authenifizierung einrichten. Dies benötigt X Schritte:
+Wir wollen nun auf allen VMs die Nutzung des LDAP Servers zur Authenifizierung einrichten. Dies benötigt 4 Schritte:
 
 1. Passwort-Authentication erlauben
 2. Nutzer entfernen & Automounts hinzufügen
 3. `sssd.config` & `slapd.crt` anlegen
-4. `/etc/secrets/sssd.env` anlegen
-5. Auf SSSD Fehler prüfen: `journalctl -u sssd.service --no-pager --since "10 minutes ago"`
+4. Auf SSSD Fehler prüfen: `journalctl -u sssd.service --no-pager --since "10 minutes ago"`
 
 Im Detail:
+
+1. **Passwort Authentifizierung** wurde für SSH anfangs nicht erlaubt, da Nutzer nur per ssh-key Zugriff hatten. Dies müssen wir für alle VMs ändern:
+
+    ```nix
+    # configuratoin.nix
+    services.openssh.settings.PasswordAuthentication = true;
+    ```
+
+2. **Nutzer** wurden bisher in der `user-config.nix` angelegt, sowie deren Homeverzeichnisse auf Automount gestellt. Wir entfernen hier alle Nutzer, und fügen in der `csv-users.nix` noch die Automounts für die Homeverzeichnisse der anderen Nutzer hinzu. Dies erfolgt automatisiert über das `home-create-csv-users.sh` Skript.
+
+3. **SSSD** muss konfiguriert und aktiviert werden. Hierfür legen wir eine Konfiguration an (Quelle Team06), wobei wir das Passwort nicht plaintext hier speichern, sondern als Umgebungsvariable in `/etc/secrets/sssd.env` mit dem Inhalt `SSSD_LDAP_DEFAULT_AUTHTOK=<Passwort>` und den Rechten `600` angeben.
+
+    ```config
+    [sssd]
+    config_file_version = 2
+    services = nss, pam
+    domains = LDAP
+
+    [domain/LDAP]
+    cache_credentials = true
+    enumerate = false
+    
+    id_provider = ldap
+
+    ldap_uri = ldaps://ldap.psa-team03.cit.tum.de
+    ldap_search_base = dc=team03,dc=psa,dc=cit,dc=tum,dc=de
+    #set following line to demand
+    ldap_tls_reqcert = allow
+    ldap_default_bind_dn = cn=sssd,dc=team03,dc=psa,dc=cit,dc=tum,dc=de
+    ldap_default_authtok_type = password
+    ldap_default_authtok = $SSSD_LDAP_DEFAULT_AUTHTOK
+    ```
+
+    und stellen das Server Zertifikat bereit. Beides geben wir in der NixOS Konfiguration `ldap-client.nix` an, welche wir auf allen Client-VMs einbinden. Hier aktivieren wir SSSD direkt:
+
+    ```nix
+    {
+      config,
+      lib,
+      ...
+    }: let
+      sssdConf = builtins.readFile ./sssd.conf;
+    in {
+        services.sssd = {
+          enable = true;
+          config = sssdConf;
+          environmentFile = "/etc/secrets/sssd.env";
+        };
+        security.pki.certificateFiles = [./slapd.crt];
+    }
+    ```
+
+4. **Prüfen** können wir den SSSD Status nach einem `nixos-rebuild switch` mit `journalctl -u sssd.service --no-pager --since "10 minutes ago"`.
+
+Quellen:
+
+- [brennan.id LDAP Basic Configuratoin](https://www.brennan.id.au/20-Shared_Address_Book_LDAP.html)
+- [ArchLinux LDAP Documentation](https://wiki.archlinux.org/title/OpenLDAP)
+- [Team06 LDAP Documentation](https://psa.in.tum.de/xwiki/bin/view/PSA%20WiSe%202024%20%202025/Dokumentation%20der%20Aufgaben/PSAwise2425Team6Aufgabe08/)
 
 ### 3) Extra: Portunus
 
 Wir haben uns zwar dagegen entschieden dieses Tool zu benutzen, aber wollten es hier dennoch kurz erwähnen: Portunus ist eine graphische Schnittstelle die einen openldap-Server im Hintergrund handhabt und auch nativ auf NixOS verfügbar ist.
 Es lohnt sich da mal einen Blick rein zu werfen: [Github Portunus](https://github.com/majewsky/portunus)
+
+Quellen:
+
+- [Github Portunus](https://github.com/majewsky/portunus)
