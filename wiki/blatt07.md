@@ -181,7 +181,7 @@ Quellen:
 
 ### 3) NFS
 
-Anschließend müssen die jeweiligen Home-Verzeichnisse, sowie die Datenbanken von der **VM 8** aus gemountet werden. Hierfür muss zuerst File-Sharing aktiviert werden.
+Anschließend müssen die jeweiligen Home-Verzeichnisse, sowie die Datenbanken von der **VM 8** aus gemountet werden. Hierfür muss zuerst File-Sharing aktiviert werden. Wir wollen außerdem den Zugriff für root für die Home-Verzeichnisse weiterhin ermöglichen, weshalb wir explizit `no_root_squash` hinzufügen.
 
 ```nix
 # fileserver.nix
@@ -189,8 +189,8 @@ services.nfs.server = {
   enable = true;
   createMountPoints = true;
   exports = ''
-    /export                 192.168.0.0/16(rw,fsid=0,no_subtree_check)
-    /export/home            192.168.0.0/16(rw,sync)
+    /export                 192.168.0.0/16(rw,fsid=0,no_subtree_check,no_root_squash)
+    /export/home            192.168.0.0/16(rw,sync,no_root_squash)
     /export/postgresql      192.168.3.4(rw,sync)
     /export/sites           192.168.3.6(rw,sync)
   '';
