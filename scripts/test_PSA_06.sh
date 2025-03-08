@@ -75,7 +75,7 @@ fi
 ## TEST #########################################
 ## check home assistant reachable
 start_test "check home assistant reachable (curl)"
-status=$(curl -X GET -o - -I http://131.159.74.56:60351/ | head -n 1)
+status=$(curl -X GET -o - -I https://131.159.74.56:60351/ | head -n 1)
 if [[ $status =~ "200" ]]; then
     print_success "curl $addr"
 else
