@@ -116,9 +116,10 @@
       iptables -A OUTPUT -p tcp --dport 25 -d 131.159.254.10 -m conntrack --ctstate NEW -j ACCEPT
 
       # --- prometheus (collector/client) --- (only vm10)
-      iptables -A INPUT -p tcp --dport 9100 -d 192.168.3.0/24 -j ACCEPT
-      iptables -A INPUT -p tcp --dport 9101 -d 192.168.3.0/24 -j ACCEPT
-      iptables -A INPUT -p tcp --dport 9090 -d 192.168.3.0/24 -j ACCEPT
+      iptables -A OUTPUT -p tcp --dport 9100 -d 192.168.3.0/24 -j ACCEPT
+      iptables -A OUTPUT -p tcp --dport 9101 -d 192.168.3.0/24 -j ACCEPT
+      iptables -A OUTPUT -p tcp --dport 9090 -d 192.168.3.0/24 -j ACCEPT
+      iptables -A OUTPUT -p tcp --dport 9330 -d 192.168.3.0/24 -j ACCEPT
 
       
 
