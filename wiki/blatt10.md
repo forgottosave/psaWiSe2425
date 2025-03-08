@@ -503,7 +503,7 @@ anpassen sodass belegter und noch freier Speicherplatz angezeigt wird
 
 #### 2.9) LDAP
 
-Leider wird für LDAP kein standard exporter angeboten, weder in NixOS, noch als fertig konfigurierter Docker Container. Wir bauen uns deshalb ein Custom-Nix-Package aus diesem Github Projekt: [Github.com/tomcz/openldap_exporter](https://github.com/tomcz/openldap_exporter).
+Leider wird für LDAP kein standard exporter angeboten, weder in NixOS, noch als fertig konfigurierter Docker Container. Wir bauen uns deshalb ein Custom-Nix-Package aus diesem Github Projekt: [Github.com/tomcz/openldap_exporter](https://github.com/tomcz/openldap_exporter). Es ist ein recht altes Projekt, aber dennoch die beste Alternative, die wir finden konnten und funktioniert einwandfrei.
 
 1. Installation: Hier bauen wir das custom Nix-Package, die Schritte sind als Kommentare erklärt:
 
