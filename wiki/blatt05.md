@@ -297,7 +297,7 @@ Zwischen beiden VMs findet das WAL von der DB in die *Backup DB* statt. Von der 
     Zusätzlich können wir den oben Erwähnten `dump` nutzen, um Backups von bestimmten Zeitpunkten zu haben. Wenn diese auf der *Backup DB* ausgeführt werden wird die Datenbank Funktionalität / Erreichbarkeit der *Master DB* nicht eingeschränkt.
     Nachdem die Aufgabenstellung ein Skipt mit `crontab` fordert, können wir die von NixOS bereitgestellte Backup-Funktion von oben nicht nutzen, sondern erstellen ein separates Skript.
 
-    Nachdem wir `user` (postgres), sowie die Pfade zum backup- und zum log-file definieren, können wir mit `pg_dumpall` ein einfaches Backup erstellen, ähnlich zum `services.postgresqlBackup`:
+    Nachdem wir `user` (postgres), sowie die Pfade zum backup- und zum log-file definieren, können wir mit `pg_dumpall` ein einfaches Backup erstellen, ähnlich zum `services.postgresqlBackup`. Wir erstellen hierbei lokal ein Backup con wirklich allem und Nutzen deshalb den postgres Nutzer:
 
     ```bash
     # backup_postgres.sh
