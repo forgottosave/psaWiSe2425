@@ -256,18 +256,21 @@ team 10
 
 
 ##### SQL
+
 mysql enumeration: versucht alle Datenbanken auf einem MySQL-Server zu enumerieren
 `nmap -p 3306 --script mysql-enum.nse <target>`
 mysql-brute: versucht ob der root user mit einem leeren Passwort auf einem MySQL-Server einloggen kann
 `nmap -p 3306 --script mysql-brute.nse <target>`
 
 ##### SMB
+
 aufzählung aller shares auf einem SMB-Server
 `nmap -p 139,445 --script smb-enum-shares.nse <target>`
 aufzählung aller Benutzer auf einem SMB-Server
 `nmap -p 139,445 --script smb-enum-users.nse <target>`
 
 ##### NFS
+
 aufzählung aller NFS-Exporte auf einem Server
 `nmap -p 111 --script nfs-ls.nse <target>`
 show mounts

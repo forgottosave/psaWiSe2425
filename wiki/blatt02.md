@@ -103,11 +103,12 @@ In diesem Blatt geht es darum die Netzwerkkonfiguration zu erstellen und die VMs
 
 ### 3) Http(s) Proxy
 
-- da das normale surfen im Netz nur über einen Proxy–Server möglich sein soll muss noch der `proxy.cit.tum.de` für alle VMs als systemweiten Proxy–Server gesetzt werden
+- da das normale surfen im Netz nur über einen Proxy–Server möglich sein soll muss noch der `proxy.cit.tum.de` für alle VMs als systemweiten Proxy–Server gesetzt werden dabei machen wir aber für local host und alle PSA interenen IPs eine Ausnahme:
 
   ```nixos
   networking.proxy.httpsProxy = "http://proxy.cit.tum.de:8080/";
   networking.proxy.httpProxy = "http://proxy.cit.tum.de:8080/";
+  networking.proxy.noProxy = "localhost,127.0.0.1,192.168.0.0/16,.cit.tum.de";
   ```
 
 ### 4) Firewall
