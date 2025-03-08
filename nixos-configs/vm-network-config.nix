@@ -119,7 +119,9 @@
       iptables -A OUTPUT -p tcp --dport 9100 -d 192.168.3.0/24 -j ACCEPT
       iptables -A OUTPUT -p tcp --dport 9101 -d 192.168.3.0/24 -j ACCEPT
       iptables -A OUTPUT -p tcp --dport 9090 -d 192.168.3.0/24 -j ACCEPT
-      iptables -A OUTPUT -p tcp --dport 9330 -d 192.168.3.0/24 -j ACCEPT
+      iptables -A OUTPUT -p tcp --dport 9330 -d 192.168.3.0/24 -j ACCEPT # ldap
+      iptables -A OUTPUT -p tcp --dport 9153 -d 192.168.3.0/24 -j ACCEPT  # coredns
+      iptables -A OUTPUT -p tcp --dport 8080 -d 192.168.3.0/24 -j ACCEPT  # cadvisor
       # docker inbound rules
       iptables -A INPUT -p tcp --dport 9090 -j ACCEPT
       iptables -A INPUT -p tcp --dport 3000 -j ACCEPT
@@ -131,7 +133,7 @@
       iptables -A INPUT -p tcp --dport 9093 -m conntrack --ctstate NEW -j ACCEPT
       # forwarding
       iptables -A FORWARD -i docker0 -o enp0s3 -j ACCEPT
-      iptables -A FORWARD -i enp0s3 -o docker0 -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+      iptables -A FORWARD -i enp0s3 -o docker0 -m conntrack --ctstate NEW -j ACCEPT
 
 
 
@@ -171,6 +173,8 @@
       iptables -A INPUT -p tcp --dport 9101 -s 192.168.3.10 -j ACCEPT
       iptables -A INPUT -p tcp --dport 9090 -s 192.168.3.10 -j ACCEPT
       iptables -A INPUT -p tcp --dport 9330 -s 192.168.3.10 -j ACCEPT  # ldap
+      iptables -A INPUT -p tcp --dport 9153 -s 192.168.3.10 -j ACCEPT  # coredns
+      iptables -A INPUT -p tcp --dport 8080 -s 192.168.3.10 -j ACCEPT  # cadvisor
     '';
   };  
 
