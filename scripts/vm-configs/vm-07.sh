@@ -7,6 +7,7 @@ include_files=(
     user-config.nix
     flake.nix
     ldap.nix
+    ldap-prometheus.nix
     csv-users.nix
 )
 
@@ -20,6 +21,7 @@ sed_placeholders[imports]='
     ./vm-network-config.nix
     ./user-config.nix
     ./ldap.nix
+    ./ldap-prometheus.nix
 '
 
 sed_placeholders[system_packages]='
