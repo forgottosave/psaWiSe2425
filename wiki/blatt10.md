@@ -530,7 +530,7 @@ Leider wird für LDAP kein standard exporter angeboten, weder in NixOS, noch als
              chmod +x source/openldap_exporter
            '';
            
-           # Ebenso definieren wir die Definition
+           # Ebenso definieren wir die Installation
            installPhase = ''
              mkdir -p $out/bin
              cp source/openldap_exporter $out/bin/
