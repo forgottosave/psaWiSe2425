@@ -92,7 +92,7 @@ Um homeassistant auch erreichen zu können müssen wir noch in VirtualBox eine P
 VBoxManage modifyvm "vmpsateam03-05" --nat-pf1 "homeassistant,tcp,,60351,,8123"
 ```
 
-Nun sollte Homeassistant unter `http://131.159.74.56:60351` erreichbar sein.
+Nun sollte Homeassistant unter [http://131.159.74.56:60351](http://131.159.74.56:60351) erreichbar sein.
 
 #### 1.4) Einrichten des SSL Zertifikats & https
 
@@ -121,7 +121,7 @@ Nach einem Neustart von HomeAssistant (Docker)...
 docker container restart homeassistant
 ```
 
-...ist HomeAssistant wie gefordert unter `https://psa.in.tum.de:60351/` erreichbar.
+...ist HomeAssistant wie gefordert unter [https://psa.in.tum.de:60351/](https://psa.in.tum.de:60351/) erreichbar. ACHTUNG der jeweilige Browser muss das Zertifikat akzeptieren, da es sich um ein selbst signiertes Zertifikat handelt (`chromium-browser --ignore-certificate-errors`)
 
 ### 2) Einrichten von Homeassistant
 
@@ -132,7 +132,7 @@ Nachdem wir Homeassistant erfolgreich installiert haben, können wir uns nun an 
 ```yaml
 recorder:
   purge_keep_days: 30
-  db_url: mysql://team3:DT7q2K1@192.168.4.5/databaseTeam3
+  db_url: mysql://team3:<passwd>@192.168.4.5/databaseTeam3
 ```
 
 ([Quelle](https://kevinfronczak.com/blog/mysql-with-homeassistant))
@@ -151,7 +151,7 @@ settings -> People -> add Person -> <name> und "allow login" -> set passwd -> cr
   | -------  | ----------------------------------------- |
   | ge78zig  | /home/ge78zig/homeassistant_password.txt  |
   | ge96xok  | /home/ge96xok/homeassistant_password.txt  |
-  | sysAdmin | /home/root/homeassistant_password.txt     |
+  | sysAdmin | /home/root/README.md                      |
 
 - Reguläre Nutzer:
 
