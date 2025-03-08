@@ -503,38 +503,73 @@ anpassen sodass belegter und noch freier Speicherplatz angezeigt wird
 
 #### 2.9) LDAP
 
-TODO
+Leider wird für LDAP kein standard exporter angeboten, weder in NixOS, noch als fertig konfigurierter Docker Container. Wir bauen uns deshalb ein Custom-Nix-Package aus diesem Github Projekt: [Github.com/tomcz/openldap_exporter](https://github.com/tomcz/openldap_exporter).
 
-1. Installation
+1. Installation: Hier bauen wir das custom Nix-Package, die Schritte sind als Kommentare erklärt:
 
    ```shell
-   git clone https://github.com/jcollie/openldap_exporter.git
-   cd openldap_exporter
-   virtualenv --python=/usr/bin/python2 /opt/openldap_exporter
-   /opt/openldap_exporter/bin/pip install --requirement requirements.txt
-   cp openldap_exporter.py /opt/openldap_exporter
-   cp openldap_exporter.yml /opt/openldap_exporter
-   vi /opt/openldap_exporter/openldap_exporter.yml
-   
-   # edit configuration file
-   cp openldap_exporter.service /etc/systemd/system
-   systemctl daemon-reload
-   systemctl enable openldap_exporter
-   systemctl start openldap_exporter
+   { pkgs, ... }:
+   let
+       # Definieren des Exporter Packages
+       openldap_exporter = pkgs.stdenv.mkDerivation {
+           name = "openldap_exporter-2.3.2";
+           pname = "openldap_exporter";
+           version = "2.3.2";
+           # Github Quelle
+           src = pkgs.fetchurl {
+             url = "https://github.com/tomcz/openldap_exporter/releases/download/v2.3.2/openldap_exporter-linux-amd64.gz";
+             sha256 = "dddd48d707a704e7ee54d70924edacca7f0eea7a54457a3b5078ac502c06b622";
+           };
+           nativeBuildInputs = [ pkgs.gzip pkgs.autoPatchelfHook ];
+           buildInputs = [ pkgs.glibc ];
 
-   docker build . -t openldap_exporter
+           # Da kein .tar.gz, muss die unpack-Phase explizit definiert werden
+           unpackPhase = ''
+             mkdir source
+             gzip -d < $src > source/openldap_exporter
+             chmod +x source/openldap_exporter
+           '';
+           
+           # Ebenso definieren wir die Definition
+           installPhase = ''
+             mkdir -p $out/bin
+             cp source/openldap_exporter $out/bin/
+           '';
+   
+           # Zum Schluss legen wir der Sauberkeit-halber ein paar Metadaten an
+           meta = with pkgs.lib; {
+             description = "Prometheus OpenLDAP Exporter";
+             license = licenses.asl20;
+             platforms = platforms.linux;
+           };
+       };
+   }
+   in
+   {
+       environment.systemPackages = [ openldap_exporter ]; 
+       # Hier definieren wir noch genauere Konfigurationen, wie das startup Kommande:
+       systemd.services.openldap_exporter = {
+           description = "Prometheus OpenLDAP Exporter";
+           after = [ "network.target" ];
+           wantedBy = [ "multi-user.target" ];
+           serviceConfig = {
+               # Beim Aufrufen geben wir den Nutzer, sowie das Passwort an
+               # Die Verbindungen lassen wir mit default Einstellungen (e.g. port des prometheus services = 9330)
+               ExecStart = "${openldap_exporter}/bin/openldap_exporter --ldapUser admin --ldapPass <Passwort>";
+               Restart = "always";
+           };
+       };
+   }
    ```
 
-2. Konfiguration - OpenLDAP
-  
+2. Prometheus Yaml
+
    ```yml
-   # ldapmodify -Y EXTERNAL -H ldapi:// <<EOF
-   dn: olcDatabase={1}monitor,cn=config
-   changetype: modify
-   replace: olcAccess
-   olcAccess: to * by dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth" read by dn.base="cn=Manager,dc=example,dc=com" read by * none
-   -
-   EOF
+   # prometheus.yml
+     - job_name: 'openldap'
+       static_configs:
+         - targets: 
+             - '192.168.3.9:9330'
    ```
 
 Quellen:
