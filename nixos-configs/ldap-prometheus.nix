@@ -38,7 +38,7 @@ in
     after = [ "network.target" ];
     wantedBy = [ "multi-user.target" ];
     serviceConfig = {
-      ExecStart = "${openldap_exporter}/bin/openldap_exporter --ldap.addr=ldap://localhost:389";
+      ExecStart = "${openldap_exporter}/bin/openldap_exporter";
       Restart = "always";
     };
   };
