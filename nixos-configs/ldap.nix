@@ -85,7 +85,12 @@ in
         };
     };
 
-    # for the LDAP exporter
-    virtualisation.docker.enable = true;
-    users.extraGroups.docker.members = [ "root" ];
+    services.prometheus.exporters.openldap = {
+    enable = true;
+    # Optional: Specify the LDAP URL if it's different from the default
+    # ldapUrl = "ldap://localhost:389";
+    # Optional: Set the bind DN and password if authentication is required
+    bindDn = "cn=admin,dc=team03,dc=psa,dc=cit,dc=tum,dc=de";
+    bindPassword = "ldapadmin123";
+  };
 }
