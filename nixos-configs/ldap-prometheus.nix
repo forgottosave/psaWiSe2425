@@ -9,16 +9,25 @@ let
       url = "https://github.com/tomcz/openldap_exporter/releases/download/v2.3.2/openldap_exporter-linux-amd64.gz";
       sha256 = "dddd48d707a704e7ee54d70924edacca7f0eea7a54457a3b5078ac502c06b622";
     };
-    nativeBuildInputs = [ pkgs.gzip ];
+    nativeBuildInputs = [ pkgs.gzip pkgs.autoPatchelfHook ];
+    buildInputs = [ pkgs.glibc ];
+
     unpackPhase = ''
       mkdir source
       gzip -d < $src > source/openldap_exporter
       chmod +x source/openldap_exporter
     '';
+
     installPhase = ''
       mkdir -p $out/bin
       cp source/openldap_exporter $out/bin/
     '';
+
+    meta = with pkgs.lib; {
+      description = "Prometheus OpenLDAP Exporter";
+      license = licenses.asl20;
+      platforms = platforms.linux;
+    };
   };
 in
 {
