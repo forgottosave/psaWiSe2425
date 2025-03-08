@@ -233,6 +233,8 @@ fileSystems."/home/ge65peq" = {
 };
 ```
 
+*Achtung: nicht alle Fileserver sind erreichbar, weshalb wir einige der Verzeichnisse als Ersatz von unserem Server mounten.*
+
 Auch das Datenbank-Verzeichnis wird von dem NFS gemountet. Die default-location ist `/var/lib/postgresql/17/`. Wir behalten diesen Pfad bei, mounten ab `postgresql` jedoch vom NFS:
 
 ```nix
