@@ -3,9 +3,8 @@
 let
   openldap_exporter = pkgs.stdenv.mkDerivation {
     pname = "openldap_exporter";
-    version = "1.0.0"; # Replace with the actual version
     src = pkgs.fetchurl {
-      url = "https://github.com/tomcz/openldap_exporter/releases/download/v${version}/openldap_exporter-${version}.tar.gz";
+      url = "https://github.com/tomcz/openldap_exporter/releases/download/v2.3.2/openldap_exporter-linux-amd64.gz";
       sha256 = "sha256-hash-of-the-tarball"; # Replace with the actual SHA256 hash
     };
     buildInputs = [ pkgs.go ];
