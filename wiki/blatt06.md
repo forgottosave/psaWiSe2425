@@ -228,7 +228,7 @@ Das Skipt kann sowohl auf der Host-VM, als auch auf jeder andern VM mit Verbingu
   ```bash
   # test_PSA_06.sh
   start_test "check home assistant reachable (curl)"
-  status=$(curl -X GET -o - -I https://131.159.74.56:60351/ | head -n 1)
+  status=$(curl --insecure -X GET -o - -I https://131.159.74.56:60351/ | head -n 1)
   if [[ $status =~ "200" ]]; then
   ...
   ```
