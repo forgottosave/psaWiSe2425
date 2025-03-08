@@ -38,7 +38,7 @@ in
     after = [ "network.target" ];
     wantedBy = [ "multi-user.target" ];
     serviceConfig = {
-      ExecStart = "${openldap_exporter}/bin/openldap_exporter";
+      ExecStart = "${openldap_exporter}/bin/openldap_exporter --ldapUser admin --ldapPass ldapadmin123";
       Restart = "always";
     };
   };
