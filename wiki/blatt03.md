@@ -176,6 +176,26 @@ Der support für **CoreDNS** ist in NixOS ähnlich wie für **bind**, aber die U
     }
     ```
 
+10. Jetzt fehlt nur noch eine Freigabe in den Firewalls und unser DNS ist einsatz bereit
+
+    ```nixos
+    # router-network.nix
+    # Allow: DNS
+    iptables -A OUTPUT -p udp --dport 53 -j ACCEPT
+    iptables -A OUTPUT -p tcp --dport 53 -j ACCEPT
+    iptables -A INPUT -p udp --dport 53 -j ACCEPT 
+    iptables -A INPUT -p tcp --dport 53 -j ACCEPT
+    ```
+
+    ```nixos
+    # vm-network-config.nix
+    # Allow: DNS
+    iptables -A OUTPUT -p udp --dport 53 -j ACCEPT
+    iptables -A OUTPUT -p tcp --dport 53 -j ACCEPT
+    iptables -A INPUT -p udp --dport 53 -j ACCEPT 
+    iptables -A INPUT -p tcp --dport 53 -j ACCEPT
+    ```
+
 Quellen:
 - [coredns](https://coredns.io/2017/07/24/quick-start/)
 - [psa wiki](https://psa.in.tum.de/xwiki/bin/download/PSA%20WiSe%202024%20%202025/Pr%C3%A4sentation%20der%20Aufgaben/WebHome/DNS_DHCP.pdf?rev=1.1)
