@@ -129,6 +129,10 @@
       iptables -A INPUT -p tcp --dport 9090 -m conntrack --ctstate NEW -j ACCEPT
       iptables -A INPUT -p tcp --dport 3000 -m conntrack --ctstate NEW -j ACCEPT
       iptables -A INPUT -p tcp --dport 9093 -m conntrack --ctstate NEW -j ACCEPT
+      # forwarding
+      iptables -A FORWARD -i docker0 -o enp0s3 -j ACCEPT
+      iptables -A FORWARD -i enp0s3 -o docker0 -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+
 
 
       
