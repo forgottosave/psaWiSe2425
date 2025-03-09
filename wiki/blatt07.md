@@ -302,7 +302,7 @@ sudo smbpasswd -e <username>
 
 Wir können das um Zeit zu sparen automatisieren. Hierfür iterieren wir in einer Schleife über jeden Nutzer, setzen das Passwort auf `{user}smbpwsrd` und aktivieren diesen für Samba:
 
-```
+```shell
 #!/usr/bin/env bash
 
 # Alle ge..... (also Studenten) Nutzer 
