@@ -84,6 +84,7 @@
       iptables -A OUTPUT -p tcp --dport 111 -m conntrack --ctstate NEW -j ACCEPT
       iptables -A OUTPUT -p udp --dport 111 -m conntrack --ctstate NEW -j ACCEPT
       iptables -A OUTPUT -p tcp --dport 2049 -m conntrack --ctstate NEW -j ACCEPT
+      iptables -A OUTPUT -p udp --dport 2049 -m conntrack --ctstate NEW -j ACCEPT
 
       # --- Samba (client) ---
       iptables -A OUTPUT -p udp --dport 137 -m conntrack --ctstate NEW -j ACCEPT

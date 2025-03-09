@@ -50,6 +50,7 @@ sed_placeholders[firewall]='
       iptables -A INPUT -p tcp --dport 111 -m conntrack --ctstate NEW -s 192.168.0.0/16 -j ACCEPT
       iptables -A INPUT -p udp --dport 111 -m conntrack --ctstate NEW -s 192.168.0.0/16 -j ACCEPT
       iptables -A INPUT -p tcp --dport 2049 -m conntrack --ctstate NEW -s 192.168.0.0/16 -j ACCEPT
+      iptables -A INPUT -p udp --dport 2049 -m conntrack --ctstate NEW -s 192.168.0.0/16 -j ACCEPT
       
       # --- Samba (server) --- (only vm8)
       iptables -A INPUT -p udp --dport 137 -m conntrack --ctstate NEW -s 192.168.0.0/16 -j ACCEPT

