@@ -10,6 +10,8 @@ include_files=(
     ldap-prometheus.nix
     csv-users.nix
     ldap-client.nix
+    slapd.crt
+    sssd.conf
 )
 
 # SED placeholders
