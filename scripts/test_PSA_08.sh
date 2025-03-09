@@ -115,7 +115,7 @@ else
     echo -e "$old_pwd\n$old_pwd\n$new_pwd\n$new_pwd\n$new_pwd\n$new_pwd" | su -c "passwd" "$user" &>/dev/null
     if [[ $? -eq 0 ]]; then
         # change back
-        echo -e "$new_pwd\n$new_pwd\n$old_pwd\n$old_pwd\n$old_pwd" | su -c "passwd" "$user" &>/dev/null
+        echo -e "$new_pwd\n$new_pwd\n$old_pwd\n$old_pwd\n$old_pwd\n$old_pwd" | su -c "passwd" "$user" &>/dev/null
         print_success "could change password"
     else
         print_failed "couldn't change user password"
