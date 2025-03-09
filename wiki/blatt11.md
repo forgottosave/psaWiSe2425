@@ -725,19 +725,7 @@ cat atten.password
 find /mnt/nfs -writable
 ```
 
-##### webserver
-
-##### mailserver
-
 ##### ldap
-
-##### ssh
-
-##### webanwendung
-
-##### dns
-
-
 
 
 ### 2. Dokumentation gefundener Sicherheitslücken

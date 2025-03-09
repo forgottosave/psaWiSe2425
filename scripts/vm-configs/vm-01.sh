@@ -10,6 +10,7 @@ include_files=(
     sssd.conf
     user-config.nix
     csv-users.nix
+    auditd.nix
 )
 
 # SED placeholders
@@ -24,6 +25,7 @@ sed_placeholders[imports]='
     ./ldap-client.nix
     ./user-config.nix
     ./csv-users.nix
+    ./auditd.nix
 '
 
 sed_placeholders[system_packages]='

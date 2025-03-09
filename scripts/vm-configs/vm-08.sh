@@ -50,15 +50,12 @@ sed_placeholders[firewall]='
       # Allow rpcbind
       iptables -A INPUT -p tcp --dport 111 -s 192.168.0.0/16 -j ACCEPT
       iptables -A INPUT -p udp --dport 111 -s 192.168.0.0/16 -j ACCEPT
-
       # Allow mountd (fixed to port 20048)
       iptables -A INPUT -p tcp --dport 20048 -s 192.168.0.0/16 -j ACCEPT
       iptables -A INPUT -p udp --dport 20048 -s 192.168.0.0/16 -j ACCEPT
-
       # Allow NFS itself
       iptables -A INPUT -p tcp --dport 2049 -s 192.168.0.0/16 -j ACCEPT
       iptables -A INPUT -p udp --dport 2049 -s 192.168.0.0/16 -j ACCEPT
-
       # Allow NLM (nlockmgr) for file locking if needed
       iptables -A INPUT -p udp --dport 37373 -s 192.168.0.0/16 -j ACCEPT
       iptables -A INPUT -p tcp --dport 43027 -s 192.168.0.0/16 -j ACCEPT
