@@ -21,6 +21,15 @@
     settings.PermitRootLogin = "prohibit-password";          # Disable root passwd login
     settings.PasswordAuthentication = true;                 # Disable password authentication
     # settings.PermitRootLogin = "yes";               # Enable root login
+
+    extraConfig = ''
+      AllowTcpForwarding no
+      ClientAliveCountMax 2
+      MaxAuthTries 3
+      MaxSessions 2
+      TCPKeepAlive no
+      AllowAgentForwarding no
+    '';
   };
 
   #networking.firewall.allowedTCPPorts = [ 22 ];

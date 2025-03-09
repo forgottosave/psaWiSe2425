@@ -132,9 +132,6 @@
 
 
 
-      
-
-
       # --- Database (client) ---
       iptables -A OUTPUT -p tcp --sport 5432 -m conntrack --ctstate NEW -j ACCEPT
 
