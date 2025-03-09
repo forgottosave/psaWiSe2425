@@ -75,7 +75,7 @@
       iptables -A INPUT -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
       iptables -A OUTPUT -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
 
-      %%imports%%
+      %%firewall%%
 
       # --- Database (client) ---
       iptables -A OUTPUT -p tcp --sport 5432 -m conntrack --ctstate NEW -j ACCEPT
