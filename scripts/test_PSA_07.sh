@@ -99,7 +99,8 @@ TEST_DIR="tmp_test_smb"
 
 for REMOTE_DIR in /home/*; do
     mkdir "$TEST_DIR"
-    mount -t cifs //192.168.3.8/${REMOTE_DIR:6} $TEST_DIR -o username=${REMOTE_DIR:6},password=${REMOTE_DIR:6}smbpswrd
+    user=${REMOTE_DIR:6}
+    mount -t cifs //192.168.3.8/${user} $TEST_DIR -o username=${user},password=$(cat ~/smb-passwords/$user.password)
     if [ $? -eq 0 ]; then
         print_success "$REMOTE_DIR could be mounted"
         umount "$TEST_DIR"

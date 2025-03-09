@@ -300,16 +300,24 @@ sudo smbpasswd -a <username>
 sudo smbpasswd -e <username>
 ```
 
-Wir können das um Zeit zu sparen automatisieren. Hierfür iterieren wir in einer Schleife über jeden Nutzer, setzen das Passwort auf `{user}smbpwsrd` und aktivieren diesen für Samba:
+Wir können das um Zeit zu sparen automatisieren. Hierfür iterieren wir über jeden Nutzer, setzen das Passwort auf ein zufällig generiertes, welches wir unter `/root/smb-passwords/` speichern, und aktivieren diesen Nutzer für Samba:
 
 ```shell
 #!/usr/bin/env bash
 
-# Alle ge..... (also Studenten) Nutzer 
-USERS=$(getent passwd | awk -F: '$3 >= 1000 {print $1}' | grep ge)
+# ausgeführt in /export/home
+for user in *; do
+    echo "Processing user $user"
 
-for user in $USERS; do
-    (echo "${user}smbpswrd"; echo "${user}smbpswrd") | smbpasswd -a -s "$user"
+    # Generate password & hash; Provide $PasswordHash
+    echo "Generating password..."
+    PWD_FILE="~/smb-passwords/$user.password"
+    Password=$(openssl rand -base64 16 | tr -d '/+=,' | cut -c1-16)
+    echo "  Pwd:  $Password"
+    touch "$PWD_FILE"
+    echo "$Password" >> "$PWD_FILE"
+
+    (echo "${Password}"; echo "${Password}") | smbpasswd -a -s "$user"
     smbpasswd -e "$user"
 done
 ```
