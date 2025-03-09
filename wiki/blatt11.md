@@ -315,6 +315,21 @@ Die Methode ist sehr effektiv um die Sicherheitslücken von NFS zu demonstrieren
 
 #### 1.4 nfs Privilege Escalation
 
+Dieser Angriff ist unserer Meinung nach einer der gefährlichste Angriff in diesen Netzwerksetup da hier ein Angreifer der Zugriff auf einen NFS share hat root rechte auf dem Server erlangen kann.
+
+**Eigene VMs:**
+hier zum glück kein Problem da dies leicht mit der option `root_squash` beim einrichten des Fileshares verhindert werden kann bzw ist sogar standardmäßig aktiviert.
+
+**Andere VMs:**
+Hier ist uns zunächst aufgefallen das die meisten Teams ihren Fileserver zu diesen Zeitpunkt nicht von anderen Team-Netzwerken (wie verlangt im Aufgabenblatt) erreichbar gemacht haben. Nur bei Team 05 und 10 war es uns möglich überhaupt auf den Fileserver zuzugreifen. Bei Team 05 war es uns möglich auf den Fileserver zuzugreifen und die Dateien zu lesen aber nicht als root zu schreiben da hier die gennante Option aktiviert war. Bei Team 10 war die Sicherheitslücke offen und wurde wie folgt ausgenutzt:
+
+```bash
+mkdir -p /mnt/nfs
+mount -t nfs 192.168.5.7:/export /mnt/nfs -o nolock
+ls -la /mnt/nfs
+# -> überprüfe welche UUID auf /export/atten zugriff hat
+
+```
 
 ### 2. lokale Exploits
 
