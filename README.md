@@ -11,24 +11,20 @@
 This repository contains all the [documentation](README.md#Wiki) & all [NixOS config files](README.md#Configs) of Team 3 of the "Praktikum Systemadministration".
 We use currently use [obsidian](https://obsidian.md/) as the Markdown editor for everything.
 
-## Progress
+## TODOs
 
-- mark **done**: `!`
-- mark **submission-ready**: `X`
-
-| Blatt | Doku | VMs | Anmerkungen (was fehlt)                     |
-| ----- | ---- | --- | ------------------------------------------- |
-| 1     | X    | X   |                                             |
-| 2     | X    | X   |                                             |
-| 3     | X    | !   |                                             |
-| 4     | X    | !   |                                             |
-| 5     | X    | !   |                                             |
-| 6     | X    | !   |                                             |
-| 7     | X    | X   |                                             |
-| 8     | !    |     | LDAP                                        |
-| 9     |      |     | Testing, update wiki                        |
-| 10    |      | !   | Status Übersicht Wiki & LDAP                |
-| 11    |      |     | Security                                    |
+- 1) dirs von anderen Teammembers von deren fileserver?
+- 1) security fertig
+- 1) mail tests
+- 1) export github to wiki
+- 2) homeassistant prometheus
+- 2) rebuild + (restart) order (fileserver, db, router, ....) (ldap allready finished)
+- 2) git squash
+- 3) ldap grafana
+- 4) web + mails quellen
+- 4) dns zone transver
+- 5) curl bug
+- 5) test_skripts only on vms according to number
 
 Submission:
 
