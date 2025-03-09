@@ -35,6 +35,22 @@ function print_summary {
     failed_count=0
 }
 
+users=(
+    cruzc ge95vir heusl liuli pluda schra wiesn
+    atten dobro ge63gut ge96hoj holst loehr popee seide witte
+    bader enges ge64baw ge96xok huber maier rempe shulm wuche
+    barza erdoe ge64wug georg jiang manov riedr sieve yorda
+    beckc fache ge65hog goelm karsu mehne rimme stein zinsl
+    becke fengj ge65peq grotz kaush mitte rooto styna
+    brand finis ge78nes hallm kentj moell ruedi trana
+    braun fisch ge78zig hanyt kilic murat sandm trayk
+    bruec fuchs ge84zoj hausn klein navar schle treml
+    catom ge38hoy ge87huk hegen kochn olsso schlo verik
+    cebul ge43fim ge87liq heinz kollo ottin schmi vossw
+    citom ge47kut ge87yen helle langi perro schmo wangn
+    ge47sof ge94bob herzi lindl pfeff schne weinb
+)
+
 ## Test depending on VM
 # hosting VM: check all
 # non-hosting VM: only check access to Home Assistant
@@ -42,21 +58,6 @@ VM_NUMBER=$(hostname)
 VM_NUMBER=${VM_NUMBER: -1}
 if [ $VM_NUMBER -eq 7 ]; then
     # LDAP VM:
-    users=(
-        cruzc ge95vir heusl liuli pluda schra wiesn
-        atten dobro ge63gut ge96hoj holst loehr popee seide witte
-        bader enges ge64baw ge96xok huber maier rempe shulm wuche
-        barza erdoe ge64wug georg jiang manov riedr sieve yorda
-        beckc fache ge65hog goelm karsu mehne rimme stein zinsl
-        becke fengj ge65peq grotz kaush mitte rooto styna
-        brand finis ge78nes hallm kentj moell ruedi trana
-        braun fisch ge78zig hanyt kilic murat sandm trayk
-        bruec fuchs ge84zoj hausn klein navar schle treml
-        catom ge38hoy ge87huk hegen kochn olsso schlo verik
-        cebul ge43fim ge87liq heinz kollo ottin schmi vossw
-        citom ge47kut ge87yen helle langi perro schmo wangn
-        ge47sof ge94bob herzi lindl pfeff schne weinb
-    )
     
     ## TEST #########################################
     ## check if LDAP is running
@@ -92,7 +93,33 @@ if [ $VM_NUMBER -eq 7 ]; then
     done
 
 else
-    echo "please run this script on VM 7"
+
+    ## TEST #########################################
+    ## check LDAP user logins
+    start_test "check LDAP user logins"
+    for user in "${users[@]}"; do
+        if su -c "whoami" "$user" &>/dev/null; then
+            print_success "user $user can log in"
+        else
+            print_failed "failed user login for $user"
+        fi
+    done
+
+    ## TEST #########################################
+    ## check if user ge96xok can change their password
+    start_test "check password changing rights"
+    user="ge96xok"
+    old_pwd="2IRR7iiMqxImTYmY"
+    new_pwd="tmppwd123"
+    echo -e "$old_pwd\n$old_pwd\n$new_pwd\n$new_pwd\n$new_pwd\n$new_pwd" | su -c "passwd" "$user" &>/dev/null
+    if [[ $? -eq 0 ]]; then
+        # change back
+        echo -e "$new_pwd\n$new_pwd\n$old_pwd\n$old_pwd\n$old_pwd" | su -c "passwd" "$user" &>/dev/null
+        print_success "could change password"
+    else
+        print_failed "couldn't change user password"
+    fi
+
 fi
 
 ## summary ######################################

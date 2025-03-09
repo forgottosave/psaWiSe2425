@@ -413,6 +413,61 @@ Quellen:
 - [ArchLinux LDAP Documentation](https://wiki.archlinux.org/title/OpenLDAP)
 - [Team06 LDAP Documentation](https://psa.in.tum.de/xwiki/bin/view/PSA%20WiSe%202024%20%202025/Dokumentation%20der%20Aufgaben/PSAwise2425Team6Aufgabe08/)
 
+### 4) Testing
+
+Zum Schluss testen wir LDAP mit einem Skript. Die Struktur des Test Skripts ist wieder gleich zu den vorhergehenden Aufgaben, wir gehen lediglich auf die spezifischen Tests ein. Hierbei unterscheiden wir zwischen Server-Tests und Client-Tests.
+
+Auf dem LDAP **Server** führen wir folgende Tests aus:
+
+1. **Service läuft:** Teste ob der LDAP Service überhaupt läuft
+
+    ```shell
+    systemctl is-active --quiet "openldap"
+    if [[ $? -eq 0 ]]; then
+        ...
+    ```
+
+2. **Port erreichbar:** Überprüfe, ob der LDAPS Port erreichbar ist
+
+    ```shell
+    nc -z -w2 ldap.psa-team03.cit.tum.de 636 &>/dev/null
+    if [[ $? -eq 0 ]]; then
+        ...
+    ```
+
+3. **User & Login:** Für jeden Nutzer testen wir, ob wir ihn im LDAP finden und ob er sich auch mit seinem Passwort anmelden kann
+
+    ```shell
+    for user in "${users[@]}"; do
+        ldapwhoami -H ldapi:// -x -D "uid=$user,ou=users,dc=team03,dc=psa,dc=cit,dc=tum,dc=de" -w "$(cat ~/ldap/ldap-user-attach/$user/$user-ldap.password)"
+
+        if [[ $? -eq 0 ]]; then
+            ...
+    ```
+
+Auf jedem **Client** können folgende Tests ausgeführt werden:
+
+1. **User Login:**
+
+    ```shell
+    for user in "${users[@]}"; do
+        if su -c "whoami" "$user" &>/dev/null; then
+            ...
+    ```
+
+2. **Password ändern:** Kann ein user sein Passwort ändern. *Wichtig*: wir müssen es für andere Tests wieder zurück ändern. Wir testen außerdem stichprobenartig nur einen User, von dem wir uns sichergehen können, dass sein Passwort nicht verändert wurde (unser Team Mitglied 2).
+
+    ```shell
+    user="ge96xok"
+    old_pwd="2IRR7iiMqxImTYmY"
+    new_pwd="tmppwd123"
+    echo -e "$old_pwd\n$old_pwd\n$new_pwd\n$new_pwd\n$new_pwd\n$new_pwd" | su -c "passwd" "$user" &>/dev/null
+    if [[ $? -eq 0 ]]; then
+        # change back
+        echo -e "$new_pwd\n$new_pwd\n$old_pwd\n$old_pwd\n$old_pwd" | su -c "passwd" "$user" &>/dev/null
+        ...
+    ```
+
 ### 3) Extra: Portunus
 
 Wir haben uns zwar dagegen entschieden dieses Tool zu benutzen, aber wollten es hier dennoch kurz erwähnen: Portunus ist eine graphische Schnittstelle die einen openldap-Server im Hintergrund handhabt und auch nativ auf NixOS verfügbar ist.
