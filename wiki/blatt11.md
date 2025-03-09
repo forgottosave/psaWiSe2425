@@ -111,9 +111,9 @@ IP Address      Hostname                                 Open Ports (with Servic
 192.168.3.3     (ns1.psa-team03.cit.tum.de)              22/open/tcp/ssh 53/open/tcp/domain   111/open/tcp/rpcbind     8123/open/tcp/polipo      9100/open/tcp/jetdirect 9101/open/tcp/jetdirect 9153/open/tcp/ 
 192.168.3.4     (vm4.psa-team03.cit.tum.de)              22/open/tcp/ssh 111/open/tcp/rpcbind 5432/open/tcp/postgresql 
 192.168.3.5     (vm5.psa-team03.cit.tum.de)              22/open/tcp/ssh 111/open/tcp/rpcbind 5355/open/tcp/llmnr      8080/open/tcp/http-proxy  8123/open/tcp/polipo    18555/open/tcp/ 
-192.168.3.6     (vm6.psa-team03.cit.tum.de)              22/open/tcp/ssh 80/open/tcp/http     111/open/tcp/rpcbind     443/open/tcp/https        5355/open/tcp/llmnr     9100/open/tcp/jetdirect 9101/open/tcp/jetdirect 9102/open/tcp/jetdirect 41027/open/tcp/ 
+192.168.3.6     (vm6.psa-team03.cit.tum.de)              22/open/tcp/ssh 80/open/tcp/http     111/open/tcp/rpcbind     443/open/tcp/https        5355/open/tcp/llmnr     9100/open/tcp/jetdirect 9101/open/tcp/jetdirect 9102/open/tcp/jetdirect    41027/open/tcp/ 
 192.168.3.7     (vm7.psa-team03.cit.tum.de)              22/open/tcp/ssh 111/open/tcp/rpcbind 389/open/tcp/ldap 
-192.168.3.8     (vm8.psa-team03.cit.tum.de)              22/open/tcp/ssh 111/open/tcp/rpcbind 139/open/tcp/netbios-ssn 445/open/tcp/microsoft-ds 2049/open/tcp/nfs       5355/open/tcp/llmnr     9100/open/tcp/jetdirect 20048/open/tcp/mountd   33469/open/tcp/ 33761/open/tcp/ 
+192.168.3.8     (vm8.psa-team03.cit.tum.de)              22/open/tcp/ssh 111/open/tcp/rpcbind 139/open/tcp/netbios-ssn 445/open/tcp/microsoft-ds 2049/open/tcp/nfs       5355/open/tcp/llmnr     9100/open/tcp/jetdirect 20048/open/tcp/mountd      33469/open/tcp/          33761/open/tcp/ 
 192.168.3.9     (vm9.psa-team03.cit.tum.de)              22/open/tcp/ssh 25/open/tcp/smtp     111/open/tcp/rpcbind     9154/open/tcp/ 
 192.168.3.10    (vm10.psa-team03.cit.tum.de)             22/open/tcp/ssh 111/open/tcp/rpcbind 3000/open/tcp/ppp        9090/open/tcp/zeus-admin  9100/open/tcp/jetdirect 9115/open/tcp/ 
 ```
@@ -122,22 +122,21 @@ IP Address      Hostname                                 Open Ports (with Servic
 Hier ist zu sehen das bei einigen VMs unnötig viele Ports offen sind. Diese sollten geschlossen werden um die Angriffsfläche zu minimieren.
 
 **Lösung:**
--> new firewall rules (siehe lynis) mit dem dann folgenden Ergebnis:
+-> new firewall rules (siehe lynis) mit dem dann folgenden Ergebnis mit deutlich weniger angriefspunkten:
 
 ```bash
 IP Address      Hostname                                 Open Ports (with Service)                                             
 ---------------------------------------------------------------------------------------------------------------
-192.168.3.2     (mirror.database.psa-team03.cit.tum.de)  22/open/tcp/ssh 111/open/tcp/rpcbind 5432/open/tcp/postgresql 9100/open/tcp/jetdirect 
-192.168.3.3     (router.psa-team03.cit.tum.de)           22/open/tcp/ssh 53/open/tcp/domain 111/open/tcp/rpcbind       8123/open/tcp/polipo 9100/open/tcp/jetdirect 9101/open/tcp/jetdirect 9153/open/tcp/ 
-192.168.3.4     (vm4.psa-team03.cit.tum.de)              22/open/tcp/ssh 111/open/tcp/rpcbind 5432/open/tcp/postgresql 
-192.168.3.5     (homeassistant.psa-team03.cit.tum.de)    22/open/tcp/ssh 111/open/tcp/rpcbind 8123/open/tcp/polipo 
-192.168.3.6     (web2.psa-team03.cit.tum.de)             22/open/tcp/ssh 80/open/tcp/http 111/open/tcp/rpcbind 443/open/tcp/https 9100/open/tcp/jetdirect 9101/open/tcp/jetdirect 9102/open/tcp/jetdirect 
-192.168.3.7     (ldap.psa-team03.cit.tum.de)             22/open/tcp/ssh 111/open/tcp/rpcbind 636/open/tcp/ldapssl 
-192.168.3.8     (fileserver.psa-team03.cit.tum.de)       22/open/tcp/ssh 111/open/tcp/rpcbind 139/open/tcp/netbios-ssn 445/open/tcp/microsoft-ds 2049/open/tcp/nfs 9100/open/tcp/jetdirect 
-192.168.3.9     (mail.psa-team03.cit.tum.de)             22/open/tcp/ssh 25/open/tcp/smtp 110/open/tcp/pop3 111/open/tcp/rpcbind 143/open/tcp/imap 9154/open/tcp/ 
-192.168.3.10    (vm10.psa-team03.cit.tum.de)             22/open/tcp/ssh 111/open/tcp/rpcbind 3000/open/tcp/ppp 9090/open/tcp/zeus-admin 9093/open/tcp/copycat 9115/open/tcp/ 
-192.168.3.66    (web3.psa-team03.cit.tum.de)             22/open/tcp/ssh 80/open/tcp/http 111/open/tcp/rpcbind 443/open/tcp/https 9100/open/tcp/jetdirect 9101/open/tcp/jetdirect 9102/open/tcp/jetdirect 
-192.168.3.1     (vm1.psa-team03.cit.tum.de)              22/open/tcp/ssh 111/open/tcp/rpcbind 5355/open/tcp/llmnr 9100/open/tcp/jetdirect 55229/open/tcp/
+192.168.3.1     (vm1.psa-team03.cit.tum.de)              22/open/tcp/ssh 111/open/tcp/rpcbind    5355/open/tcp/llmnr      9100/open/tcp/jetdirect 
+192.168.3.2     (vm2.psa-team03.cit.tum.de)              22/open/tcp/ssh 9100/open/tcp/jetdirect 
+192.168.3.3     (vm3.psa-team03.cit.tum.de)              22/open/tcp/ssh 53/open/tcp/domain      111/open/tcp/rpcbind     8123/open/tcp/polipo      9100/open/tcp/jetdirect 9101/open/tcp/jetdirect 9153/open/tcp/ 
+192.168.3.4     (database.psa-team03.cit.tum.de)         22/open/tcp/ssh                                     
+192.168.3.5     (vm5.psa-team03.cit.tum.de)              22/open/tcp/ssh 111/open/tcp/rpcbind    5355/open/tcp/llmnr      8080/open/tcp/http-proxy  8123/open/tcp/polipo    18555/open/tcp/ 
+192.168.3.6     (web2.psa-team03.cit.tum.de)             22/open/tcp/ssh 80/open/tcp/http        443/open/tcp/https       9100/open/tcp/jetdirect   9102/open/tcp/jetdirect 
+192.168.3.7     (ldap.psa-team03.cit.tum.de)             22/open/tcp/ssh 636/open/tcp/ldapssl 
+192.168.3.8     (fileserver.psa-team03.cit.tum.de)       22/open/tcp/ssh 111/open/tcp/rpcbind    139/open/tcp/netbios-ssn 445/open/tcp/microsoft-ds 2049/open/tcp/nfs       9100/open/tcp/jetdirect 20048/open/tcp/mountd 43027/open/tcp/ 
+192.168.3.9     (mail.psa-team03.cit.tum.de)             22/open/tcp/ssh 25/open/tcp/smtp        110/open/tcp/pop3        143/open/tcp/imap         9154/open/tcp/ 
+192.168.3.10    (vm10.psa-team03.cit.tum.de)             22/open/tcp/ssh 3000/open/tcp/ppp       9090/open/tcp/zeus-admin 9115/open/tcp/ 
 ```
 
 **Andere VMs:**
@@ -160,6 +159,9 @@ IP Address      Hostname                                 Open Ports (with Servic
     192.168.2.10    (due.psa-team02.cit.tum.de)              22/open/tcp/ssh 80/open/tcp/http     443/open/tcp/https       5666/open/tcp/nrpe        8123/open/tcp/polipo 
     ```
 
+    -> nfs share auf 192.168.2.7 aber mit fehlenden Portfreigaben
+    -> unverschlüsselte protokolle SMTP (Port 25), POP3 (Port 110) und IMAP (Port 143)
+
 - team 04:
 
     ```bash
@@ -181,7 +183,8 @@ IP Address      Hostname                                 Open Ports (with Servic
     192.168.4.43    (vm04-04-ip43.psa-team04.cit.tum.de)     22/open/tcp/ssh 8123/open/tcp/polipo 
     ```
 
-    -> kein nfs share
+    -> kein nfs share (nicht aufgabenstellungskonform)
+    -> generell viele fehlende Konfigurationen
 
 - team 05:
 
@@ -201,6 +204,7 @@ IP Address      Hostname                                 Open Ports (with Servic
     ```
 
     -> nfs on 192.168.5.7 mit /16
+    -> unverschlüsselte protokolle SMTP (Port 25), IMAP (Port 143)
 
 - team 06:
 
@@ -219,7 +223,9 @@ IP Address      Hostname                                 Open Ports (with Servic
     192.168.6.69    (web.psa-team06.cit.tum.de)              22/open/tcp/ssh 80/open/tcp/http 443/open/tcp/https 8123/open/tcp/polipo 9100/open/tcp/jetdirect 
     ```
 
-    -> fileserver auf 192.168.6.7 aber nicht /16 ?
+    -> fileserver auf 192.168.6.7 aber mit fehlenden Portfreigaben
+    -> unverschlüsselte protokolle SMTP (Port 25), POP3 (Port 110), IMAP (Port 143)
+    -> verschlüsselte protokolle IMAPS (Port 993), POP3S (Port 995)
 
 - team 07: fast keine erreichbaren hosts
 
@@ -243,7 +249,9 @@ IP Address      Hostname                                 Open Ports (with Servic
     192.168.8.254   (router.psa-team08.cit.tum.de)           22/open/tcp/ssh 111/open/tcp/rpcbind 8123/open/tcp/polipo
     ```
 
-    -> fileserver auf 192.168.8.12 aber ohne /16?
+    -> fileserver auf 192.168.8.12 aber mit fehlenden Portfreigaben
+    -> unverschlüsselte protokolle SMTP (Port 25), POP3 (Port 110), IMAP (Port 143)
+    -> verschlüsselte protokolle IMAPS (Port 993), POP3S (Port 995)
 
 - team 09:
 
@@ -251,7 +259,7 @@ IP Address      Hostname                                 Open Ports (with Servic
 
     ```
 
-    -> fileserver auf 192.168.9.14 aber ohne /16?
+    -> fileserver auf 192.168.9.14 aber mit fehlenden Portfreigaben
 
 - team 10:
 
@@ -273,6 +281,8 @@ IP Address      Hostname                                 Open Ports (with Servic
     ```
 
     -> fileserver auf 192.168.10.8 mit /16
+    -> unverschlüsselte protokolle SMTP (Port 25), POP3 (Port 110), IMAP (Port 143)
+    -> verschlüsselte protokolle IMAPS (Port 993), POP3S (Port 995)
 
 **Wirksamkeit:**
 Das tool ist durachaus nützlich alle hosts und deren Angriffspunkte zu finden und war in unseren Fall besonders hilfreich zur identifizierung der fileservers.

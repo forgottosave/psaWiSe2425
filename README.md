@@ -14,7 +14,7 @@ We use currently use [obsidian](https://obsidian.md/) as the Markdown editor for
 ## TODOs
 
 - [ ] 1) dirs von anderen Teammembers von deren fileserver?
-- [ ] 1) security fertig
+- [ ] 1) security team 9 network scann
 - [ ] 1) mail tests
 - [ ] 1) export github to wiki
 - [x] 2) homeassistant prometheus
