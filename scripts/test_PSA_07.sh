@@ -84,10 +84,10 @@ for REMOTE_DIR in /home/*; do
     mkdir "$TEST_DIR"
     mount -t nfs "192.168.3.8:$REMOTE_DIR" "$TEST_DIR"
     if [ $? -eq 0 ]; then
-        print_success "$REMOTE_DIR could be mounted"
+        print_success "$REMOTE_DIR could be mounted (nfs)"
         umount "$TEST_DIR"
     else
-        print_failed "failed to mount $REMOTE_DIR"
+        print_failed "failed to mount $REMOTE_DIR (smb)"
     fi
     rm -r "$TEST_DIR"
 done
@@ -112,15 +112,14 @@ users=(
     ge47sof ge94bob herzi lindl pfeff schne weinb
 )
 
-for REMOTE_DIR in users; do
+for user in users; do
     mkdir "$TEST_DIR"
-    user=${REMOTE_DIR:6}
     mount -t cifs //192.168.3.8/${user} $TEST_DIR -o username=${user},password=$(cat ~/smb-passwords/$user.password)
     if [ $? -eq 0 ]; then
-        print_success "$REMOTE_DIR could be mounted"
+        print_success "$user home could be mounted (smb)"
         umount "$TEST_DIR"
     else
-        print_failed "failed to mount $REMOTE_DIR"
+        print_failed "failed to mount $user home (smb)"
     fi
     rm -r "$TEST_DIR"
 done
