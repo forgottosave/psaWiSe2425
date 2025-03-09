@@ -44,3 +44,18 @@ sed_placeholders[root_access]='
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIFKywkjovjz87VQHeNVSGUlc/5Nl4eH4Hj1SrYHIeqM"
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBwkCLE+pDy8HvHy98MwsNH/sxPYmBRXuREOd2jTMXPV timon.ensel@tum.de"
 '
+
+sed_placeholders[firewall]='
+    # --- Mail (server) --- (only vm9)
+    # Reception of mail
+    iptables -A INPUT -p tcp --dport 25 -m conntrack --ctstate NEW -s 192.168.0.0/16 -j ACCEPT
+    iptables -A INPUT -p tcp --dport 587 -m conntrack --ctstate NEW -s 192.168.0.0/16 -j ACCEPT
+    # Retrieval of mail
+    iptables -A INPUT -p tcp --dport 143 -m conntrack --ctstate NEW -s 192.168.0.0/16 -j ACCEPT
+    iptables -A INPUT -p tcp --dport 993 -m conntrack --ctstate NEW -s 192.168.0.0/16 -j ACCEPT
+    iptables -A INPUT -p tcp --dport 110 -m conntrack --ctstate NEW -s 192.168.0.0/16 -j ACCEPT
+    iptables -A INPUT -p tcp --dport 995 -m conntrack --ctstate NEW -s 192.168.0.0/16 -j ACCEPT
+    # Outgoing mail
+    iptables -A OUTPUT -p tcp --dport 25 -d 192.168.0.0/16 -m conntrack --ctstate NEW -j ACCEPT
+    iptables -A OUTPUT -p tcp --dport 25 -d 131.159.254.10 -m conntrack --ctstate NEW -j ACCEPT
+'

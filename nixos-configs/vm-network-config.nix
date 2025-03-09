@@ -75,62 +75,7 @@
       iptables -A INPUT -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
       iptables -A OUTPUT -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
 
-
-
-      # --- Database (server) --- (only vm4)
-      iptables -A INPUT -p tcp --dport 5432 -m conntrack --ctstate NEW -s 192.168.0.0/16 -j ACCEPT
-
-      # --- Homeassistant (server) --- (only vm5)
-      iptables -A INPUT -p tcp --dport 8123 -m conntrack --ctstate NEW -j ACCEPT
-
-      # --- HTTP/HTTPS (server) --- (only vm6)
-      iptables -A INPUT -p tcp --dport 80 -s 192.168.0.0/16 -j ACCEPT  
-      iptables -A INPUT -p tcp --dport 443 -s 192.168.0.0/16 -j ACCEPT
-
-      # --- LDAP (server) --- (only vm7)
-      iptables -A INPUT -p tcp --dport 389 -m conntrack --ctstate NEW -s 192.168.0.0/16 -j ACCEPT
-      iptables -A INPUT -p tcp --dport 636 -m conntrack --ctstate NEW -s 192.168.0.0/16 -j ACCEPT
-
-      # --- NFS (server) --- (only vm8)
-      iptables -A INPUT -p tcp --dport 111 -m conntrack --ctstate NEW -s 192.168.0.0/16 -j ACCEPT
-      iptables -A INPUT -p udp --dport 111 -m conntrack --ctstate NEW -s 192.168.0.0/16 -j ACCEPT
-      iptables -A INPUT -p tcp --dport 2049 -m conntrack --ctstate NEW -s 192.168.0.0/16 -j ACCEPT
-
-      # --- Samba (server) --- (only vm8)
-      iptables -A INPUT -p udp --dport 137 -m conntrack --ctstate NEW -s 192.168.0.0/16 -j ACCEPT
-      iptables -A INPUT -p udp --dport 138 -m conntrack --ctstate NEW -s 192.168.0.0/16 -j ACCEPT
-      iptables -A INPUT -p tcp --dport 139 -m conntrack --ctstate NEW -s 192.168.0.0/16 -j ACCEPT
-      iptables -A INPUT -p tcp --dport 445 -m conntrack --ctstate NEW -s 192.168.0.0/16 -j ACCEPT
-
-      # --- Mail (server) --- (only vm9)
-      # Reception of mail
-      iptables -A INPUT -p tcp --dport 25 -m conntrack --ctstate NEW -s 192.168.0.0/16 -j ACCEPT
-      iptables -A INPUT -p tcp --dport 587 -m conntrack --ctstate NEW -s 192.168.0.0/16 -j ACCEPT
-      # Retrieval of mail
-      iptables -A INPUT -p tcp --dport 143 -m conntrack --ctstate NEW -s 192.168.0.0/16 -j ACCEPT
-      iptables -A INPUT -p tcp --dport 993 -m conntrack --ctstate NEW -s 192.168.0.0/16 -j ACCEPT
-      iptables -A INPUT -p tcp --dport 110 -m conntrack --ctstate NEW -s 192.168.0.0/16 -j ACCEPT
-      iptables -A INPUT -p tcp --dport 995 -m conntrack --ctstate NEW -s 192.168.0.0/16 -j ACCEPT
-      # Outgoing mail
-      iptables -A OUTPUT -p tcp --dport 25 -d 192.168.0.0/16 -m conntrack --ctstate NEW -j ACCEPT
-      iptables -A OUTPUT -p tcp --dport 25 -d 131.159.254.10 -m conntrack --ctstate NEW -j ACCEPT
-
-      # --- prometheus (collector/client) --- (only vm10)
-      iptables -A OUTPUT -p tcp --dport 9100 -d 192.168.3.0/24 -j ACCEPT
-      iptables -A OUTPUT -p tcp --dport 9101 -d 192.168.3.0/24 -j ACCEPT
-      iptables -A OUTPUT -p tcp --dport 9090 -d 192.168.3.0/24 -j ACCEPT
-      iptables -A OUTPUT -p tcp --dport 9330 -d 192.168.3.0/24 -j ACCEPT # ldap
-      iptables -A OUTPUT -p tcp --dport 9153 -d 192.168.3.0/24 -j ACCEPT  # coredns
-      iptables -A OUTPUT -p tcp --dport 8080 -d 192.168.3.0/24 -j ACCEPT  # cadvisor
-      # interface for prometheus
-      iptables -A INPUT -p tcp --dport 9090 -m conntrack --ctstate NEW -j ACCEPT
-      iptables -A INPUT -p tcp --dport 3000 -m conntrack --ctstate NEW -j ACCEPT
-      iptables -A INPUT -p tcp --dport 9093 -m conntrack --ctstate NEW -j ACCEPT
-      # forwarding
-      iptables -I DOCKER-USER -j ACCEPT
-      iptables -I FORWARD 1 -j DOCKER-USER
-
-
+      %%imports%%
 
       # --- Database (client) ---
       iptables -A OUTPUT -p tcp --sport 5432 -m conntrack --ctstate NEW -j ACCEPT

@@ -45,6 +45,11 @@ sed_placeholders[root_access]='
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBwkCLE+pDy8HvHy98MwsNH/sxPYmBRXuREOd2jTMXPV timon.ensel@tum.de"
 '
 
+sed_placeholders[firewall]='
+    # --- Database (server) --- (only vm4)
+    iptables -A INPUT -p tcp --dport 5432 -m conntrack --ctstate NEW -s 192.168.0.0/16 -j ACCEPT
+'
+
 # WARNGING:
 # The passwords are obviously not placed in this repositoy.
 # Insert all passwords into the according files in /root/db-user-pwds manually.

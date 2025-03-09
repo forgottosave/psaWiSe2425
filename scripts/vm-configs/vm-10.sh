@@ -41,3 +41,20 @@ sed_placeholders[root_access]='
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIFKywkjovjz87VQHeNVSGUlc/5Nl4eH4Hj1SrYHIeqM"
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBwkCLE+pDy8HvHy98MwsNH/sxPYmBRXuREOd2jTMXPV timon.ensel@tum.de"
 '
+
+sed_placeholders[firewall]='
+    # --- prometheus (collector/client) --- (only vm10)
+    iptables -A OUTPUT -p tcp --dport 9100 -d 192.168.3.0/24 -j ACCEPT
+    iptables -A OUTPUT -p tcp --dport 9101 -d 192.168.3.0/24 -j ACCEPT
+    iptables -A OUTPUT -p tcp --dport 9090 -d 192.168.3.0/24 -j ACCEPT
+    iptables -A OUTPUT -p tcp --dport 9330 -d 192.168.3.0/24 -j ACCEPT # ldap
+    iptables -A OUTPUT -p tcp --dport 9153 -d 192.168.3.0/24 -j ACCEPT  # coredns
+    iptables -A OUTPUT -p tcp --dport 8080 -d 192.168.3.0/24 -j ACCEPT  # cadvisor
+    # interface for prometheus
+    iptables -A INPUT -p tcp --dport 9090 -m conntrack --ctstate NEW -j ACCEPT
+    iptables -A INPUT -p tcp --dport 3000 -m conntrack --ctstate NEW -j ACCEPT
+    iptables -A INPUT -p tcp --dport 9093 -m conntrack --ctstate NEW -j ACCEPT
+    # forwarding
+    iptables -I DOCKER-USER -j ACCEPT
+    iptables -I FORWARD 1 -j DOCKER-USER
+'
