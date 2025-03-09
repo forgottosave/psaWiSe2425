@@ -112,7 +112,7 @@ users=(
     ge47sof ge94bob herzi lindl pfeff schne weinb
 )
 
-for user in users; do
+for user in $users; do
     mkdir "$TEST_DIR"
     mount -t cifs //192.168.3.8/${user} $TEST_DIR -o username=${user},password=$(cat ~/smb-passwords/$user.password)
     if [ $? -eq 0 ]; then
