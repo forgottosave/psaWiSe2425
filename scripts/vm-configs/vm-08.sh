@@ -46,14 +46,14 @@ sed_placeholders[root_access]='
 '
 
 sed_placeholders[firewall]='
-    # --- NFS (server) --- (only vm8)
-    iptables -A INPUT -p tcp --dport 111 -m conntrack --ctstate NEW -s 192.168.0.0/16 -j ACCEPT
-    iptables -A INPUT -p udp --dport 111 -m conntrack --ctstate NEW -s 192.168.0.0/16 -j ACCEPT
-    iptables -A INPUT -p tcp --dport 2049 -m conntrack --ctstate NEW -s 192.168.0.0/16 -j ACCEPT
-
-    # --- Samba (server) --- (only vm8)
-    iptables -A INPUT -p udp --dport 137 -m conntrack --ctstate NEW -s 192.168.0.0/16 -j ACCEPT
-    iptables -A INPUT -p udp --dport 138 -m conntrack --ctstate NEW -s 192.168.0.0/16 -j ACCEPT
-    iptables -A INPUT -p tcp --dport 139 -m conntrack --ctstate NEW -s 192.168.0.0/16 -j ACCEPT
-    iptables -A INPUT -p tcp --dport 445 -m conntrack --ctstate NEW -s 192.168.0.0/16 -j ACCEPT
+      # --- NFS (server) --- (only vm8)
+      iptables -A INPUT -p tcp --dport 111 -m conntrack --ctstate NEW -s 192.168.0.0/16 -j ACCEPT
+      iptables -A INPUT -p udp --dport 111 -m conntrack --ctstate NEW -s 192.168.0.0/16 -j ACCEPT
+      iptables -A INPUT -p tcp --dport 2049 -m conntrack --ctstate NEW -s 192.168.0.0/16 -j ACCEPT
+      
+      # --- Samba (server) --- (only vm8)
+      iptables -A INPUT -p udp --dport 137 -m conntrack --ctstate NEW -s 192.168.0.0/16 -j ACCEPT
+      iptables -A INPUT -p udp --dport 138 -m conntrack --ctstate NEW -s 192.168.0.0/16 -j ACCEPT
+      iptables -A INPUT -p tcp --dport 139 -m conntrack --ctstate NEW -s 192.168.0.0/16 -j ACCEPT
+      iptables -A INPUT -p tcp --dport 445 -m conntrack --ctstate NEW -s 192.168.0.0/16 -j ACCEPT
 '

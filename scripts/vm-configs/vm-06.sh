@@ -45,7 +45,7 @@ sed_placeholders[root_access]='
 '
 
 sed_placeholders[firewall]='
-    # --- HTTP/HTTPS (server) --- (only vm6)
-    iptables -A INPUT -p tcp --dport 80 -s 192.168.0.0/16 -j ACCEPT  
-    iptables -A INPUT -p tcp --dport 443 -s 192.168.0.0/16 -j ACCEPT
+      # --- HTTP/HTTPS (server) --- (only vm6)
+      iptables -A INPUT -p tcp --dport 80 -s 192.168.0.0/16 -j ACCEPT  
+      iptables -A INPUT -p tcp --dport 443 -s 192.168.0.0/16 -j ACCEPT
 '

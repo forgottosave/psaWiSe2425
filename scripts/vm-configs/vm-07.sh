@@ -42,7 +42,7 @@ sed_placeholders[root_access]='
 '
 
 sed_placeholders[firewall]='
-    # --- LDAP (server) --- (only vm7)
-    iptables -A INPUT -p tcp --dport 389 -m conntrack --ctstate NEW -s 192.168.0.0/16 -j ACCEPT
-    iptables -A INPUT -p tcp --dport 636 -m conntrack --ctstate NEW -s 192.168.0.0/16 -j ACCEPT
+      # --- LDAP (server) --- (only vm7)
+      iptables -A INPUT -p tcp --dport 389 -m conntrack --ctstate NEW -s 192.168.0.0/16 -j ACCEPT
+      iptables -A INPUT -p tcp --dport 636 -m conntrack --ctstate NEW -s 192.168.0.0/16 -j ACCEPT
 '
