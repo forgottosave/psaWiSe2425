@@ -35,20 +35,21 @@ function print_summary {
     failed_count=0
 }
 
+# selection of users to test with
 users=(
-    cruzc ge95vir heusl liuli pluda schra wiesn
-    atten dobro ge63gut ge96hoj holst loehr popee seide witte
-    bader enges ge64baw ge96xok huber maier rempe shulm wuche
-    barza erdoe ge64wug georg jiang manov riedr sieve yorda
-    beckc fache ge65hog goelm karsu mehne rimme stein zinsl
-    becke fengj ge65peq grotz kaush mitte rooto styna
-    brand finis ge78nes hallm kentj moell ruedi trana
-    braun fisch ge78zig hanyt kilic murat sandm trayk
-    bruec fuchs ge84zoj hausn klein navar schle treml
-    catom ge38hoy ge87huk hegen kochn olsso schlo verik
-    cebul ge43fim ge87liq heinz kollo ottin schmi vossw
-    citom ge47kut ge87yen helle langi perro schmo wangn
-    ge47sof ge94bob herzi lindl pfeff schne weinb
+    cruzc ge95vir heusl liuli pluda wiesn
+    atten dobro ge63gut ge96hoj holst witte
+    bader enges ge96xok huber maier wuche
+    barza erdoe ge64wug georg manov yorda
+    beckc fache ge65hog karsu mehne zinsl
+    becke fengj ge65peq grotz kaush styna
+    brand finis ge78nes kentj moell trana
+    braun ge78zig hanyt kilic murat trayk
+    bruec fuchs ge84zoj klein navar treml
+    catom ge38hoy hegen kochn olsso verik
+    cebul ge43fim ge87liq heinz schmi vossw
+    citom ge47kut ge87yen helle schmo wangn
+    ge47sof ge94bob lindl pfeff weinb
 )
 
 ## Test depending on VM
