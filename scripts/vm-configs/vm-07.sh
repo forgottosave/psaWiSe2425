@@ -9,6 +9,7 @@ include_files=(
     ldap.nix
     ldap-prometheus.nix
     csv-users.nix
+    ldap-client.nix
 )
 
 # SED placeholders
@@ -22,6 +23,7 @@ sed_placeholders[imports]='
     ./user-config.nix
     ./ldap.nix
     ./ldap-prometheus.nix
+    ./ldap-client.nix
 '
 
 sed_placeholders[system_packages]='
