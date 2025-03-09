@@ -38,17 +38,4 @@
     # Exclude Nix store paths to reduce noise 
     "-a never,exit -F dir=/nix/store -k nix_store"
   ];
-
-  services.logrotate.enable = true;
-  services.logrotate.settings = {
-    "/var/log/audit/audit.log" = {
-      rotate = 5;                  # Keep the last 5 log files 
-      size = "50M";                # Rotate if log file exceeds 50MB
-      compress = true;             # Compress old log files to save space
-      delaycompress = true;        # Delay compression for the last log
-      missingok = true;            # Ignore if log file is missing
-      notifempty = true;           # Don’t rotate empty files
-      copytruncate = true;         # Truncate the log after copying to prevent service restart
-    };
-  };
 }

