@@ -96,8 +96,23 @@ done
 ## check Samba
 start_test "check Samba directory mount"
 TEST_DIR="tmp_test_smb"
+users=(
+    cruzc ge95vir heusl liuli pluda schra wiesn
+    dobro ge63gut ge96hoj holst loehr popee seide witte
+    enges ge64baw ge96xok huber maier rempe shulm wuche
+    erdoe ge64wug georg jiang manov riedr sieve yorda
+    beckc fache ge65hog goelm karsu mehne rimme stein zinsl
+    becke fengj ge65peq grotz kaush mitte rooto styna
+    brand finis ge78nes hallm kentj moell ruedi trana
+    braun fisch ge78zig hanyt kilic murat sandm trayk
+    bruec fuchs ge84zoj hausn klein navar schle treml
+    catom ge38hoy ge87huk hegen kochn olsso schlo verik
+    cebul ge43fim ge87liq heinz kollo ottin schmi vossw
+    citom ge47kut ge87yen helle langi perro schmo wangn
+    ge47sof ge94bob herzi lindl pfeff schne weinb
+)
 
-for REMOTE_DIR in /home/*; do
+for REMOTE_DIR in users; do
     mkdir "$TEST_DIR"
     user=${REMOTE_DIR:6}
     mount -t cifs //192.168.3.8/${user} $TEST_DIR -o username=${user},password=$(cat ~/smb-passwords/$user.password)
