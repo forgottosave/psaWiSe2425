@@ -143,15 +143,24 @@ fi
 ## TEST ########################################
 
 start_test "Test der Headeranpassung"
-output=$(swaks --to testusr@psa-team03.cit.tum.de \
+
+swaks --to testusr@psa-team03.cit.tum.de \
       --from ge78zig@blub.psa-team03.cit.tum.de \
       --server localhost \
       --auth LOGIN --auth-user testusr --auth-password testpwd \
-      --data "Subject: Test der Headeranpassung\n\nDies ist eine Testmail." 2>&1)
-if echo "$output" | grep -q "ge78zig@psa-team03.cit.tum.de"; then
-    print_success "Interner Relay an anderen Mailserver funktioniert"
+      --data "Subject: Test der Headeranpassung\n\nDies ist eine Testmail." 2>&1
+sleep 2  # Allow time for delivery
+mailfile=$(find /var/mail/testusr/new -type f -printf "%T@ %p\n" \
+           | sort -n | tail -1 | awk '{print $2}')
+
+if [ -z "$mailfile" ]; then
+    print_failed "Keine neue Mail in /var/mail/testusr/new gefunden"
 else
-    print_failed "Interner Relay an anderen Mailserver funktioniert NICHT"
+    if grep -q "From: ge78zig@psa-team03.cit.tum.de" "$mailfile"; then
+        print_success "Header-Rewrite: Der From-Header wurde korrekt angepasst"
+    else
+        print_failed "Header-Rewrite: Der From-Header wurde NICHT korrekt angepasst"
+    fi
 fi
 
 
