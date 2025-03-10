@@ -256,10 +256,20 @@ IP Address      Hostname                                 Open Ports (with Servic
 - team 09:
 
     ```bash
-
+    IP Address      Hostname                                 Open Ports (with Service)                                             
+    ---------------------------------------------------------------------------------------------------------------
+    192.168.9.10    (vl-1772.csr1-krr.lrz.de)                22/open/tcp/ssh 53/open/tcp/domain 8123/open/tcp/polipo 10050/open/tcp/zabbix-agent 
+    192.168.9.11    ()                                       8123/open/tcp/polipo                                
+    192.168.9.12    ()                                       8123/open/tcp/polipo                                
+    192.168.9.13    ()                                       8123/open/tcp/polipo                                
+    192.168.9.14    ()                                       8123/open/tcp/polipo                                
+    192.168.9.15    ()                                       8123/open/tcp/polipo                                
+    192.168.9.16    ()                                       8123/open/tcp/polipo                                
+    192.168.9.17    ()                                       8123/open/tcp/polipo                                
+    192.168.9.22    (tu-209.bro01-0gz.lrz.de)                8123/open/tcp/polipo   
     ```
 
-    -> fileserver auf 192.168.9.14 aber mit fehlenden Portfreigaben
+    - fehlende Portfreigaben oder maßnahmen gegen nmap
 
 - team 10:
 
