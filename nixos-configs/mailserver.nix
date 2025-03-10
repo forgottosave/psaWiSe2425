@@ -91,10 +91,6 @@ in
       smtpd_sasl_local_domain = "$myhostname";
       smtpd_sasl_security_options = "noanonymous";
       smtpd_sasl_path = "/run/dovecot2/auth";
-
-      extraConfig = ''
-        home_mailbox = Maildir/
-      '';
     };
   };
 
@@ -102,7 +98,6 @@ in
     enable = true;
     enableImap = true;
     enablePop3 = true;
-    mailLocation = "maildir:~/Maildir";
 
     extraConfig = ''
       listen = 0.0.0.0
@@ -115,8 +110,6 @@ in
       }
     '';
   };
-  #      auth_mechanisms = plain login
-  #      mail_location = maildir:~/Maildir
 
 
   services.clamav.daemon.enable = true;   # Aktiviert den ClamAV-Daemon, der E-Mails auf Viren untersucht
