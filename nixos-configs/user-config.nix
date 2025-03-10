@@ -189,14 +189,12 @@
   };
   # Team 02
   fileSystems."/home/ge78nes" = {
-    #device = "fileserver.psa-team02.cit.tum.de:/data/home/ge78nes";
-    device = "192.168.3.8:/home/ge78nes";
+    device = "fileserver.psa-team02.cit.tum.de:/data/home/ge78nes";
     fsType = "nfs";
     options = [ "x-systemd.automount" "noauto" "x-systemd.idle-timeout=600"];
   };
   fileSystems."/home/ge96hoj" = {
-    #device = "fileserver.psa-team02.cit.tum.de:/data/home/ge96hoj";
-    device = "192.168.3.8:/home/ge38hoy";
+    device = "fileserver.psa-team02.cit.tum.de:/data/home/ge96hoj";
     fsType = "nfs";
     options = [ "x-systemd.automount" "noauto" "x-systemd.idle-timeout=600"];
   };
@@ -213,14 +211,12 @@
   };
   # Team 04
   fileSystems."/home/ge87yen" = {
-    #device = "fileserver.psa-team04.cit.tum.de:/mnt/raid/home/ge87yen";
-    device = "192.168.3.8:/home/ge87yen";
+    device = "fileserver.psa-team04.cit.tum.de:/mnt/raid/home/ge87yen";
     fsType = "nfs";
     options = [ "x-systemd.automount" "noauto" "x-systemd.idle-timeout=600" ];
   };
   fileSystems."/home/ge47sof" = {
-    #device = "fileserver.psa-team04.cit.tum.de:/mnt/raid/home/ge47sof";
-    device = "192.168.3.8:/home/ge47sof";
+    device = "fileserver.psa-team04.cit.tum.de:/mnt/raid/home/ge47sof";
     fsType = "nfs";
     options = [ "x-systemd.automount" "noauto" "x-systemd.idle-timeout=600" ];
   };

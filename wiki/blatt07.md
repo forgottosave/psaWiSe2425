@@ -311,7 +311,7 @@ for user in *; do
 
     # Generate password & hash; Provide $PasswordHash
     echo "Generating password..."
-    PWD_FILE="~/smb-passwords/$user.password"
+    PWD_FILE="/root/smb-passwords/$user.password"
     Password=$(openssl rand -base64 16 | tr -d '/+=,' | cut -c1-16)
     echo "  Pwd:  $Password"
     touch "$PWD_FILE"
