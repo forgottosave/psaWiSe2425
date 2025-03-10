@@ -159,8 +159,8 @@ IP Address      Hostname                                 Open Ports (with Servic
     192.168.2.10    (due.psa-team02.cit.tum.de)              22/open/tcp/ssh 80/open/tcp/http     443/open/tcp/https       5666/open/tcp/nrpe        8123/open/tcp/polipo 
     ```
 
-    -> nfs share auf 192.168.2.7 aber mit fehlenden Portfreigaben
-    -> unverschlüsselte protokolle SMTP (Port 25), POP3 (Port 110) und IMAP (Port 143)
+    - nfs share auf 192.168.2.7 aber mit fehlenden Portfreigaben
+    - unverschlüsselte protokolle SMTP (Port 25), POP3 (Port 110) und IMAP (Port 143)
 
 - team 04:
 
@@ -183,8 +183,8 @@ IP Address      Hostname                                 Open Ports (with Servic
     192.168.4.43    (vm04-04-ip43.psa-team04.cit.tum.de)     22/open/tcp/ssh 8123/open/tcp/polipo 
     ```
 
-    -> kein nfs share (nicht aufgabenstellungskonform)
-    -> generell viele fehlende Konfigurationen
+    - kein nfs share (nicht aufgabenstellungskonform)
+    - generell viele fehlende Konfigurationen
 
 - team 05:
 
@@ -203,8 +203,8 @@ IP Address      Hostname                                 Open Ports (with Servic
     192.168.5.200   (web.psa-team05.cit.tum.de)              22/open/tcp/ssh 80/open/tcp/http 443/open/tcp/https 8123/open/tcp/polipo 
     ```
 
-    -> nfs on 192.168.5.7 mit /16
-    -> unverschlüsselte protokolle SMTP (Port 25), IMAP (Port 143)
+    - nfs on 192.168.5.7 mit /16
+    - unverschlüsselte protokolle SMTP (Port 25), IMAP (Port 143)
 
 - team 06:
 
@@ -223,9 +223,9 @@ IP Address      Hostname                                 Open Ports (with Servic
     192.168.6.69    (web.psa-team06.cit.tum.de)              22/open/tcp/ssh 80/open/tcp/http 443/open/tcp/https 8123/open/tcp/polipo 9100/open/tcp/jetdirect 
     ```
 
-    -> fileserver auf 192.168.6.7 aber mit fehlenden Portfreigaben
-    -> unverschlüsselte protokolle SMTP (Port 25), POP3 (Port 110), IMAP (Port 143)
-    -> verschlüsselte protokolle IMAPS (Port 993), POP3S (Port 995)
+    - fileserver auf 192.168.6.7 aber mit fehlenden Portfreigaben
+    - unverschlüsselte protokolle SMTP (Port 25), POP3 (Port 110), IMAP (Port 143)
+    - verschlüsselte protokolle IMAPS (Port 993), POP3S (Port 995)
 
 - team 07: fast keine erreichbaren hosts
 
@@ -249,9 +249,9 @@ IP Address      Hostname                                 Open Ports (with Servic
     192.168.8.254   (router.psa-team08.cit.tum.de)           22/open/tcp/ssh 111/open/tcp/rpcbind 8123/open/tcp/polipo
     ```
 
-    -> fileserver auf 192.168.8.12 aber mit fehlenden Portfreigaben
-    -> unverschlüsselte protokolle SMTP (Port 25), POP3 (Port 110), IMAP (Port 143)
-    -> verschlüsselte protokolle IMAPS (Port 993), POP3S (Port 995)
+    - fileserver auf 192.168.8.12 aber mit fehlenden Portfreigaben
+    - unverschlüsselte protokolle SMTP (Port 25), POP3 (Port 110), IMAP (Port 143)
+    - verschlüsselte protokolle IMAPS (Port 993), POP3S (Port 995)
 
 - team 09:
 
@@ -280,9 +280,9 @@ IP Address      Hostname                                 Open Ports (with Servic
     192.168.10.80   ()                                       22/open/tcp/ssh 80/open/tcp/http 443/open/tcp/https 8123/open/tcp/polipo 
     ```
 
-    -> fileserver auf 192.168.10.8 mit /16
-    -> unverschlüsselte protokolle SMTP (Port 25), POP3 (Port 110), IMAP (Port 143)
-    -> verschlüsselte protokolle IMAPS (Port 993), POP3S (Port 995)
+    - fileserver auf 192.168.10.8 mit /16
+    - unverschlüsselte protokolle SMTP (Port 25), POP3 (Port 110), IMAP (Port 143)
+    - verschlüsselte protokolle IMAPS (Port 993), POP3S (Port 995)
 
 **Wirksamkeit:**
 Das tool ist durachaus nützlich alle hosts und deren Angriffspunkte zu finden und war in unseren Fall besonders hilfreich zur identifizierung der fileservers.
