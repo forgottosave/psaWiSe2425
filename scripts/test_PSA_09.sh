@@ -9,6 +9,14 @@ TEXT_CURSIVE='\033[0;3m'
 TEXT_RED='\033[0;31m'
 TEXT_GREEN='\033[0;32m'
 
+USERNAME="testusr"
+PASSWORD="testpwd"
+SENDER="${USERNAME}@psa-team03.cit.tum.de"
+RECIPIENT="${USERNAME}@psa-team03.cit.tum.de"
+
+# send mail with test user:
+# swaks --to recipient@domain.cit.tum.de --from testuser@psa-team03.cit.tum.de --server localhost --auth LOGIN --auth-user testuser --auth-password testuserPWD
+
 # Statuszähler & allgemeine Testfunktionen
 success_count=0
 failed_count=0
@@ -89,6 +97,7 @@ fi
 ## Test ########################################
 
 start_test "teste ob postemaster funktioniert"
+# 
 
 ## TEST ########################################
 
