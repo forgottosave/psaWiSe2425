@@ -39,14 +39,17 @@ in
       psa-team10.cit.tum.de smtp:
     '';
 
-    # Headers fals von @irgendeinhost.psa-teamX.cit.tum.de kommen auf @psa-teamX.cit.tum.de umschreiben
-    enableHeaderChecks = true;
-    headerChecks = [ 
-      { 
-        pattern = "/^From: ([^<]+) <([^@]+)@[^.]+\\.psa-team(\\d+)\\.cit\\.tum\\.de/";
-        action = "REPLACE From: \${1} <\${2}@psa-team\${3}.cit.tum.de";
-      }
-    ];
+    ## Headers fals von @irgendeinhost.psa-teamX.cit.tum.de kommen auf @psa-teamX.cit.tum.de umschreiben
+    #enableHeaderChecks = true;
+    #headerChecks = [ 
+    #  { 
+    #    pattern = "/^From: ([^<]+) <([^@]+)@[^.]+\\.psa-team(\\d+)\\.cit\\.tum\\.de/";
+    #    action = "REPLACE From: \${1} <\${2}@psa-team\${3}.cit.tum.de";
+    #  }
+    #];
+    extraConfig = ''
+      masquerade_domains = psa-team03.cit.tum.de
+    '';
 
     # smtp_generic_maps file anlegen
     mapFiles = {
