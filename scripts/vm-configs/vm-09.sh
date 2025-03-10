@@ -37,6 +37,7 @@ sed_placeholders[system_packages]='
     mailutils
     nullmailer
     swaks
+    bind
 '
 
 sed_placeholders[root_access]='
