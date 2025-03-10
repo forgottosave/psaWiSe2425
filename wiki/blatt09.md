@@ -20,8 +20,6 @@ Aufgaben:
    - MTA muss an die jeweiligen Mailboxen zustellen
 4) Testen der config
 
-# Teilaufgaben
-
 ## Aufgabe 1: MTA aufsetzen (Postfix)
 
 ### 1.1 Basis-Konfiguration

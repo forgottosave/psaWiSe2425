@@ -1,8 +1,8 @@
 { config, lib, pkgs, ... }:
 let
-  sender_canonical_file = let
+  smtp_generic_maps_file = let
     content = "/^(.*)@(.*\.)?psa-team([0-9]+)\.cit\.tum\.de$/  \$1@cit\.tum\.de";
-  in builtins.toFile "sender_canonical" content;
+  in builtins.toFile "smtp_generic" content;
 in
 {
   services.postfix = {
@@ -50,7 +50,7 @@ in
 
     # smtp_generic_maps file anlegen
     mapFiles = {
-      generic = sender_canonical_file;
+      generic = smtp_generic_maps_file;
     };
 
     # main.cf anpassen
@@ -101,7 +101,6 @@ in
 
     extraConfig = ''
       listen = 0.0.0.0
-
       service auth {
         unix_listener auth {
           mode = 0666
@@ -109,10 +108,11 @@ in
           group = postfix
         }
       }
+      mail_location = maildir:~/Maildir
     '';
   };
   #      auth_mechanisms = plain login
-  #      mail_location = maildir:~/Maildir
+  #      
 
 
   services.clamav.daemon.enable = true;   # Aktiviert den ClamAV-Daemon, der E-Mails auf Viren untersucht
