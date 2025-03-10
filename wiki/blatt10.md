@@ -17,9 +17,8 @@ Aufgaben:
     8. Fileserver -> Freien Speicherplatz
     9. LDAP -> Verfügbarkeit, Anzahl Anfragen
     10. Mail -> Länge der Warteschlange
-3. Für alle Dienste soll eine Art Status-Übersicht erstellt werden
-4. Alarmierung bei Fehlern aber auch mit alternative zum Mailserver
-5. Testen
+3. Alarmierung bei Fehlern aber auch mit alternative zum Mailserver
+4. Testen
 
 ## Teilaufgaben
 
@@ -224,7 +223,7 @@ Nun können wir in Grafana die Metriken visualisieren. Dafür erstellen wir ein 
 
 Um dieses Dashboard zu verwenden, müssen wir es in Grafana importieren. Dafür gehen wir auf `Dashboard` -> `New` -> `Import` und geben die ID des Dashboards ein. In diesem Fall `1860`. Nun muss nur noch `Prometheus` als Datenquelle ausgewählt werden und das Dashboard ist einsatzbereit.
 
-#### 2.2) Netzwerk
+#### 2.2) Netzwerk [Dashboard](http://131.159.74.56:60313/d/NEzutrbMk/02-network?orgId=1&from=now-6h&to=now&timezone=browser&var-job=%24__all&var-instance=%24__all&refresh=1m)
 
 Um die Erreichbarkeit der verschiedenen VMs zu überwachen, verwenden wir den `blackbox-exporter`. Dieser kann verschiedene Module verwenden, um die Erreichbarkeit von Diensten zu überprüfen. Configuriert wird dieser exporter über seine eigene `yml` Datei welche in compose file definiert wird. In unserem Fall verwenden wir das `ping`-Modul, wir wie folgt definiert haben:
 
@@ -281,7 +280,7 @@ Nun brauchen wir noch noch einen euen Job in der `prometheus.yml` Datei, um den 
 
 In grafana importieren wir nun das interface `https://grafana.com/grafana/dashboards/13659-blackbox-exporter-http-prober/` und nach etwas Anpassung haben nun eine schöne Übersicht über die Erreichbarkeit der verschiedenen Server.
 
-#### 2.3) DNS
+#### 2.3) DNS [Dashboard](http://131.159.74.56:60313/d/wY4blRMGz/03-dns?orgId=1&from=now-1h&to=now&timezone=browser&var-instance=%24__all&refresh=5s)
 
 CoreDNS bietet nativen prometheus support und es lässt such ein exporter einfach durch hinzufügen von `prometheus :9153` in `dns-config.nix` aktivieren:
 
@@ -312,13 +311,14 @@ dann nur noch zu prometheus hinzufügen:
             - "192.168.3.3:9153"
 ```
 
-grafana: `https://grafana.com/grafana/dashboards/14981-coredns/`
+In grafana importieren wir nun das interface `https://grafana.com/grafana/dashboards/14981-coredns/` und nach etwas Anpassung haben nun eine schöne Übersicht über unseren CoreDNS Server.
 
-#### 2.4) DHCP
+#### 2.4) DHCP [Dashboard](http://131.159.74.56:60313/d/cdgjnsy1l6pkwc/04-dhcp?orgId=1&from=now-30m&to=now&timezone=browser&var-host=192.168.3.3%3A9101&var-ipv4_pool=%24__all&var-ipv6_pool=%24__all&var-ipv4_subnet=%24__all&var-ipv6_subnet=%24__all)
 
-added controll socket to dhcpd.conf:
+Hier ist die bereitstellung des exporters etwas aufwendiger aber immernoch einfach umzusetzen. Zunächst muss ein controll socket in der dhcp config hinzugefügt werden:
 
-```shell
+```bash
+# dhcp.conf
 ...
         "control-socket": {
             "socket-type": "unix",
@@ -327,9 +327,10 @@ added controll socket to dhcpd.conf:
 ...
 ```
 
-einen neuen exporter router-exporter.nix:
+und dann ein neuer exporter zur `router-exporter.nix`:
 
 ```nix
+# router-exporter.nix
 { config, lib, pkgs, ... }:
 {
   services.prometheus.exporters.node = {
@@ -352,11 +353,11 @@ einen neuen exporter router-exporter.nix:
 }
 ```
 
-grafana `https://grafana.com/grafana/dashboards/12688-kea-dhcp/`
+Bei grafana haben wir uns für das folgende Dashboard entschieden und auf unsere Bedürfnisse angepasst `https://grafana.com/grafana/dashboards/12688-kea-dhcp/`
 
-#### 2.5) Webserver
+#### 2.5) Webserver [Dashboard](http://131.159.74.56:60313/d/EmUBHUFGk/05-webserver?orgId=1&from=now-30m&to=now&timezone=browser&var-target=http%3A%2F%2Fweb1.psa-team03.cit.tum.de)
 
-blackbox config:
+Zum testen des Webservers haben wir uns für `blackbox-exporter` entschieden welcher die einzelnen Webseiten auf Verfügbarkeit prüft. Für Blackbox haben iwr dann die folgende Konfig für http und icmp Anfragen erstellt:
 
 ```yml
 # blackbox.yml
@@ -382,7 +383,7 @@ modules:
       preferred_ip_protocol: "ip4"
 ```
 
-neuer prometheus job:
+Nun muss noch in Prometheus ein neuer Job hinzugefügt werden:
 
 ```yml
 # prometheus.yml
@@ -406,9 +407,9 @@ neuer prometheus job:
         replacement: 192.168.3.6:9102  # muss blackbox:9115 sein
 ```
 
-grafana: `https://grafana.com/grafana/dashboards/13659-blackbox-exporter-http-prober/`
+Und bei Grafana haben wir das folgende Interface angepasst: `https://grafana.com/grafana/dashboards/13659-blackbox-exporter-http-prober/`
 
-#### 2.6) Datenbank
+#### 2.6) Datenbank [Dashboard](http://131.159.74.56:60313/d/000000039/06-database?var-interval=%24__auto&orgId=1&from=now-6h&to=now&timezone=browser&var-DS_PROMETHEUS=aealih1zjcdtsa&var-namespace&var-release&var-instance=192.168.3.2%3A9101&var-datname=%24__all&var-mode=%24__all&refresh=10s)
 
 Wir haben insgesamt 3 Datenbanken zu überwachen:
 
@@ -472,7 +473,7 @@ Quellen:
 
 #### 2.7) Webanwendung
 
-cadvisor zu homeassistant compose file:
+Um die webanwendung zu überwachen haben wir uns für Cadvisor entschieden welches Metricken über Container im selben Stack sammelt und da bei uns Homeassistant in einem Docker Container läuft, ist dies eine sehr einfache und effektive Lösung. Um Cadvisor zu deployen, haben wir das homeassistant compose file um Cadvisor erweitert:
 
 ```yml
   cadvisor:
@@ -492,9 +493,19 @@ cadvisor zu homeassistant compose file:
     privileged: true
 ```
 
-grafana: `https://grafana.com/grafana/dashboards/19792-cadvisor-dashboard/`
+einen neuen Job in der `prometheus.yml` Datei hinzufügen:
 
-#### 2.8) Fileserver
+```yml
+- job_name: 'homeassistant'
+    static_configs:
+      - targets: ['192.168.3.5:8080']
+```
+
+und ein neues Dashboard in Grafana importieren: `https://grafana.com/grafana/dashboards/19792-cadvisor-dashboard/` und angepasst
+
+#### 2.8) Fileserver [Dashboard](http://131.159.74.56:60313/d/rYdddlPWK/08-fileserver?orgId=1&from=now-24h&to=now&timezone=browser&var-datasource=default&var-job=fileserver&var-node=192.168.3.8%3A9100&var-diskdevices=%5Ba-z%5D%2B%7Cnvme%5B0-9%5D%2Bn%5B0-9%5D%2B%7Cmmcblk%5B0-9%5D%2B&refresh=1m)
+
+Zur überwachung des fileservers lassen wir auch einfach den node-exporter laufen und fügen ihn zu prometheus hinzu:
 
 ```yml
 # prometheus.yml
@@ -504,8 +515,7 @@ grafana: `https://grafana.com/grafana/dashboards/19792-cadvisor-dashboard/`
           - '192.168.3.8:9100' #vm1
 ```
 
-grafana: `https://grafana.com/grafana/dashboards/13976-node-exporter-full/`
-anpassen sodass belegter und noch freier Speicherplatz angezeigt wird
+fügen das bekannte grafana interface hinzu `https://grafana.com/grafana/dashboards/13976-node-exporter-full/` und anpassen es an sodass belegter und noch freier Speicherplatz angezeigt wird
 
 #### 2.9) LDAP
 
@@ -582,11 +592,11 @@ Quellen:
 
 - [OpenLDAP Prometheus Exporter](https://github.com/jcollie/openldap_exporter)
 
-#### 2.10) Mail
+#### 2.10) Mail [Dashboard](http://131.159.74.56:60313/d/h36Havfik/10-mail?orgId=1&from=now-6h&to=now&timezone=browser&var-instance=%24__all)
 
-TODO
+Für den Mail-Service nutzen wir den Prometheus Exporter für Postfix, um Metriken zu sammeln und die Mail Warteschlange anzuzeigen.
 
-```nixos
+```nix
 # Konfiguration für den Prometheus Exporter für Postfix
 services.prometheus.exporters.postfix = {
   enable = true;
@@ -596,6 +606,8 @@ services.prometheus.exporters.postfix = {
 };
 ```
 
+auch hier müssen wir den Exporter in Prometheus eintragen:
+
 ```yml
 # prometheus.yml
   - job_name: 'postfix'
@@ -604,24 +616,16 @@ services.prometheus.exporters.postfix = {
           - '192.168.3.9:9154'
 ```
 
-interface TODO (nur doku)
+darauf haben wir das folgende Dashboard in Grafana importiert `https://grafana.com/grafana/dashboards/10013-postfix/` und angepasst sodass die Warteschlange angezeigt wird.
 
-Quellen:
-
-- [NixOS Postfix Prometheus Exporter](https://search.nixos.org/options?channel=24.11&from=0&size=50&sort=relevance&type=packages&query=services.prometheus.exporters.postfix)
-
-### 3. Status-Übersicht
-
-TODO
-
-### 4. Alarmierung
+### 3. Alarmierung
 
 Um schnell wichtige Probleme / Ausfäle zu erkennen, werden zum Schluss noch Alerts eingerichtet. Hierfür benötigen wir 2 Konfigurationen:
 
 1. `alert.rules.yml` beinhaltet alle Alert-Regeln und wird von Prometheus eingelesen. Sollte ein Alert ausgelöst werden, wird dieser an den `Alert Manager` gesendet.
 2. `alertmanager.yml` beinhaltet die Konfiguration für den Alert Manager. Hier wird definiert, wer bei welcher Art von Alert benachrichtigt wird.
 
-#### 4.1) Alert Manager
+#### 3.1) Alert Manager
 
 Der Prometheus Alert Manager unterstützt viele Arten von Alert-Möglichkeiten, beispielsweise Mail, Slack, oder PagerDuty. Wir haben uns entschieden einen Slack-Bot einzurichten.
 
@@ -652,7 +656,7 @@ receivers:
             {{ end }}
 ```
 
-#### 4.2) Prometheus (Alert Regeln)
+#### 3.2) Prometheus (Alert Regeln)
 
 Um den Alert Manager mit Prometheus zu verbinden muss dieser in der `prometheus.yml` unter `alerting` eingetragen werden. Auch wird hier der Pfad zu der Datei mit den Alert-Regeln `rule_files` angegeben:
 
