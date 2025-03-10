@@ -241,7 +241,3 @@ Diese Einstellungen bewirken, dass:
 - **Mailboxen:** Für jeden Benutzer eine Mailbox im Maildir-Format bereitgestellt wird.
 - **Authentifizierung:** Ein Unix-Socket (mit den entsprechenden Rechten) zwischen Dovecot und Postfix eingerichtet wird, sodass die Authentifizierung über die folgende Kette erfolgt: Postfix -> Dovecot SASL -> PAM -> SSSD -> LDAP. Auth also mit den LDAP Credentials.
 - **IMAP/POP3-Zugriff:** Benutzer über IMAP/POP3 auf ihre E-Mails zugreifen können.
-
-## Aufgabe 4: Testen der Konfiguration
-
-TODO: testing

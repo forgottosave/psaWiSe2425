@@ -171,9 +171,15 @@ Wenn Grafana zum erstenmal gestartet wird, muss ein neues Passwort gesetzt werde
 
 Jetzt muss nur noch Prometheus als Datenquelle hinzugefügt werden und dann ist auch Grafana einsatzbereit. Hierzu wählt man im linken Menü unter dem Reiter "Connections” "Data Sources" aus. Dort dann auf "Add data source" klicken und "Prometheus" als Datenquelle auswählen. Die URL sollte auf `http://prometheus:9090` gesetzt werden und dann auf "Save & Test" klicken. (Wichtig: der Hostname muss `prometheus` sein)
 
+Nun sollten die folgenden Dienste erreichbar sein:
+
+- Prometheus: [link](http://131.159.74.56:60312/)
+- Grafana: [link](http://131.159.74.56:60313/)
+- Alertmanager: [link](http://131.159.74.56:60314/)
+
 ### 2. Überwachung der Dienste
 
-#### 2.1) Betriebssystem
+#### 2.1) Betriebssystem [Dashboard](http://131.159.74.56:60313/d/rYdddlPWk/01-os-metrik?orgId=1&from=now-24h&to=now&timezone=browser&var-datasource=default&var-job=os-status&var-node=192.168.3.1%3A9100&var-diskdevices=%5Ba-z%5D%2B%7Cnvme%5B0-9%5D%2Bn%5B0-9%5D%2B%7Cmmcblk%5B0-9%5D%2B&refresh=1m)
 
 Zunächst sollen die beiden vm1 und vm2 überwacht werden. Dafür müssen wir auf den beiden VMs den node-exporter installieren. Dieser sammelt Metriken über das Betriebssystem und stellt sie Prometheus zur Verfügung.
 
@@ -213,10 +219,6 @@ scrape_configs:
 
 Darauf muss `prometheus` mittels `docker compose restart prometheus` neugestarted werden.
 Worauf unter `http://131.159.74.56:60312/targets` die beiden VMs als `UP` angezeigt werden sollten. (hierfür ist natürlich zunächst eine Portweiterleitung in VirtualBox notwendig)
-
-Prometheus: [link](http://131.159.74.56:60312/)
-Grafana: [link](http://131.159.74.56:60313/)
-Alertmanager: [link](http://131.159.74.56:60314/)
 
 Nun können wir in Grafana die Metriken visualisieren. Dafür erstellen wir ein neues Dashboard und fügen ein Panel hinzu. Eine tolle Sache an Grafana ist hier das es bereits viele fertige Dashboards gibt, wie das `https://grafana.com/grafana/dashboards/1860-node-exporter-full/` Dashboard welches alle Metriken des node-exporters visualisiert.
 
