@@ -18,9 +18,9 @@ We use currently use [obsidian](https://obsidian.md/) as the Markdown editor for
 - [ ] 1) mail tests
 - [ ] 1) export github to wiki (Blatt 9,10,11)
 - [x] 2) homeassistant prometheus
+- [x] 2) fix no_root_squash + webserver accessrm b
 - [ ] 2) rebuild + (restart) order (fileserver, db, router, ....) (ldap already finished)
 - [ ] 2) git squash
-- [ ] 2) fix no_root_squash + webserver accessrm b
 - [ ] 3) ldap grafana
 - [ ] 4) web + mails quellen
 - [ ] 4) dns zone transver
