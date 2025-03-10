@@ -33,7 +33,7 @@ Gehen wir detaillierter auf die Schritte ein:
     ```
 
 2. **LDAP Custom Nutzer Schema**
-    Um Attribute wie die Matrikelnummre zu unterstützen müssen wir ein eigenes LDAP Schema anlegen, wleches eine neue `objectClass` definiert, welche all diese Attribute unterstützt.
+    Um Attribute wie die Matrikelnummer zu unterstützen müssen wir ein eigenes LDAP Schema anlegen, welches eine neue `objectClass` definiert, welche all diese Attribute unterstützt.
 
     An dieser Stelle ein Danke an [Team 6](https://psa.in.tum.de/xwiki/bin/view/PSA%20WiSe%202024%20%202025/Dokumentation%20der%20Aufgaben/PSAwise2425Team6Aufgabe08/), welches solch ein vorgefertigtes Schema bereitgestellt hat. Hier wird eine Matrikelnummer, Geburtsdatum, Geburtsort, Nationalität und Geschlecht als zusätzliche Attribute in einer neuen Objekt-Klasse namens `auxPerson` bereitgestellt.
 
@@ -278,7 +278,6 @@ Quellen:
 
 - [brennan.id LDAP Basic Configuratoin](https://www.brennan.id.au/20-Shared_Address_Book_LDAP.html)
 - [ArchLinux LDAP Documentation](https://wiki.archlinux.org/title/OpenLDAP)
-- [Team06 LDAP Documentation](https://psa.in.tum.de/xwiki/bin/view/PSA%20WiSe%202024%20%202025/Dokumentation%20der%20Aufgaben/PSAwise2425Team6Aufgabe08/)
 
 #### 1.3) Dynamisches Einrichten
 
@@ -357,7 +356,7 @@ Im Detail:
 
 2. **Nutzer** wurden bisher in der `user-config.nix` angelegt, sowie deren Homeverzeichnisse auf Automount gestellt. Wir entfernen hier alle Nutzer, und fügen in der `csv-users.nix` noch die Automounts für die Homeverzeichnisse der anderen Nutzer hinzu. Dies erfolgt automatisiert über das `home-create-csv-users.sh` Skript.
 
-3. **SSSD** muss konfiguriert und aktiviert werden. Hierfür legen wir eine Konfiguration an (Quelle Team06):
+3. **SSSD** muss konfiguriert und aktiviert werden. Hierfür legen wir eine Konfiguration an:
 
     ```config
     [sssd]
