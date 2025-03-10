@@ -16,9 +16,9 @@ We use currently use [obsidian](https://obsidian.md/) as the Markdown editor for
 - [x] 1) dirs von anderen Teammembers von deren fileserver -> T1 geht nicht. T2 & T4 gemountet. Soll ich noch mehr machen?
 - [ ] 1) security team 9 network scann
 - [ ] 1) mail tests
-- [ ] 1) export github to wiki
+- [ ] 1) export github to wiki (Blatt 8,9,10,11)
 - [x] 2) homeassistant prometheus
-- [ ] 2) rebuild + (restart) order (fileserver, db, router, ....) (ldap allready finished)
+- [ ] 2) rebuild + (restart) order (fileserver, db, router, ....) (ldap already finished)
 - [ ] 2) git squash
 - [ ] 2) fix no_root_squash + webserver accessrm b
 - [ ] 3) ldap grafana

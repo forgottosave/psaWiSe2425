@@ -95,6 +95,7 @@ Das Migrieren der Daten erfolgt wie folgt:
 #### 2.1) `rsync`
 
 Mit `rsync` können wir einfach alle Verzeichnisse synchronizieren (wir nutzen hierfür als "Zwschenstopp" einen lokalen Rechner, da dieser bereits alle ssh Zugriffe besitzt). Um sie auf die VM 8 zu bekommen, können wir dann wieder rsync nutzen.
+*Achtung: Wir legen tatsächlich auch die Homeverzeichnisse anderer Teams an, damit wir diese von unserem Fileserver mounten können, solange andere Fileserver noch nicht errecihbar sind.* 
 
 ```ascii
 ┌────────────────────────┐                                               
@@ -221,7 +222,7 @@ Quellen:
 
 ### 4) Mounten von File-Systemen
 
-Die User Home-Verzeichnisse auf allen anderen VMs werden nun von dem NFS gemountet, wobei wir jeweils den fileserver des Teams angeben, sowie den Pfad zum jeweiligen exporteten Verzeichnis:
+Die User Home-Verzeichnisse auf allen anderen VMs werden nun von dem NFS gemountet, wobei wir jeweils den fileserver des Teams angeben, sowie den Pfad zum jeweiligen exporteten Verzeichnis. Auch setzen wir die automount option (nach 10 Minuten idle wird es wieder unmounted).
 
 ```nix
 # user-config.nix
@@ -362,13 +363,13 @@ Auf allen VMs können wir folgende Punkte testen:
    rm -r "$TEST_DIR"
    ```
 
-3. Kann die Samba Verbindung genutzt werden? (hier REMOTE_DIR:6, da wir das vorhergehende `/home/` nicht haben wollen)
+3. Kann die Samba Verbindung genutzt werden?
 
    ```shell
-   mkdir "$TEST_DIR"
-   mount -t cifs //192.168.3.8/${REMOTE_DIR:6} $TEST_DIR -o username=${REMOTE_DIR:6},password=${REMOTE_DIR:6}smbpswrd
-   umount "$TEST_DIR"
-   rm -r "$TEST_DIR"
+   for user in "${users[@]}"; do
+      mkdir "$TEST_DIR"
+      mount -t cifs //192.168.3.8/${user} $TEST_DIR -o username=${user},password=$(cat ~/smb-passwords/$user.password)
+        if [ $? -eq 0 ]; then
    ```
 
 Zudem können wir zusätzliche Tests auf der Fileserver VM ausführen, wie:
