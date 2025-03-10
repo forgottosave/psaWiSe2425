@@ -50,7 +50,7 @@ in
 
     # smtp_generic_maps file anlegen
     mapFiles = {
-      generic = ./generic;
+      generic = sender_canonical_file;
     };
 
     # main.cf anpassen

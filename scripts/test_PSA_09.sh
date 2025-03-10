@@ -61,6 +61,8 @@ else
     print_failed "Rspamd-Service läuft nicht"
 fi
 
+# echo "test huhu" |mail -s "test huhu" "atten@psa-team03.cit.tum.de"
+# cat /home/atten/Maildir/new/* |grep test
 
 ## TEST ########################################
 
