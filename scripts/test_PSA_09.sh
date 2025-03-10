@@ -148,7 +148,7 @@ swaks --to testusr@psa-team03.cit.tum.de \
       --from ge78zig@blub.psa-team03.cit.tum.de \
       --server localhost \
       --auth LOGIN --auth-user testusr --auth-password testpwd \
-      --data "Subject: Test der Headeranpassung\n\nDies ist eine Testmail." 2>&1
+      --data "Subject: Test der Headeranpassung\n\nDies ist eine Testmail."
 sleep 2  # Allow time for delivery
 mailfile=$(find /var/mail/testusr/new -type f -printf "%T@ %p\n" \
            | sort -n | tail -1 | awk '{print $2}')

@@ -42,9 +42,9 @@ in
     # Headers fals von @irgendeinhost.psa-teamX.cit.tum.de kommen auf @psa-teamX.cit.tum.de umschreiben
     enableHeaderChecks = true;
     headerChecks = [ 
-      {
-        pattern = "/^From:(.*)@.+?\\.psa-team(\\d+)\\.cit\\.tum\\.de/";
-        action = "REPLACE From:\${1}@psa-team\${2}.cit.tum.de";
+      { 
+        pattern = "/^From: ([^<]+) <([^@]+)@[^.]+\\.psa-team(\\d+)\\.cit\\.tum\\.de/";
+        action = "REPLACE From: \${1} <\${2}@psa-team\${3}.cit.tum.de";
       }
     ];
 
