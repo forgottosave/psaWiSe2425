@@ -48,6 +48,7 @@ sed_placeholders[root_access]='
 sed_placeholders[firewall]='
       # --- Database (server) --- (only vm4)
       iptables -A INPUT -p tcp --dport 5432 -m conntrack --ctstate NEW -s 192.168.0.0/16 -j ACCEPT
+      iptables -A OUTPUT -p tcp --dport 5432 -m conntrack --ctstate NEW -s 192.168.0.0/16 -j ACCEPT
 '
 
 # WARNGING:

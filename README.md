@@ -19,7 +19,7 @@ We use currently use [obsidian](https://obsidian.md/) as the Markdown editor for
 - [ ] 1) export github to wiki (Blatt 9)
 - [x] 2) homeassistant prometheus
 - [x] 2) fix no_root_squash + webserver accessrm b
-- [ ] 2) rebuild + (restart) order (fileserver, db, router, ....) (ldap already finished)
+- [x] 2) rebuild + (restart) order (fileserver, db, router, ....) (done: VM 6,8,)
 - [ ] 2) git squash
 - [ ] 3) ldap grafana
 - [ ] 4) web + mails quellen
