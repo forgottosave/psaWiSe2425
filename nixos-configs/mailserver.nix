@@ -7,15 +7,14 @@ in
 {
   services.postfix = {
     enable = true;                                    # postfix aktivieren
-    domain = "psa-team03.cit.tum.de";                 # primäre domain von postfix
-    hostname = "mail";                                # hostname von postfix -> mit domain ergibt mail.psa-team03.cit.tum.de
-    networks = [ "127.0.0.0/8" "192.168.0.0/16" ];    # netzwerke die postfix als trusted betrachtet
-    destination = [ "mail" "mail.psa-team03.cit.tum.de" "psa-team03.cit.tum.de" "localhost.cit.tum.de" "localhost" ]; # liste an hostnamen und domainnamen, die als lokale ziele betrachtet werden
     origin = "psa-team03.cit.tum.de";                 # Ursprungsdomäne die in E-Mail-Headers verwendet wird
-    postmasterAlias = "ge78zig, ge96xok";             # Admins an die Fehlermeldungen gehen
+    domain = "psa-team03.cit.tum.de";                 # primäre domain von postfix
+    hostname = "mail.psa-team03.cit.tum.de";          # hostname von postfix -> mit domain ergibt mail.psa-team03.cit.tum.de
+    networks = [ "127.0.0.0/8" "192.168.0.0/16" ];    # netzwerke die postfix als trusted betrachtet
+    destination = [ "mail.psa-team03.cit.tum.de" "psa-team03.cit.tum.de" "localhost.cit.tum.de" "localhost" ]; # liste an hostnamen und domainnamen, die als lokale ziele betrachtet werden
+    postmasterAlias = "ge78zig";                       # Admin an die Fehlermeldungen gehen
     
     relayHost = "mailrelay.cit.tum.de";                # Relayhost für ausgehende E-Mails
-
     relayDomains = [
       "psa-team01.cit.tum.de"
       "psa-team02.cit.tum.de"
@@ -51,10 +50,10 @@ in
 
     # smtp_generic_maps file anlegen
     mapFiles = {
-      generic = sender_canonical_file;
+      generic = ./generic;
     };
 
-    # main.cf settings
+    # main.cf anpassen
     config = {
       smtp_generic_maps = "regexp:/etc/postfix/generic";
 
@@ -110,11 +109,11 @@ in
           group = postfix
         }
       }
-
-      auth_mechanisms = plain login
-      mail_location = maildir:~/Maildir
     '';
   };
+  #      auth_mechanisms = plain login
+  #      mail_location = maildir:~/Maildir
+
 
   services.clamav.daemon.enable = true;   # Aktiviert den ClamAV-Daemon, der E-Mails auf Viren untersucht
   services.clamav.updater.enable = true;  # Sorgt dafür, dass die Virensignaturen regelmäßig aktualisiert werden
