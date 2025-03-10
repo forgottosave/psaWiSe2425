@@ -144,11 +144,11 @@ fi
 
 start_test "Test der Headeranpassung"
 output=$(swaks --to testusr@psa-team03.cit.tum.de \
-      --from testuser@blub.psa-team03.cit.tum.de \
+      --from ge78zig@blub.psa-team03.cit.tum.de \
       --server localhost \
       --auth LOGIN --auth-user testusr --auth-password testpwd \
       --data "Subject: Test der Headeranpassung\n\nDies ist eine Testmail." 2>&1)
-if echo "$output" | grep -q "psa-team06.cit.tum.de"; then
+if echo "$output" | grep -q "ge78zig@psa-team03.cit.tum.de"; then
     print_success "Interner Relay an anderen Mailserver funktioniert"
 else
     print_failed "Interner Relay an anderen Mailserver funktioniert NICHT"
